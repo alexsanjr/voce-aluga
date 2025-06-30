@@ -1,0 +1,1 @@
+INSERT INTO tb_veiculo (marca, modelo, grupo, ano, cor, valor_Diaria, quilometragem, status_Veiculo, placa) VALUES ('Toyota', 'Corolla', 0, 2022, 2, 199.9, 34800L, 1, 'ABC-1234');

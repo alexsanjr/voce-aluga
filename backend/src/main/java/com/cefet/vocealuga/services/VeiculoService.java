@@ -34,6 +34,7 @@ public class VeiculoService {
         dto.setQuilometragem(veiculo.getQuilometragem());
         dto.setStatusVeiculo(veiculo.getStatusVeiculo());
         dto.setPlaca(veiculo.getPlaca());
+        dto.setMarca(veiculo.getMarca());
         return dto;
     }
 
