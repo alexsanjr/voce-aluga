@@ -3,16 +3,21 @@ package com.cefet.vocealuga.dtos;
 import com.cefet.vocealuga.entities.enums.Cor;
 import com.cefet.vocealuga.entities.enums.Grupo;
 import com.cefet.vocealuga.entities.enums.StatusVeiculo;
+import jakarta.validation.constraints.NotBlank;
 
 public class VeiculoDTO {
     private Long id;
     //Estoque
+    @NotBlank(message = "Campo requerido")
     private String marca;
+    @NotBlank(message = "Campo requerido")
     private String modelo;
     private Grupo grupo;
     private int ano;
     private Cor cor;
+    @NotBlank(message = "Campo requerido")
     private double valorDiaria;
+    @NotBlank(message = "Campo requerido")
     private Long quilometragem;
     private StatusVeiculo statusVeiculo;
     private String placa;
