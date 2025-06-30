@@ -4,9 +4,12 @@ import com.cefet.vocealuga.dtos.VeiculoDTO;
 import com.cefet.vocealuga.entities.Veiculo;
 import com.cefet.vocealuga.repositories.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -29,6 +32,41 @@ public class VeiculoService {
         return result.map(this::convertToDTO);
     }
 
+    @Transactional
+    public VeiculoDTO insert(VeiculoDTO dto) {
+        Veiculo entity = convertToEntity(dto);
+        entity = veiculoRepository.save(entity);
+        return convertToDTO(entity);
+    }
+
+    @Transactional
+    public VeiculoDTO update(Long id, VeiculoDTO dto) {
+        try {
+            Veiculo entity = veiculoRepository.getReferenceById(id);
+            dto.setId(id);
+            entity = convertToEntity(dto);
+            entity = veiculoRepository.save(entity);
+            return convertToDTO(entity);
+        }
+        catch (JpaObjectRetrievalFailureException e) {
+            //throw new ResourceNotFoundException("Recurso não encontrado");
+        }
+        return dto;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void delete(Long id) {
+//        if(!veiculoRepository.existsById(id)) {
+//            throw new ResourceNotFoundException("Recurso não encontrado");
+//        }
+        try {
+            veiculoRepository.deleteById(id);
+        }
+        catch (DataIntegrityViolationException e) {
+            //throw new DatabaseException("Falha de integridade referencial");
+        }
+    }
+
 
 
     public VeiculoDTO convertToDTO(Veiculo veiculo) {
@@ -45,6 +83,22 @@ public class VeiculoService {
         dto.setPlaca(veiculo.getPlaca());
         dto.setMarca(veiculo.getMarca());
         return dto;
+    }
+
+    public Veiculo convertToEntity(VeiculoDTO dto) {
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(dto.getId());
+        veiculo.setPlaca(dto.getPlaca());
+        veiculo.setModelo(dto.getModelo());
+        veiculo.setGrupo(dto.getGrupo());
+        veiculo.setAno(dto.getAno());
+        veiculo.setCor(dto.getCor());
+        veiculo.setValorDiaria(dto.getValorDiaria());
+        veiculo.setQuilometragem(dto.getQuilometragem());
+        veiculo.setStatusVeiculo(dto.getStatusVeiculo());
+        veiculo.setPlaca(dto.getPlaca());
+        veiculo.setMarca(dto.getMarca());
+        return veiculo;
     }
 
 }

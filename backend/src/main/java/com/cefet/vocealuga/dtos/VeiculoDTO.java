@@ -4,6 +4,7 @@ import com.cefet.vocealuga.entities.enums.Cor;
 import com.cefet.vocealuga.entities.enums.Grupo;
 import com.cefet.vocealuga.entities.enums.StatusVeiculo;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class VeiculoDTO {
     private Long id;
@@ -15,9 +16,9 @@ public class VeiculoDTO {
     private Grupo grupo;
     private int ano;
     private Cor cor;
-    @NotBlank(message = "Campo requerido")
+    @NotNull(message = "Campo requerido")
     private double valorDiaria;
-    @NotBlank(message = "Campo requerido")
+    @NotNull(message = "Campo requerido")
     private Long quilometragem;
     private StatusVeiculo statusVeiculo;
     private String placa;
