@@ -3,6 +3,8 @@ package com.cefet.vocealuga.services;
 import com.cefet.vocealuga.dtos.VeiculoDTO;
 import com.cefet.vocealuga.entities.Veiculo;
 import com.cefet.vocealuga.repositories.VeiculoRepository;
+import com.cefet.vocealuga.services.exceptions.DatabaseException;
+import com.cefet.vocealuga.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -49,21 +51,20 @@ public class VeiculoService {
             return convertToDTO(entity);
         }
         catch (JpaObjectRetrievalFailureException e) {
-            //throw new ResourceNotFoundException("Recurso não encontrado");
+            throw new ResourceNotFoundException("Recurso não encontrado");
         }
-        return dto;
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
-//        if(!veiculoRepository.existsById(id)) {
-//            throw new ResourceNotFoundException("Recurso não encontrado");
-//        }
+        if(!veiculoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado");
+        }
         try {
             veiculoRepository.deleteById(id);
         }
         catch (DataIntegrityViolationException e) {
-            //throw new DatabaseException("Falha de integridade referencial");
+            throw new DatabaseException("Falha de integridade referencial");
         }
     }
 
