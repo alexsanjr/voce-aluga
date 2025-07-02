@@ -9,3 +9,8 @@ INSERT INTO filial (nome, local) VALUES ('Filial 3', 'Salvador');
 
 INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 1',1);
 INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 2',2);
+
+INSERT INTO TRANSFERENCIA_VEICULOS (status, data, estoque_destino_id, estoque_origem_id) VALUES (1, TIMESTAMP WITH TIME ZONE '2022-07-25T15:00:00Z', 1, 2);
+
+INSERT INTO TRANSFERENCIA_VEICULOS_VEICULO (transferencia_id, veiculo_id) VALUES (1 ,1);
+INSERT INTO TRANSFERENCIA_VEICULOS_VEICULO (transferencia_id, veiculo_id) VALUES (1 ,2);
