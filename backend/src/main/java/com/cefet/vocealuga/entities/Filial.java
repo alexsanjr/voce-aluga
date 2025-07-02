@@ -1,5 +1,6 @@
 package com.cefet.vocealuga.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -12,7 +13,7 @@ public class Filial {
     private Long id;
     private String nome;
     private String local;
-    @OneToOne(mappedBy = "filial", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "filial")
     private Estoque estoque;
 
     public Filial(Long id, String nome, String local, Estoque estoque) {

@@ -11,8 +11,8 @@ public class Estoque {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    @OneToOne
-    @MapsId
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "filial_id", referencedColumnName = "id")
     private Filial filial;
 
     public Estoque(Long id, String nome, Filial filial) {

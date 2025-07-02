@@ -5,4 +5,7 @@ INSERT INTO veiculo (marca, modelo, grupo, ano, cor, valor_Diaria, quilometragem
 
 INSERT INTO filial (nome, local) VALUES ('Filial 1', 'Rio de Janeiro');
 INSERT INTO filial (nome, local) VALUES ('Filial 2', 'São Paulo');
+INSERT INTO filial (nome, local) VALUES ('Filial 3', 'Salvador');
 
+INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 1',1);
+INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 2',2);
