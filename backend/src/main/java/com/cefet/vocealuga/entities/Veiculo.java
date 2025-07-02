@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_veiculo")
 public class Veiculo {
 
     @Id
