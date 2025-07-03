@@ -1,7 +1,9 @@
 package com.cefet.vocealuga.services;
 
 import com.cefet.vocealuga.dtos.VeiculoDTO;
+import com.cefet.vocealuga.entities.Estoque;
 import com.cefet.vocealuga.entities.Veiculo;
+import com.cefet.vocealuga.repositories.EstoqueRepository;
 import com.cefet.vocealuga.repositories.VeiculoRepository;
 import com.cefet.vocealuga.services.exceptions.DatabaseException;
 import com.cefet.vocealuga.services.exceptions.ResourceNotFoundException;
@@ -19,6 +21,9 @@ public class VeiculoService {
 
     @Autowired
     private VeiculoRepository veiculoRepository;
+
+    @Autowired
+    EstoqueRepository estoqueRepository;
 
     @Transactional(readOnly = true)
     public VeiculoDTO findById(Long id) {
@@ -83,6 +88,7 @@ public class VeiculoService {
         dto.setStatusVeiculo(veiculo.getStatusVeiculo());
         dto.setPlaca(veiculo.getPlaca());
         dto.setMarca(veiculo.getMarca());
+        dto.setEstoqueId(veiculo.getEstoque().getId());
         return dto;
     }
 
@@ -99,6 +105,10 @@ public class VeiculoService {
         veiculo.setStatusVeiculo(dto.getStatusVeiculo());
         veiculo.setPlaca(dto.getPlaca());
         veiculo.setMarca(dto.getMarca());
+
+        Estoque estoque = estoqueRepository.findById(dto.getEstoqueId())
+                .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
+        veiculo.setEstoque(estoque);
         return veiculo;
     }
 

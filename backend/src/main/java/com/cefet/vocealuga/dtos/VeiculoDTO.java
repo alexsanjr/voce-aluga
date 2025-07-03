@@ -22,7 +22,15 @@ public class VeiculoDTO {
     private Long quilometragem;
     private StatusVeiculo statusVeiculo;
     private String placa;
+    private Long estoqueId;
 
+    public Long getEstoqueId() {
+        return estoqueId;
+    }
+
+    public void setEstoqueId(Long estoqueId) {
+        this.estoqueId = estoqueId;
+    }
 
     public Long getId() {
         return id;

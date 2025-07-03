@@ -13,7 +13,9 @@ public class Veiculo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //Estoque
+    @ManyToOne
+    @JoinColumn(name = "estoque_id")
+    private Estoque estoque;
     private String marca;
     private String modelo;
     private Grupo grupo;
@@ -30,7 +32,7 @@ public class Veiculo {
     public Veiculo() {
     }
 
-    public Veiculo(Long id, String marca, String modelo, Grupo grupo, int ano, Cor cor, double valorDiaria, Long quilometragem, StatusVeiculo statusVeiculo, String placa) {
+    public Veiculo(Long id, String marca, String modelo, Grupo grupo, int ano, Cor cor, double valorDiaria, Long quilometragem, StatusVeiculo statusVeiculo, String placa, Estoque estoque) {
         this.id = id;
         this.marca = marca;
         this.modelo = modelo;
@@ -41,6 +43,7 @@ public class Veiculo {
         this.quilometragem = quilometragem;
         this.statusVeiculo = statusVeiculo;
         this.placa = placa;
+        this.estoque = estoque;
     }
 
     public Long getId() {
@@ -121,6 +124,14 @@ public class Veiculo {
 
     public void setPlaca(String placa) {
         this.placa = placa;
+    }
+
+    public Estoque getEstoque() {
+        return estoque;
+    }
+
+    public void setEstoque(Estoque estoque) {
+        this.estoque = estoque;
     }
 
     @Override
