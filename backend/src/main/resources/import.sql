@@ -14,3 +14,7 @@ INSERT INTO TRANSFERENCIA_VEICULOS (status, data, estoque_destino_id, estoque_or
 
 INSERT INTO TRANSFERENCIA_VEICULOS_VEICULO (transferencia_id, veiculo_id) VALUES (1 ,1);
 INSERT INTO TRANSFERENCIA_VEICULOS_VEICULO (transferencia_id, veiculo_id) VALUES (1 ,2);
+
+INSERT INTO ESTACAO_DE_SERVICO (local, nome) VALUES ('São Paulo - SP', 'Filial Centro');
+INSERT INTO ESTACAO_DE_SERVICO (local, nome) VALUES ( 'Rio de Janeiro - RJ', 'Filial Centro');
+INSERT INTO ESTACAO_DE_SERVICO (local, nome) VALUES ('Curitiba - PR', 'Pátio Sul');
