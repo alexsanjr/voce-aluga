@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 
 public class VeiculoDTO {
     private Long id;
-    //Estoque
     @NotBlank(message = "Campo requerido")
     private String marca;
     @NotBlank(message = "Campo requerido")
