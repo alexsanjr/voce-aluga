@@ -28,7 +28,7 @@ public class EstoqueService {
     @Transactional(readOnly = true)
     public EstoqueDTO findById(Long id) {
 
-        Estoque estoque = estoqueRepository.findById(id).orElseThrow(() -> new RuntimeException("Filial não encontrada"));
+        Estoque estoque = estoqueRepository.findById(id).orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
         return convertToDTO(estoque);
     }
 
