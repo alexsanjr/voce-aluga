@@ -44,6 +44,7 @@ public class EstacaoDeServicoService {
     public EstacaoDeServicoDTO update(Long id, EstacaoDeServicoDTO dto) {
         try {
             EstacaoDeServico entity = repository.getReferenceById(id);
+            dto.setId(entity.getId());
             entity = convertToEntity(dto);
             entity = repository.save(entity);
             return convertToDTO(entity);

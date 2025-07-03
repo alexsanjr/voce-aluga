@@ -1,7 +1,6 @@
 package com.cefet.vocealuga.services;
 
 
-
 import com.cefet.vocealuga.dtos.TransferenciaVeiculosDTO;
 import com.cefet.vocealuga.entities.Estoque;
 import com.cefet.vocealuga.entities.TransferenciaVeiculos;
