@@ -1,6 +1,5 @@
 package com.cefet.vocealuga.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;

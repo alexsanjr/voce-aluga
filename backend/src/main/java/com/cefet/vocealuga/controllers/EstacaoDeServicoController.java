@@ -1,9 +1,7 @@
 package com.cefet.vocealuga.controllers;
 
 import com.cefet.vocealuga.dtos.EstacaoDeServicoDTO;
-import com.cefet.vocealuga.dtos.EstoqueDTO;
 import com.cefet.vocealuga.services.EstacaoDeServicoService;
-import com.cefet.vocealuga.services.EstoqueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

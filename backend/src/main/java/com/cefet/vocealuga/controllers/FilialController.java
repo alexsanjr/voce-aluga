@@ -1,7 +1,6 @@
 package com.cefet.vocealuga.controllers;
 
 import com.cefet.vocealuga.dtos.FilialDTO;
-import com.cefet.vocealuga.dtos.VeiculoDTO;
 import com.cefet.vocealuga.services.FilialService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
