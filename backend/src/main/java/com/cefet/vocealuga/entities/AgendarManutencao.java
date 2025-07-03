@@ -1,6 +1,5 @@
 package com.cefet.vocealuga.entities;
 
-import com.cefet.vocealuga.services.EstacaoDeServicoService;
 import jakarta.persistence.*;
 
 import java.time.Instant;
