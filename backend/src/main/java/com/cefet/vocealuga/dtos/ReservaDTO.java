@@ -3,7 +3,7 @@ package com.cefet.vocealuga.dtos;
 import com.cefet.vocealuga.entities.enums.StatusReserva;
 import com.cefet.vocealuga.entities.enums.TipoReserva;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 public class ReservaDTO {
 
@@ -12,8 +12,8 @@ public class ReservaDTO {
     //Motorista
     private TipoReserva categoria;
     private StatusReserva status;
-    private Instant dataReserva;
-    private Instant dataVencimento;
+    private LocalDate dataReserva;
+    private LocalDate dataVencimento;
     private Long localRetiradaId;
 
     public Long getId() {
@@ -40,19 +40,19 @@ public class ReservaDTO {
         this.status = status;
     }
 
-    public Instant getDataReserva() {
+    public LocalDate getDataReserva() {
         return dataReserva;
     }
 
-    public void setDataReserva(Instant dataReserva) {
+    public void setDataReserva(LocalDate dataReserva) {
         this.dataReserva = dataReserva;
     }
 
-    public Instant getDataVencimento() {
+    public LocalDate getDataVencimento() {
         return dataVencimento;
     }
 
-    public void setDataVencimento(Instant dataVencimento) {
+    public void setDataVencimento(LocalDate dataVencimento) {
         this.dataVencimento = dataVencimento;
     }
 

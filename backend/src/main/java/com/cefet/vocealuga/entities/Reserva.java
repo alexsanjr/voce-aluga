@@ -4,7 +4,7 @@ import com.cefet.vocealuga.entities.enums.StatusReserva;
 import com.cefet.vocealuga.entities.enums.TipoReserva;
 import jakarta.persistence.*;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -18,14 +18,14 @@ public class Reserva {
     private TipoReserva categoria;
     private StatusReserva status;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant dataReserva;
+    private LocalDate dataReserva;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant dataVencimento;
-    @OneToOne(cascade = CascadeType.ALL)
+    private LocalDate dataVencimento;
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filial_id")
     private Filial localRetirada;
 
-    public Reserva(Long id, TipoReserva categoria, StatusReserva status, Instant dataReserva, Instant dataVencimento, Filial localRetirada) {
+    public Reserva(Long id, TipoReserva categoria, StatusReserva status, LocalDate dataReserva, LocalDate dataVencimento, Filial localRetirada) {
         this.id = id;
         this.categoria = categoria;
         this.status = status;
@@ -61,19 +61,19 @@ public class Reserva {
         this.status = status;
     }
 
-    public Instant getDataReserva() {
+    public LocalDate getDataReserva() {
         return dataReserva;
     }
 
-    public void setDataReserva(Instant dataReserva) {
+    public void setDataReserva(LocalDate dataReserva) {
         this.dataReserva = dataReserva;
     }
 
-    public Instant getDataVencimento() {
+    public LocalDate getDataVencimento() {
         return dataVencimento;
     }
 
-    public void setDataVencimento(Instant dataVencimento) {
+    public void setDataVencimento(LocalDate dataVencimento) {
         this.dataVencimento = dataVencimento;
     }
 
