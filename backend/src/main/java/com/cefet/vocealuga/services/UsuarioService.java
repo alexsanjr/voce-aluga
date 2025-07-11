@@ -17,13 +17,12 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Usuario saveUser(String email, String rawPassword) {
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-        Usuario user = new Usuario(null, email, encodedPassword);
-        return repository.save(user);
+    public Usuario saveUser(Usuario usuario) {
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        return repository.save(usuario);
     }
 
-    public Usuario findByUsername(String username) {
-        return repository.findByEmail(username);
+    public Usuario findByEmail(String email) {
+        return repository.findByEmail(email);
     }
 }

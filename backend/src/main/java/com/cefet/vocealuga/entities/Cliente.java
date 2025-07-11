@@ -21,6 +21,10 @@ public class Cliente extends Usuario {
         this.pontosFidelidade = pontosFidelidade;
     }
 
+    public Cliente(Long id, String email, String password) {
+        super(id, email, password);
+    }
+
     public int getPontosFidelidade() {
         return pontosFidelidade;
     }

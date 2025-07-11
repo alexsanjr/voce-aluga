@@ -1,7 +1,10 @@
 package com.cefet.vocealuga.entities;
 
+import jakarta.persistence.Entity;
+
 import java.time.LocalDate;
 
+@Entity
 public class Gerente extends Funcionario {
 
     public Gerente() {
@@ -13,5 +16,9 @@ public class Gerente extends Funcionario {
 
     public Gerente(Long id, String email, String password, String cargo, String filial) {
         super(id, email, password, cargo, filial);
+    }
+
+    public Gerente(Long id, String email, String password) {
+        super(id, email, password);
     }
 }

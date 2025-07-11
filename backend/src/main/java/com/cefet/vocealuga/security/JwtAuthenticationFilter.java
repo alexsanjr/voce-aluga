@@ -35,18 +35,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
             String username = jwtTokenService.getUsernameFromToken(token);
+            String role = jwtTokenService.getRoleFromToken(token); // extrai ROLE_ADMIN, por exemplo
 
-            if (username != null) {
-                // Cria uma autenticação simples sem authorities (você pode ajustar depois)
+            if (username != null && role != null) {
+                var authorities = List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority(role));
+
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, List.of());
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
 
-                // Registra no contexto do Spring Security
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // Continua a cadeia de filtros
         filterChain.doFilter(request, response);
     }
 

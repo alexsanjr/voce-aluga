@@ -24,6 +24,10 @@ public class Funcionario extends Usuario {
         this.filial = filial;
     }
 
+    public Funcionario(Long id, String email, String password) {
+        super(id, email, password);
+    }
+
     public String getCargo() {
         return cargo;
     }

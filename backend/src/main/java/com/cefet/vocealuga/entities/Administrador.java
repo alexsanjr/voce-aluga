@@ -18,4 +18,7 @@ public class Administrador  extends Funcionario{
         super(id, email, password, cargo, filial);
     }
 
+    public Administrador(Long id, String email, String password) {
+        super(id, email, password);
+    }
 }

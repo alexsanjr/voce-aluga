@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,18 +22,21 @@ public class TransferenciaVeiculosController {
     private TransferenciaVeiculosService transferenciaVeiculosService;
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
     public ResponseEntity<TransferenciaVeiculosDTO> findById(@PathVariable Long id) {
         TransferenciaVeiculosDTO dto = transferenciaVeiculosService.findById(id);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
     public ResponseEntity<Page<TransferenciaVeiculosDTO>> findAll(Pageable pageable) {
         Page<TransferenciaVeiculosDTO> dto = transferenciaVeiculosService.findAll(pageable);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
     public ResponseEntity<TransferenciaVeiculosDTO> insert(@Valid @RequestBody TransferenciaVeiculosDTO dto) {
         dto = transferenciaVeiculosService.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -41,6 +45,7 @@ public class TransferenciaVeiculosController {
     }
 
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
     public ResponseEntity<TransferenciaVeiculosDTO> update(@PathVariable Long id, @Valid @RequestBody TransferenciaVeiculosDTO dto) {
         dto = transferenciaVeiculosService.update(id, dto);
         return ResponseEntity.ok(dto);

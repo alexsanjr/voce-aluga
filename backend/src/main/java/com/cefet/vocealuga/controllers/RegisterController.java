@@ -1,6 +1,7 @@
 package com.cefet.vocealuga.controllers;
 
-import com.cefet.vocealuga.dtos.LoginRequest;
+import com.cefet.vocealuga.dtos.RegisterRequest;
+import com.cefet.vocealuga.entities.*;
 import com.cefet.vocealuga.services.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +20,32 @@ public class RegisterController {
     }
 
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody LoginRequest request) {
-        if (userService.findByUsername(request.getEmail()) != null) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        if (userService.findByEmail(request.getEmail()) != null) {
             return ResponseEntity.badRequest().body("Usuário já existe");
         }
 
-        userService.saveUser(request.getEmail(), request.getPassword());
-        return ResponseEntity.ok("Usuário criado com sucesso!");
+        Usuario novoUsuario;
+
+        switch (request.getTipo()) {
+            case CLIENTE:
+                novoUsuario = new Cliente(null, request.getEmail(), request.getPassword());
+                break;
+            case FUNCIONARIO:
+                novoUsuario = new Funcionario(null, request.getEmail(), request.getPassword());
+                break;
+            case GERENTE:
+                novoUsuario = new Gerente(null, request.getEmail(), request.getPassword());
+                break;
+            case ADMINISTRADOR:
+                novoUsuario = new Administrador(null, request.getEmail(), request.getPassword());
+                break;
+            default:
+                return ResponseEntity.badRequest().body("Tipo de usuário inválido");
+        }
+
+        userService.saveUser(novoUsuario);
+
+        return ResponseEntity.ok("Usuário " + request.getTipo() + " criado com sucesso!");
     }
 }
