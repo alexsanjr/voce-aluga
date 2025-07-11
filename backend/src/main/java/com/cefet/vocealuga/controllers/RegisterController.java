@@ -1,7 +1,7 @@
 package com.cefet.vocealuga.controllers;
 
 import com.cefet.vocealuga.dtos.LoginRequest;
-import com.cefet.vocealuga.services.UserService;
+import com.cefet.vocealuga.services.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/register")
 public class RegisterController {
 
-    private final UserService userService;
+    private final UsuarioService userService;
 
-    public RegisterController(UserService userService) {
+    public RegisterController(UsuarioService userService) {
         this.userService = userService;
     }
 
     @PostMapping
     public ResponseEntity<String> register(@RequestBody LoginRequest request) {
-        if (userService.findByUsername(request.getUsername()) != null) {
+        if (userService.findByUsername(request.getEmail()) != null) {
             return ResponseEntity.badRequest().body("Usuário já existe");
         }
 
-        userService.saveUser(request.getUsername(), request.getPassword());
+        userService.saveUser(request.getEmail(), request.getPassword());
         return ResponseEntity.ok("Usuário criado com sucesso!");
     }
 }

@@ -1,14 +1,14 @@
 package com.cefet.vocealuga.dtos;
 
-public class LoginRequest {
+public class RegisterRequest {
     private String email;
     private String password;
 
-    public String getEmail() {
+    public String getemail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setemail(String email) {
         this.email = email;
     }
 
