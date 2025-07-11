@@ -1,0 +1,62 @@
+@use "../../styles/variaveis.scss" as *;
+
+.container-navbar {
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    height: 4rem;
+
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+
+    .limit {
+        width: 100%;
+        max-width: 1220px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .logo {
+            img {
+                height: 3rem;
+            }
+        }
+
+        .navegacao {
+            ul {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+
+                li {
+                    a {
+                        font-size: 0.8rem;
+                        text-decoration: none;
+                        color: #000;
+                        font-weight: 600;
+                    }
+
+                    &:last-child {
+                        a {
+                            padding: 0.7rem 1.5rem;
+                            background-color: $accent;
+                            color: #fff;
+                            border-radius: 10rem;
+                            transition: 0.1s ease-in-out;
+
+                            &:hover {
+                                background-color: $accentHover;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

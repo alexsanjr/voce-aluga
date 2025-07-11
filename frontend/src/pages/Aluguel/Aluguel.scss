@@ -1,0 +1,26 @@
+@use "../../../styles/variaveis.scss" as *;
+
+.container-aluguel {
+    margin-top: 4rem;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.1);
+    border-radius: 0.8rem;
+    margin-bottom: 5rem;
+    max-width: 50%;
+
+    .container {
+        strong {
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        .inputs {
+            margin-top: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            width: 100%;
+        }
+    }
+}
