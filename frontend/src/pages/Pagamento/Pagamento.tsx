@@ -1,5 +1,7 @@
+
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import { criarPagamento } from "../../services/pagamentoService";
 import "./Pagamento.css";
 
 export default function Pagamento() {
@@ -30,12 +32,7 @@ export default function Pagamento() {
       };
     }
     try {
-      const response = await fetch("http://localhost:8080/pagamento", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
+      const response = await criarPagamento(payload);
       console.log(response);
       // Aqui você pode redirecionar ou mostrar mensagem de sucesso
     } catch (err) {

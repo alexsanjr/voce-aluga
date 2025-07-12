@@ -1,10 +1,11 @@
 import { Routes, Route } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import Reserva from "../pages/Reserva/Reserva";
 import Register from "../pages/Register/Register";
 import Pagamento from "../pages/Pagamento/Pagamento";
-import HomeAluguel from "../pages/Aluguel/Aluguel";
+import Aluguel from "../pages/Aluguel/Aluguel";
 
 export default function Router() {
   return (
@@ -13,12 +14,12 @@ export default function Router() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/*<Route path="/veiculos" element={< />} />*/}
-        <Route path="/reserva" element={<Reserva />} />
+        <Route path="/reserva" element={<PrivateRoute><Reserva /></PrivateRoute>} />
         {/*<Route path="/minha-reserva" element={<Login />} />*/}
 
-        <Route path="/pagamento" element={<Pagamento />} />
+        <Route path="/pagamento" element={<PrivateRoute><Pagamento /></PrivateRoute>} />
 
-        <Route path="/aluguel" element={<HomeAluguel />} />
+        <Route path="/aluguel" element={<PrivateRoute><Aluguel /></PrivateRoute>} />
 
       </Routes>
   );

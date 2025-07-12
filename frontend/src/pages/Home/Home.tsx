@@ -3,7 +3,7 @@ import Banner from "../../components/Banner/Banner";
 import Footer from "../../components/Footer/Footer";
 
 import "./style.min.css";
-import HomeAluguel from "../Aluguel/Aluguel";
+import HomeAluguel from "./HomeAluguel/HomeAluguel";
 
 export default function Home() {
     return (

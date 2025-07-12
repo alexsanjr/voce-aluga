@@ -17,7 +17,7 @@ export default function NavBar() {
                             <a href="/">HOME</a>
                         </li>
                         <li className="ReservarAgora">
-                            <a href="#">RESERVAR AGORA</a>
+                            <a href="/aluguel">RESERVAR AGORA</a>
                         </li>
                         <li className="MinhasReservas">
                             <a href="#">MINHAS RESERVAS</a>
