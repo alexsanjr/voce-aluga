@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sem sessão
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/register","/h2-console/**").permitAll() // libera login e cadastro
+                        .requestMatchers("/auth/**", "/register","/h2-console/**","/veiculos/**").permitAll() // libera login e cadastro
                         .anyRequest().authenticated() // demais rotas precisam de autenticação
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // adiciona o filtro JWT
