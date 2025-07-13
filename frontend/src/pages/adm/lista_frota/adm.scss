@@ -66,13 +66,25 @@
 
             tbody {
                 tr {
-                    border-bottom: 1px solid $gray-200;
+                    &:hover {
+                        td {
+                            background-color: rgba(0, 0, 0, 0.03);
+                        }
+                    }
 
                     td {
                         padding: 0.5rem;
-
+                        border-bottom: 1px solid $gray-200;
                         font-size: 0.8rem;
-                        // text-align: center;
+
+                        &:first-child {
+                            border-top-left-radius: 1rem;
+                            border-bottom-left-radius: 1rem;
+                        }
+                        &:last-child {
+                            border-top-right-radius: 1rem;
+                            border-bottom-right-radius: 1rem;
+                        }
 
                         &.status {
                             display: flex;

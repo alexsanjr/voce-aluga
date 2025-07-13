@@ -49,7 +49,7 @@ const Sidebar: React.FC = () => {
                     <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" />
                     <div className="user-info">
                         <p className="user-name">Admin user</p>
-                        <p className="userRole">Game Master</p>
+                        <p className="userRole">Admin</p>
                     </div>
 
                     <button
