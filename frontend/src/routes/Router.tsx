@@ -19,40 +19,39 @@ export default function Router() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            {/*<Route path="/veiculos" element={< />} />*/}
             <Route
                 path="/reserva"
                 element={
-                    //<PrivateRoute>
+                    <PrivateRoute>
                         <Reserva />
-                    //</PrivateRoute>
+                    </PrivateRoute>
                 }
             />
 
             <Route
                 path="/minhas-reservas"
                 element={
-                    //<PrivateRoute>
+                    <PrivateRoute>
                         <MinhasReservas />
-                    //</PrivateRoute>
+                    </PrivateRoute>
                 }
             />
 
             <Route
                 path="/pagamento"
                 element={
-                    //<PrivateRoute>
+                    <PrivateRoute>
                         <Pagamento />
-                    //</PrivateRoute>
+                    </PrivateRoute>
                 }
             />
 
             <Route
                 path="/aluguel"
                 element={
-                    //<PrivateRoute>
+                    <PrivateRoute>
                         <Aluguel />
-                    //</PrivateRoute>
+                    </PrivateRoute>
                 }
             />
 
@@ -60,18 +59,18 @@ export default function Router() {
             <Route
                 path="/adm"
                 element={
-                    //<PrivateRoute role="ROLE_ADMININISTRADOR">
+                    <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
                         <Adm />
-                    //</PrivateRoute>
+                    </PrivateRoute>
                 }
             />
 
             <Route
                 path="/novoveiculo"
                 element={
-                    // <PrivateRoute>
-                    <NovoVeiculo />
-                    // </PrivateRoute>
+                    <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
+                        <NovoVeiculo />
+                    </PrivateRoute>
                 }
             />
         </Routes>

@@ -27,10 +27,12 @@ const marcas = [
   { label: "Outros", value: "Outros" },
 ];
 
+// Mapeamento dos locais para seus respectivos filialId (como string)
 const locais = [
   { label: "Todos", value: "" },
-  { label: "Campo Grande - RJ", value: "Campo Grande - RJ" },
-  { label: "Nova Iguaçu - RJ", value: "Nova Iguaçu - RJ" },
+  { label: "Rio de Janeiro", value: "1" },
+  { label: "São Paulo", value: "2" },
+  { label: "Salvador", value: "3" },
 ];
 
 const Aluguel: React.FC = () => {
@@ -49,11 +51,11 @@ const Aluguel: React.FC = () => {
   async function buscarVeiculos() {
     setLoading(true);
     try {
-      // Aqui você pode adaptar para passar ambos filtros se o backend aceitar
-      const data = await getVeiculos(marca); // Adapte para getVeiculos(marca, local) se necessário
+      const data = await getVeiculos(marca);
       let filtrados = data.content || [];
       if (local) {
-        filtrados = filtrados.filter((v: Veiculo) => (v.filial || "").toLowerCase().includes(local.toLowerCase()));
+        // local é o filialId ("1", "2", "3")
+        filtrados = filtrados.filter((v: Veiculo) => String(v.filialId) === local);
       }
       setVeiculos(filtrados);
     } finally {

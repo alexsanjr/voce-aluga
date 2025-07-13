@@ -6,7 +6,7 @@ import { parseJwt } from "../utils/jwt";
 
 interface PrivateRouteProps {
   children: ReactNode;
-  role?: string;
+  role?: string | string[];
 }
 
 export default function PrivateRoute({ children, role }: PrivateRouteProps) {
@@ -16,8 +16,17 @@ export default function PrivateRoute({ children, role }: PrivateRouteProps) {
   }
   if (role) {
     const payload = parseJwt(token);
-    if (!payload || payload.role !== role) {
+    if (!payload) {
       return <Navigate to="/aluguel" replace />;
+    }
+    if (Array.isArray(role)) {
+      if (!role.includes(payload.role)) {
+        return <Navigate to="/aluguel" replace />;
+      }
+    } else {
+      if (payload.role !== role) {
+        return <Navigate to="/aluguel" replace />;
+      }
     }
   }
   return <>{children}</>;
