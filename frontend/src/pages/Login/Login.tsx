@@ -1,11 +1,13 @@
 
 
+
 import { useState, useEffect } from "react";
 import { login } from "../../services/loginService";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar/NavBar";
 import "./Login.css";
 import bkgLogin from "../../assets/bkglogin3.jpg";
+import { parseJwt } from "../../utils/jwt";
 
 
 export default function Login() {
@@ -25,7 +27,12 @@ export default function Login() {
     try {
       const { token } = await login(email, password);
       localStorage.setItem("token", token);
-      navigate("/aluguel");
+      const payload = parseJwt(token);
+      if (payload && payload.role === "ROLE_ADMININISTRADOR") {
+        navigate("/adm");
+      } else {
+        navigate("/aluguel");
+      }
     } catch (err: any) {
       setError("Usuário ou senha inválidos");
     }
