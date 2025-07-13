@@ -1,10 +1,16 @@
 
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { criarPagamento } from "../../services/pagamentoService";
+import { criarReserva } from "../../services/reservaService";
 import "./Pagamento.css";
 
+
 export default function Pagamento() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const reservaPayload = location.state?.reservaPayload;
   const [metodo, setMetodo] = useState("");
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -13,6 +19,8 @@ export default function Pagamento() {
     cardCVV: "",
     cardName: "",
   });
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   function handleInput(e: ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.id]: e.target.value });
@@ -32,9 +40,12 @@ export default function Pagamento() {
       };
     }
     try {
-      const response = await criarPagamento(payload);
-      console.log(response);
-      // Aqui você pode redirecionar ou mostrar mensagem de sucesso
+      await criarPagamento(payload);
+      // Só cria a reserva se o pagamento for aprovado
+      if (reservaPayload) {
+        await criarReserva(reservaPayload);
+      }
+      navigate("/minhas-reservas");
     } catch (err) {
       // Trate o erro se necessário
     } finally {
@@ -47,6 +58,8 @@ export default function Pagamento() {
       <div className="pagamento-box">
         <h2>Pagamento</h2>
         <p className="pagamento-desc">Selecione o método de pagamento:</p>
+        {success && <div style={{ color: '#080', textAlign: 'center', marginBottom: 16, fontWeight: 600 }}>{success}</div>}
+        {error && <div style={{ color: '#c00', textAlign: 'center', marginBottom: 16, fontWeight: 600 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="payment-options">
             <label className="payment-option">
