@@ -3,6 +3,7 @@ package com.cefet.vocealuga.services;
 import com.cefet.vocealuga.dtos.MeDTO;
 import com.cefet.vocealuga.entities.Cliente;
 import com.cefet.vocealuga.entities.Funcionario;
+import com.cefet.vocealuga.entities.Reserva;
 import com.cefet.vocealuga.repositories.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -40,8 +41,9 @@ public class AuthService {
             dto.setPontosFidelidade(cliente.getPontosFidelidade());
             dto.setDocumento(cliente.getDocumento());
 
-            //List<ReservaRepository> reservas = reservaRepository.findAll();
-            //dto.getReservas().add(reservaRepository.fi);
+            List<Long> reservas = reservaRepository.findIdsByUsuarioId(cliente.getId());
+            dto.setReservas(reservas);
+
         }
 
         return dto;
