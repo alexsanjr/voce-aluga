@@ -1,24 +1,29 @@
 package com.cefet.vocealuga.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.time.LocalDate;
 
 @Entity
 public class Funcionario extends Usuario {
     private String cargo;
-    private String filial;
+    @ManyToOne
+    @JoinColumn(name = "filial_id")
+    private Filial filial;
+
 
     public Funcionario() {
     }
 
-    public Funcionario(Long id, String nome, String documento, LocalDate dataDeNascimento, String email, String password, String telefone, String cargo, String filial) {
+    public Funcionario(Long id, String nome, String documento, LocalDate dataDeNascimento, String email, String password, String telefone, String cargo, Filial filial) {
         super(id, nome, documento, dataDeNascimento, email, password, telefone);
         this.cargo = cargo;
         this.filial = filial;
     }
 
-    public Funcionario(Long id, String email, String password, String cargo, String filial) {
+    public Funcionario(Long id, String email, String password, String cargo, Filial filial) {
         super(id, email, password);
         this.cargo = cargo;
         this.filial = filial;
@@ -36,11 +41,11 @@ public class Funcionario extends Usuario {
         this.cargo = cargo;
     }
 
-    public String getFilial() {
+    public Filial getFilial() {
         return filial;
     }
 
-    public void setFilial(String filial) {
+    public void setFilial(Filial filial) {
         this.filial = filial;
     }
 }

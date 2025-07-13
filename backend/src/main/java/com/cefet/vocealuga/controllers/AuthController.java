@@ -2,10 +2,12 @@ package com.cefet.vocealuga.controllers;
 
 import com.cefet.vocealuga.dtos.AuthResponse;
 import com.cefet.vocealuga.dtos.LoginRequest;
+import com.cefet.vocealuga.dtos.MeDTO;
 import com.cefet.vocealuga.entities.Administrador;
 import com.cefet.vocealuga.entities.Funcionario;
 import com.cefet.vocealuga.entities.Gerente;
 import com.cefet.vocealuga.entities.Usuario;
+import com.cefet.vocealuga.services.AuthService;
 import com.cefet.vocealuga.services.JwtTokenService;
 import com.cefet.vocealuga.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,10 @@ public class AuthController {
     private final JwtTokenService jwtTokenService;
     private final UsuarioService usuarioService;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthService authService;
+
 
     @Autowired
     public AuthController(JwtTokenService jwtTokenService,
@@ -54,8 +60,9 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<String> me(Authentication auth) {
-        return ResponseEntity.ok("Usuário logado: " + auth.getName());
+    public ResponseEntity<MeDTO> me(Authentication auth) {
+          MeDTO dto = authService.findMe(auth);
+        return ResponseEntity.ok(dto);
     }
 
 }
