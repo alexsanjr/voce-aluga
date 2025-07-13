@@ -41,7 +41,7 @@ public class AuthController {
         if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
 
             String tipo = user instanceof Gerente ? "ROLE_GERENTE" :
-                    user instanceof Administrador ? "ROLE_ADMININISTRADOR"   :
+                    user instanceof Administrador ? "ROLE_ADMIN"   :
                             user instanceof Funcionario ? "ROLE_FUNCIONARIO" :
                                     "ROLE_CLIENTE";
 
