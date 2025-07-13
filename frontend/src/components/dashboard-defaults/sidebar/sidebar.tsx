@@ -15,7 +15,7 @@ interface SidebarItem {
 const Sidebar: React.FC = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const items: SidebarItem[] = [{ icon: "dashicons:car", label: "Frota", route: "/painel" }];
+    const items: SidebarItem[] = [{ icon: "dashicons:car", label: "Frota", route: "/adm" }];
 
     // const { logout } = useAuthStore();
 
