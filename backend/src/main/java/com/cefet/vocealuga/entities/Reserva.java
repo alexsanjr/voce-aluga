@@ -13,7 +13,9 @@ public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //Usuario
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
     //Motorista
     private TipoReserva categoria;
     private StatusReserva status;
@@ -25,13 +27,14 @@ public class Reserva {
     @JoinColumn(name = "filial_id")
     private Filial localRetirada;
 
-    public Reserva(Long id, TipoReserva categoria, StatusReserva status, LocalDate dataReserva, LocalDate dataVencimento, Filial localRetirada) {
+    public Reserva(Long id, TipoReserva categoria, StatusReserva status, LocalDate dataReserva, LocalDate dataVencimento, Filial localRetirada, Usuario usuario) {
         this.id = id;
         this.categoria = categoria;
         this.status = status;
         this.dataReserva = dataReserva;
         this.dataVencimento = dataVencimento;
         this.localRetirada = localRetirada;
+        this.usuario = usuario;
     }
 
     public Reserva() {
@@ -83,6 +86,14 @@ public class Reserva {
 
     public void setLocalRetirada(Filial localRetirada) {
         this.localRetirada = localRetirada;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @Override

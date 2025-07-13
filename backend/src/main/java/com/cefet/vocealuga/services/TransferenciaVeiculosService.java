@@ -35,7 +35,7 @@ public class TransferenciaVeiculosService {
     @Transactional(readOnly = true)
     public TransferenciaVeiculosDTO findById(Long id) {
 
-        TransferenciaVeiculos transferenciaVeiculos = transferenciaVeiculosRepository.findById(id).orElseThrow(() -> new RuntimeException("Transferencia não encontrada"));
+        TransferenciaVeiculos transferenciaVeiculos = transferenciaVeiculosRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transferencia não encontrada"));
         return convertToDTO(transferenciaVeiculos);
     }
 

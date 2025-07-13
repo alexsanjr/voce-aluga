@@ -22,6 +22,7 @@ public class VeiculoDTO {
     private StatusVeiculo statusVeiculo;
     private String placa;
     private Long estoqueId;
+    private Long filialId;
 
     public Long getEstoqueId() {
         return estoqueId;
@@ -109,5 +110,13 @@ public class VeiculoDTO {
 
     public void setPlaca(String placa) {
         this.placa = placa;
+    }
+
+    public Long getFilialId() {
+        return filialId;
+    }
+
+    public void setFilialId(Long filialId) {
+        this.filialId = filialId;
     }
 }

@@ -16,6 +16,9 @@ public class Veiculo {
     @ManyToOne
     @JoinColumn(name = "estoque_id")
     private Estoque estoque;
+    @ManyToOne
+    @JoinColumn(name = "filial_id")
+    private Filial filial;
     private String marca;
     private String modelo;
     private Grupo grupo;
@@ -32,8 +35,10 @@ public class Veiculo {
     public Veiculo() {
     }
 
-    public Veiculo(Long id, String marca, String modelo, Grupo grupo, int ano, Cor cor, double valorDiaria, Long quilometragem, StatusVeiculo statusVeiculo, String placa, Estoque estoque) {
+    public Veiculo(Long id, Estoque estoque, String marca, String modelo, Grupo grupo, int ano, Cor cor, double valorDiaria, Long quilometragem, StatusVeiculo statusVeiculo, String placa) {
         this.id = id;
+        this.estoque = estoque;
+        this.filial = estoque.getFilial();
         this.marca = marca;
         this.modelo = modelo;
         this.grupo = grupo;
@@ -43,7 +48,6 @@ public class Veiculo {
         this.quilometragem = quilometragem;
         this.statusVeiculo = statusVeiculo;
         this.placa = placa;
-        this.estoque = estoque;
     }
 
     public Long getId() {
@@ -124,6 +128,14 @@ public class Veiculo {
 
     public void setPlaca(String placa) {
         this.placa = placa;
+    }
+
+    public Filial getFilial() {
+        return filial;
+    }
+
+    public void setFilial(Filial filial) {
+        this.filial = filial;
     }
 
     public Estoque getEstoque() {
