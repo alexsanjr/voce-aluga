@@ -3,7 +3,6 @@ package com.cefet.vocealuga.services;
 import com.cefet.vocealuga.dtos.MeDTO;
 import com.cefet.vocealuga.entities.Cliente;
 import com.cefet.vocealuga.entities.Funcionario;
-import com.cefet.vocealuga.entities.Usuario;
 import com.cefet.vocealuga.repositories.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
