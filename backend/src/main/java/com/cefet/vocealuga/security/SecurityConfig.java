@@ -1,5 +1,6 @@
 package com.cefet.vocealuga.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,19 +33,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable()) // Dsabeilita CSRF para APIs REST
+                .csrf(csrf -> csrf.disable()) // Desabilita CSRF para APIs REST
                 .cors(withDefaults())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sem sessão
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/register","/h2-console/**","/veiculos/**").permitAll() // libera login e cadastro
-                        .anyRequest().authenticated() // demais rotas precisam de autenticação
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"status\":401,\"mensagem\":\"Você precisa estar autenticado para acessar este recurso\",\"path\":\"" + request.getRequestURI() + "\"}");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"status\":403,\"mensagem\":\"Acesso negado: você não tem permissão para acessar este recurso\",\"path\":\"" + request.getRequestURI() + "\"}");
+                        })
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // adiciona o filtro JWT
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**", "/register", "/h2-console/**", "/veiculos/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    // Se for usar autenticação com AuthenticationManager futuramente
+    // autenticação com AuthenticationManager para casos futuros
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();

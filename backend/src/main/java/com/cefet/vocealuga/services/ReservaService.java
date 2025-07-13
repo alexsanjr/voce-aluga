@@ -3,8 +3,10 @@ package com.cefet.vocealuga.services;
 import com.cefet.vocealuga.dtos.ReservaDTO;
 import com.cefet.vocealuga.entities.Filial;
 import com.cefet.vocealuga.entities.Reserva;
+import com.cefet.vocealuga.entities.Usuario;
 import com.cefet.vocealuga.repositories.FilialRepository;
 import com.cefet.vocealuga.repositories.ReservaRepository;
+import com.cefet.vocealuga.repositories.UsuarioRepository;
 import com.cefet.vocealuga.services.exceptions.DatabaseException;
 import com.cefet.vocealuga.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class ReservaService {
 
     @Autowired
     private FilialRepository filialRepository;
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
     
 
     @Transactional(readOnly = true)
@@ -82,6 +87,7 @@ public class ReservaService {
         dto.setCategoria(entity.getCategoria());
         dto.setStatus(entity.getStatus());
         dto.setLocalRetiradaId(entity.getLocalRetirada().getId());
+        dto.setUsuarioId(entity.getUsuario().getId());
         return dto;
     }
 
@@ -93,6 +99,10 @@ public class ReservaService {
         entity.setCategoria(dto.getCategoria());
         entity.setStatus(dto.getStatus());
 
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        usuario.setId(dto.getUsuarioId());
+        entity.setUsuario(usuario);
 
         Filial filial = filialRepository.findById(dto.getLocalRetiradaId())
                 .orElseThrow(() -> new RuntimeException("Local de retirada não encontrada"));
