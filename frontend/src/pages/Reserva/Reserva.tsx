@@ -1,124 +1,133 @@
-import { useEffect, useState } from "react";
+
+
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import type { Veiculo } from "../../types/veiculo";
+import car from "../../assets/background-banner.png";
+// import { criarReserva } from "../../services/reservaService";
 import "./Reserva.css";
 
-interface Car {
-  id: number;
-  modelo: string;
-  categoria: string;
-  ano: number;
-  combustivel: string;
-  cambio: string;
-  arCondicionado: boolean;
-  imagem: string;
-  preco: number;
-}
+const categorias = [
+  { label: "Imediata", value: "IMEDIATA" },
+  { label: "Antecipada", value: "ANTECIPADA" },
+];
 
-export default function Reserva() {
-  const [carros, setCarros] = useState<Car[]>([]);
+const Reserva: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const veiculo: Veiculo | undefined = location.state?.veiculo;
 
-  useEffect(() => {
-    setCarros([
-      {
-        id: 1,
-        modelo: "Toyota Corolla Altis",
-        categoria: "Sedã Médio",
-        ano: 2023,
-        combustivel: "Flex",
-        cambio: "Automático",
-        arCondicionado: true,
-        imagem: "/assets/carros/corolla.png",
-        preco: 199.9,
-      },
-      {
-        id: 2,
-        modelo: "Jeep Compass Limited",
-        categoria: "SUV",
-        ano: 2024,
-        combustivel: "Diesel",
-        cambio: "Automático",
-        arCondicionado: true,
-        imagem: "/assets/carros/compass.png",
-        preco: 259.9,
-      },
-      {
-        id: 3,
-        modelo: "Volkswagen T-Cross",
-        categoria: "SUV Compacto",
-        ano: 2023,
-        combustivel: "Flex",
-        cambio: "Automático",
-        arCondicionado: true,
-        imagem: "/assets/carros/tcross.png",
-        preco: 189.9,
-      },
-      {
-        id: 4,
-        modelo: "Fiat Mobi Like 1.0",
-        categoria: "Econômico",
-        ano: 2022,
-        combustivel: "Flex",
-        cambio: "Manual",
-        arCondicionado: true,
-        imagem: "/assets/carros/mobi.png",
-        preco: 79.9,
-      },
-      {
-        id: 5,
-        modelo: "Renault Kwid Zen",
-        categoria: "Econômico",
-        ano: 2023,
-        combustivel: "Flex",
-        cambio: "Manual",
-        arCondicionado: true,
-        imagem: "/assets/carros/kwid.png",
-        preco: 84.9,
-      },
-      {
-        id: 6,
-        modelo: "Chevrolet Tracker Premier",
-        categoria: "SUV",
-        ano: 2024,
-        combustivel: "Flex",
-        cambio: "Automático",
-        arCondicionado: true,
-        imagem: "/assets/carros/tracker.png",
-        preco: 229.9,
-      },
-    ]);
-  }, []);
+  const [categoria, setCategoria] = useState("IMEDIATA");
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const [dataReserva, setDataReserva] = useState(todayStr);
+  const [dataVencimento, setDataVencimento] = useState("");
+  const [status] = useState("AGENDADO");
+  const [erro, setErro] = useState("");
+
+  if (!veiculo) {
+    return <div>Veículo não selecionado. Volte e escolha um veículo.</div>;
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErro("");
+    if (!dataReserva || !dataVencimento) {
+      setErro("Preencha todas as datas.");
+      return;
+    }
+    if (dataVencimento < todayStr) {
+      setErro("A data de vencimento não pode ser anterior a hoje.");
+      return;
+    }
+    if (dataVencimento < dataReserva) {
+      setErro("A data de vencimento não pode ser anterior à data da reserva.");
+      return;
+    }
+
+    const reservaPayload = {
+      categoria,
+      status,
+      dataReserva,
+      dataVencimento,
+      localRetiradaId: veiculo.estoqueId,
+      veiculoId: veiculo.id,
+      veiculo: {
+        ...veiculo
+      }
+    };
+    navigate("/pagamento", { state: { reservaPayload } });
+  };
+
+  // Atualiza dataReserva para hoje se categoria mudar para IMEDIATA
+  React.useEffect(() => {
+    if (categoria === "IMEDIATA") {
+      setDataReserva(todayStr);
+    }
+  }, [categoria, todayStr]);
 
   return (
     <div className="reserva-container">
-      <div className="reserva-container-veicles">
-        <section className="veiculos-disponiveis">
-          <h2>Escolha seu próximo veículo</h2>
-          <div className="veiculos-grid">
-            {carros.map((carro) => (
-              <div className="card-veiculo" key={carro.id}>
-                <img
-                  src={carro.imagem}
-                  alt={carro.modelo}
-                  className="carro-img"
-                />
-                <h3>{carro.modelo}</h3>
-                <p className="categoria">
-                  {carro.categoria} • {carro.ano}
-                </p>
-                <p className="detalhes">
-                  {carro.combustivel} • {carro.cambio} •{" "}
-                  {carro.arCondicionado
-                    ? "Ar-condicionado"
-                    : "Sem ar-cond."}
-                </p>
-                <p className="preco">
-                  R$ {carro.preco.toFixed(2)} <span>/ dia</span>
-                </p>
-                <button className="btn-reservar">Reservar</button>
-              </div>
-            ))}
+      <h2>Reserva de Veículo</h2>
+      <div className="reserva-content">
+        <div className="reserva-veiculo-box">
+          <div className="reserva-veiculo-imgbox">
+            <img
+              src={veiculo.imagemUrl || car}
+              alt={veiculo.modelo}
+            />
           </div>
-        </section>
+          <div className="reserva-veiculo-title">
+            {veiculo.marca} {veiculo.modelo}
+          </div>
+          <div className="reserva-veiculo-info">
+            Placa: <b>{veiculo.placa}</b><br />
+            Ano: <b>{veiculo.ano}</b> <br />
+            Cor: <b>{veiculo.cor}</b> <br />
+            Filial: <b>{veiculo.estoqueId}</b>
+          </div>
+        </div>
+        <form className="reserva-form" onSubmit={handleSubmit}>
+          <label>
+            Categoria:
+            <select value={categoria} onChange={e => setCategoria(e.target.value)}>
+              {categorias.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Data da Reserva:
+            <input
+              type="date"
+              value={dataReserva}
+              min={todayStr}
+              onChange={e => setDataReserva(e.target.value)}
+              disabled={categoria === "IMEDIATA"}
+            />
+          </label>
+          <label>
+            Data de Vencimento:
+            <input
+              type="date"
+              value={dataVencimento}
+              min={dataReserva || todayStr}
+              onChange={e => setDataVencimento(e.target.value)}
+            />
+          </label>
+          <label>
+            Local de Retirada (ID):
+            <input type="text" value={veiculo.estoqueId} disabled />
+          </label>
+          <label>
+            Status:
+            <input type="text" value={status} disabled />
+          </label>
+          {erro && <div className="erro">{erro}</div>}
+          <button type="submit">Confirmar Reserva</button>
+        </form>
       </div>
     </div>
   );
-}
+};
+
+export default Reserva;

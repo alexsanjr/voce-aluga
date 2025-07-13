@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { Veiculo } from "../../types/veiculo";
 import car from "../../assets/background-banner.png";
 import "./AluguelCard.css";
@@ -9,7 +10,18 @@ interface AluguelCardProps {
 }
 
 
+
 const AluguelCard: React.FC<AluguelCardProps> = ({ veiculo, onReservar }) => {
+  const navigate = useNavigate();
+
+  function handleReservar() {
+    if (onReservar) {
+      onReservar(veiculo);
+    } else {
+      navigate("/reserva", { state: { veiculo } });
+    }
+  }
+
   return (
     <div className="aluguel-card aluguel-card-elegante">
       <div className="aluguel-card-imgbox">
@@ -27,7 +39,7 @@ const AluguelCard: React.FC<AluguelCardProps> = ({ veiculo, onReservar }) => {
           <span>Placa <b>{veiculo.placa}</b></span>
         </div>
       </div>
-      <button className="aluguel-card-btn" onClick={() => onReservar?.(veiculo)}>
+      <button className="aluguel-card-btn" onClick={handleReservar}>
         Reservar agora
       </button>
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getVeiculos } from "../../../services/veiculosService";
 import type { Veiculo } from "../../../types/veiculo";
 import AluguelCard from "../../AluguelCard/AluguelCard";
+import { useNavigate } from "react-router-dom";
 import "./HomeAluguel.css";
 
 const HomeAluguel: React.FC = () => {
@@ -23,6 +24,12 @@ const HomeAluguel: React.FC = () => {
     }
   }
 
+  const navigate = useNavigate();
+
+  function handleReservar(veiculo: Veiculo) {
+    navigate("/reserva", { state: { veiculo } });
+  }
+
   return (
     <section className="container-aluguel home-aluguel">
       <div className="container">
@@ -33,7 +40,9 @@ const HomeAluguel: React.FC = () => {
           ) : veiculos.length === 0 ? (
             <span>Nenhum veículo em destaque.</span>
           ) : (
-            veiculos.map((v) => <AluguelCard key={v.id} veiculo={v} />)
+            veiculos.map((v) => (
+              <AluguelCard key={v.id} veiculo={v} onReservar={handleReservar} />
+            ))
           )}
         </div>
       </div>

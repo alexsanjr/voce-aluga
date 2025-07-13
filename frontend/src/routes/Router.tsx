@@ -6,6 +6,8 @@ import Reserva from "../pages/Reserva/Reserva";
 import Register from "../pages/Register/Register";
 import Pagamento from "../pages/Pagamento/Pagamento";
 import Aluguel from "../pages/Aluguel/Aluguel";
+import MinhasReservas from "../pages/MinhasReservas/MinhasReservas";
+
 import { lazy } from "react";
 
 const Adm = lazy(() => import("../pages/adm/adm"));
@@ -26,7 +28,15 @@ export default function Router() {
                     </PrivateRoute>
                 }
             />
-            {/*<Route path="/minha-reserva" element={<Login />} />*/}
+
+            <Route
+                path="/minhas-reservas"
+                element={
+                    <PrivateRoute>
+                        <MinhasReservas />
+                    </PrivateRoute>
+                }
+            />
 
             <Route
                 path="/pagamento"
