@@ -1,13 +1,17 @@
 package com.cefet.vocealuga.dtos;
 
 import com.cefet.vocealuga.dtos.enums.TipoRegister;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 
 import java.time.LocalDate;
 
 public class RegisterRequest {
     private String nome;
+    @Column(unique = true)
     private String documento;
     private LocalDate dataNascimento;
+    @Column(unique = true)
     private String email;
     private String telefone;
     private String password;

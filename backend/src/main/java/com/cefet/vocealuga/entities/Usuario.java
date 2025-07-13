@@ -19,7 +19,6 @@ public class Usuario {
     @Column(unique = true)
     private String nome;
     private String documento;
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataDeNascimento;
     @Column(unique = true)
     private String email;
