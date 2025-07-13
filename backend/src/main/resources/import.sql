@@ -4,9 +4,9 @@ INSERT INTO filial (nome, local) VALUES ('Filial 3', 'Salvador');
 
 
 -- Inserir base do usuário
-INSERT INTO usuario (id, nome, documento, data_de_nascimento, email, password, telefone) VALUES (1, 'Carlos Gerente', '12345678900', '1985-05-15', 'carlos@email.com', '$2a$10$TDeYzJ7x6TDrs6EgIuLIluUr/EHuouYlWRBBRjXalmiwsfX1vCyYe', '21999999999');
-INSERT INTO usuario (id, nome, documento, data_de_nascimento, email, password, telefone) VALUES (2, 'Ana Admin', '11122233300', '1982-03-10', 'ana@email.com', '$2a$10$TDeYzJ7x6TDrs6EgIuLIluUr/EHuouYlWRBBRjXalmiwsfX1vCyYe', '21888888888');
-INSERT INTO usuario (id, nome, documento, data_de_nascimento, email, password, telefone) VALUES (3, 'Bruno Cliente', '77788899900', '1992-09-22', 'bruno@email.com', '$2a$10$TDeYzJ7x6TDrs6EgIuLIluUr/EHuouYlWRBBRjXalmiwsfX1vCyYe', '21911112222');
+INSERT INTO usuario (id, nome, documento, data_de_nascimento, email, password, telefone) VALUES (1, 'Carlos Gerente', '12345678900', '15-05-1985', 'carlos@email.com', '$2a$10$TDeYzJ7x6TDrs6EgIuLIluUr/EHuouYlWRBBRjXalmiwsfX1vCyYe', '21999999999');
+INSERT INTO usuario (id, nome, documento, data_de_nascimento, email, password, telefone) VALUES (2, 'Ana Admin', '11122233300', '10-03-1982', 'ana@email.com', '$2a$10$TDeYzJ7x6TDrs6EgIuLIluUr/EHuouYlWRBBRjXalmiwsfX1vCyYe', '21888888888');
+INSERT INTO usuario (id, nome, documento, data_de_nascimento, email, password, telefone) VALUES (3, 'Bruno Cliente', '77788899900', '22-09-1992', 'bruno@email.com', '$2a$10$TDeYzJ7x6TDrs6EgIuLIluUr/EHuouYlWRBBRjXalmiwsfX1vCyYe', '21911112222');
 
 
 -- Funcionário

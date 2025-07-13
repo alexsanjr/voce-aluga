@@ -1,5 +1,6 @@
 package com.cefet.vocealuga.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -18,6 +19,7 @@ public class Usuario {
     @Column(unique = true)
     private String nome;
     private String documento;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataDeNascimento;
     @Column(unique = true)
     private String email;

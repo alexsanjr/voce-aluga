@@ -29,16 +29,16 @@ public class RegisterController {
 
         switch (request.getTipo()) {
             case CLIENTE:
-                novoUsuario = new Cliente(null, request.getEmail(), request.getPassword());
+                novoUsuario = new Cliente(null, request.getNome(), request.getDocumento(), request.getDataNascimento(), request.getEmail(), request.getPassword(), request.getTelefone(), 0);
                 break;
             case FUNCIONARIO:
-                novoUsuario = new Funcionario(null, request.getEmail(), request.getPassword());
+                novoUsuario = new Funcionario(null, request.getNome(), request.getDocumento(), request.getDataNascimento(), request.getEmail(), request.getPassword(), request.getTelefone(),"",new Filial());
                 break;
             case GERENTE:
-                novoUsuario = new Gerente(null, request.getEmail(), request.getPassword());
+                novoUsuario = new Gerente(null, request.getNome(), request.getDocumento(), request.getDataNascimento(), request.getEmail(), request.getPassword(), request.getTelefone(),"",new Filial());
                 break;
             case ADMINISTRADOR:
-                novoUsuario = new Administrador(null, request.getEmail(), request.getPassword());
+                novoUsuario = new Administrador(null, request.getNome(), request.getDocumento(), request.getDataNascimento(), request.getEmail(), request.getPassword(), request.getTelefone(),"",new Filial());
                 break;
             default:
                 return ResponseEntity.badRequest().body("Tipo de usuário inválido");
