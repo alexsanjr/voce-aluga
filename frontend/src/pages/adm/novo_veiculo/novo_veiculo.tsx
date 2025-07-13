@@ -1,7 +1,12 @@
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
-import { InputDate, InputSelect, InputText } from "../../../components/inputs";
+import { InputSelect, InputText } from "../../../components/inputs";
+import useHookVeiculo from "./hook/useHookVeiculo";
+
+import "./novo_veiculo.min.css";
 
 const NovoVeiculo: React.FC = () => {
+    const { enviar_form, pegarVeiculo, veiculo } = useHookVeiculo();
+
     const marcas = [
         {
             label: "Volkswagen",
@@ -41,19 +46,76 @@ const NovoVeiculo: React.FC = () => {
             <DashboardDefaults title="Adicionar novo veículo">
                 <section className="criar-veiculo">
                     <section className="form-criar-veiculo">
-                        <form>
-                            <InputSelect icon="mingcute:car-fill" label="Marca" options={marcas} />
-                            <InputText label="Modelo" icon="mdi:car-info" />
-                            <InputText label="Grupo" icon="lets-icons:group-fill" />
-                            <InputDate label="Ano" icon="solar:calendar-bold" />
-                            <InputSelect label="Cor" icon="ion:color-filter-sharp" options={cores} />
-                            <InputText label="Valor diário" icon="material-symbols:attach-money-rounded" />
-                            <InputText label="KM" icon="icon-park-solid:map-distance" />
-                            <InputText label="Status do veículo" icon="pajamas:status-alert" />
-                            <InputText label="Estoque ID" icon="mingcute:stock-fill" />
-                            <InputText label="Placa" icon="solar:plate-bold" />
+                        <form onSubmit={enviar_form}>
+                            <div className="grid">
+                                <div className="column">
+                                    <InputSelect
+                                        icon="mingcute:car-fill"
+                                        label="Marca"
+                                        options={marcas}
+                                        value={veiculo.marca}
+                                        onChange={(e) => pegarVeiculo("marca", e.target.value)}
+                                    />
+                                    <InputText
+                                        label="Modelo"
+                                        icon="mdi:car-info"
+                                        value={veiculo.modelo}
+                                        onChange={(e) => pegarVeiculo("modelo", e.target.value)}
+                                    />
+                                    <InputText
+                                        label="Grupo"
+                                        icon="lets-icons:group-fill"
+                                        value={veiculo.grupo}
+                                        onChange={(e) => pegarVeiculo("grupo", e.target.value)}
+                                    />
+                                    <InputText
+                                        label="Ano"
+                                        icon="solar:calendar-bold"
+                                        onChange={(e) => pegarVeiculo("ano", e.target.value)}
+                                    />
+                                    <InputSelect
+                                        label="Cor"
+                                        icon="ion:color-filter-sharp"
+                                        options={cores}
+                                        onChange={(e) => pegarVeiculo("cor", e.target.value)}
+                                    />
+                                </div>
 
-                            <button>Submit</button>
+                                <div className="column">
+                                    <InputText
+                                        label="Valor diário"
+                                        icon="material-symbols:attach-money-rounded"
+                                        value={veiculo.valor_diaria}
+                                        onChange={(e) => pegarVeiculo("valor_diaria", e.target.value)}
+                                    />
+                                    <InputText
+                                        label="KM"
+                                        icon="icon-park-solid:map-distance"
+                                        value={veiculo.km}
+                                        onChange={(e) => pegarVeiculo("km", e.target.value)}
+                                    />
+                                    <InputText
+                                        label="Status do veículo"
+                                        icon="pajamas:status-alert"
+                                        value={veiculo.status_veiculo}
+                                        onChange={(e) => pegarVeiculo("status_veiculo", e.target.value)}
+                                    />
+                                    <InputText
+                                        label="Estoque ID"
+                                        icon="mingcute:stock-fill"
+                                        value={veiculo.estoque_id}
+                                        onChange={(e) => pegarVeiculo("estoque_id", e.target.value)}
+                                    />
+                                    <InputText
+                                        label="Placa"
+                                        icon="solar:plate-bold"
+                                        value={veiculo.placa}
+                                        onChange={(e) => pegarVeiculo("placa", e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <button>Salvar</button>
                         </form>
                     </section>
                 </section>

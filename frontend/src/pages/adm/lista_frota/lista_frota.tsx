@@ -14,8 +14,8 @@ const ListaFrota: React.FC = () => {
         <>
             <DashboardDefaults title="Gerenciamento de frota">
                 <section className="container-table-frota">
-                    <div className="title" onClick={() => navigate(`/novoveiculo`)}>
-                        <button>
+                    <div className="title">
+                        <button onClick={() => navigate(`/novoveiculo`)}>
                             <i>
                                 <Icon icon="fluent-emoji-high-contrast:plus" />
                             </i>

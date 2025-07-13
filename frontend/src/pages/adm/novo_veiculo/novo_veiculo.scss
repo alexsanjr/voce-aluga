@@ -1,0 +1,35 @@
+@use "../../../styles/variaveis.scss" as *;
+@import "../../../styles/mixins";
+
+.criar-veiculo {
+    @include flex-center;
+
+    .form-criar-veiculo {
+        background-color: #fff;
+        width: 100%;
+        max-width: 600px;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        form {
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            button {
+                background-color: $accent;
+                padding: 0.6rem 2rem;
+                color: #fff;
+                border: none;
+                border-radius: 0.5rem;
+
+                &:hover {
+                    background-color: $accentHover;
+                }
+            }
+        }
+    }
+}
