@@ -89,6 +89,7 @@ public class VeiculoService {
         dto.setPlaca(veiculo.getPlaca());
         dto.setMarca(veiculo.getMarca());
         dto.setEstoqueId(veiculo.getEstoque().getId());
+        dto.setFilialId(veiculo.getEstoque().getFilial().getId());
         return dto;
     }
 
@@ -108,6 +109,7 @@ public class VeiculoService {
 
         Estoque estoque = estoqueRepository.findById(dto.getEstoqueId())
                 .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
+        veiculo.setFilial(estoque.getFilial());
         veiculo.setEstoque(estoque);
         return veiculo;
     }
