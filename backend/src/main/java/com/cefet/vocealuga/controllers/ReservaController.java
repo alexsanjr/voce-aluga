@@ -21,7 +21,7 @@ public class ReservaController {
     private ReservaService service;
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN', 'ROLE_CLIENTE')")
     public ResponseEntity<ReservaDTO> findById(@PathVariable Long id) {
         ReservaDTO dto = service.findById(id);
         return ResponseEntity.ok(dto);
