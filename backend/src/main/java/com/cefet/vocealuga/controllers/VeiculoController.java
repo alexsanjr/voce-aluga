@@ -21,7 +21,7 @@ public class VeiculoController {
     private VeiculoService veiculoService;
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
+    @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<VeiculoDTO> findById(@PathVariable Long id) {
         VeiculoDTO dto = veiculoService.findById(id);
         return ResponseEntity.ok(dto);
@@ -36,7 +36,7 @@ public class VeiculoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
+    @PreAuthorize("hasAnyRole('ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<VeiculoDTO> insert(@Valid @RequestBody VeiculoDTO dto) {
         dto = veiculoService.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -45,14 +45,14 @@ public class VeiculoController {
     }
 
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
+    @PreAuthorize("hasAnyRole('ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<VeiculoDTO> update(@PathVariable Long id, @Valid @RequestBody VeiculoDTO dto) {
         dto = veiculoService.update(id, dto);
         return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMININISTRADOR')")
+    @PreAuthorize("hasAnyRole('ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         veiculoService.delete(id);
         return ResponseEntity.noContent().build();
