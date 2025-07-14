@@ -1,0 +1,21 @@
+[
+    {
+        "key": "ctrl+alt+p",
+        "command": "plantuml.preview",
+        "when": "editorLangId == plantuml"
+    },
+    {
+        "key": "ctrl+alt+e",
+        "command": "plantuml.exportCurrent",
+        "when": "editorLangId == plantuml"
+    },
+    {
+        "key": "ctrl+alt+w",
+        "command": "plantuml.exportWorkspace"
+    },
+    {
+        "key": "f5",
+        "command": "plantuml.preview",
+        "when": "editorLangId == plantuml"
+    }
+]

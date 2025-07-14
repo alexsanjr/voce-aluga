@@ -1,0 +1,277 @@
+@startuml Diagrama de Pacotes - Voce Aluga
+
+!theme toy
+skinparam backgroundColor #f9f9f9
+skinparam packageStyle rectangle
+skinparam packageBackgroundColor #e8f4fd
+skinparam packageBorderColor #2196F3
+skinparam packageFontColor #1976D2
+skinparam packageFontSize 12
+skinparam packageFontStyle bold
+
+title <size:18><color:#1976D2>Sistema de Aluguel de Veículos - Você Aluga</color></size>\n<size:14><color:#666>Diagrama de Pacotes</color></size>
+
+package "🌐 Frontend Layer" as frontend_layer #lightblue {
+    
+    package "📱 React Application" as react_app #aliceblue {
+        
+        package "🏠 Pages" as pages #white {
+            [Home Page] as home_page
+            [Login Page] as login_page
+            [Register Page] as register_page
+            [Aluguel Page] as aluguel_page
+            [Reserva Page] as reserva_page
+            [Pagamento Page] as pagamento_page
+            [Minhas Reservas] as minhas_reservas
+            [Admin Panel] as admin_panel
+        }
+        
+        package "🧩 Components" as components #white {
+            [NavBar] as navbar
+            [Banner] as banner
+            [Card] as card
+            [Footer] as footer
+            [Section Cards] as section_cards
+            [Dashboard Defaults] as dashboard_defaults
+            [Input Components] as input_components
+        }
+        
+        package "🚀 Services" as frontend_services #white {
+            [API Service] as api_service
+            [Login Service] as login_service
+            [Register Service] as register_service
+            [Veiculos Service] as veiculos_service
+            [Reserva Service] as reserva_service
+            [Pagamento Service] as pagamento_service
+        }
+        
+        package "🛣️ Routing" as routing #white {
+            [Router] as router
+            [Private Route] as private_route
+        }
+        
+        package "🎨 Styles & Assets" as styles_assets #white {
+            [SCSS Files] as scss_files
+            [CSS Files] as css_files
+            [Images] as images
+            [Icons] as icons
+        }
+        
+        package "🔧 Utils & Types" as utils_types #white {
+            [JWT Utils] as jwt_utils
+            [Veiculo Types] as veiculo_types
+            [Veiculo Options] as veiculo_options
+        }
+    }
+    
+    package "📦 Dependencies" as frontend_deps #lavender {
+        [React 19.1.0] as react
+        [TypeScript] as typescript
+        [Vite] as vite
+        [React Router] as react_router
+        [Axios] as axios
+        [TanStack Query] as tanstack_query
+        [GSAP] as gsap
+    }
+}
+
+package "⚙️ Backend Layer" as backend_layer #lightgreen {
+    
+    package "☕ Spring Boot Application" as spring_app #honeydew {
+        
+        package "🎮 Controller Layer" as controllers #white {
+            [Auth Controller] as auth_controller
+            [Veiculo Controller] as veiculo_controller
+            [Reserva Controller] as reserva_controller
+            [Pagamento Controller] as pagamento_controller
+            [Register Controller] as register_controller
+            [Filial Controller] as filial_controller
+            [Estoque Controller] as estoque_controller
+            [Transferencia Controller] as transferencia_controller
+            [Manutencao Controller] as manutencao_controller
+            [Estacao Servico Controller] as estacao_controller
+        }
+        
+        package "💼 Service Layer" as services #white {
+            [Auth Service] as auth_service
+            [Veiculo Service] as veiculo_service_back
+            [Reserva Service] as reserva_service_back
+            [Pagamento Service] as pagamento_service_back
+            [Usuario Service] as usuario_service
+            [Filial Service] as filial_service
+            [Estoque Service] as estoque_service
+            [Transferencia Service] as transferencia_service
+            [Manutencao Service] as manutencao_service
+            [Estacao Service] as estacao_service
+            [JWT Token Service] as jwt_service
+        }
+        
+        package "🗂️ Repository Layer" as repositories #white {
+            [Usuario Repository] as usuario_repo
+            [Veiculo Repository] as veiculo_repo
+            [Reserva Repository] as reserva_repo
+            [Filial Repository] as filial_repo
+            [Estoque Repository] as estoque_repo
+            [Transferencia Repository] as transferencia_repo
+            [Manutencao Repository] as manutencao_repo
+            [Estacao Repository] as estacao_repo
+        }
+        
+        package "🏛️ Entity Layer" as entities #white {
+            [Usuario] as usuario_entity
+            [Cliente] as cliente_entity
+            [Funcionario] as funcionario_entity
+            [Gerente] as gerente_entity
+            [Administrador] as admin_entity
+            [Veiculo] as veiculo_entity
+            [Reserva] as reserva_entity
+            [Filial] as filial_entity
+            [Estoque] as estoque_entity
+            [Transferencia Veiculos] as transferencia_entity
+            [Agendar Manutencao] as manutencao_entity
+            [Estacao De Servico] as estacao_entity
+        }
+        
+        package "🛡️ Security Layer" as security #white {
+            [Security Config] as security_config
+            [JWT Authentication Filter] as jwt_filter
+            [Authentication Provider] as auth_provider
+            [CORS Configuration] as cors_config
+        }
+        
+        package "📋 DTO Layer" as dtos #white {
+            [Request DTOs] as request_dtos
+            [Response DTOs] as response_dtos
+            [Mapper Classes] as mappers
+        }
+        
+        package "⚠️ Exception Handling" as exceptions #white {
+            [Custom Exceptions] as custom_exceptions
+            [Global Exception Handler] as exception_handler
+            [Error Response] as error_response
+        }
+        
+        package "📊 Configuration" as config #white {
+            [Application Properties] as app_properties
+            [Database Config] as db_config
+            [Web Config] as web_config
+        }
+    }
+    
+    package "📚 Dependencies" as backend_deps #lightcyan {
+        [Spring Boot 3.5.3] as spring_boot
+        [Spring Security] as spring_security
+        [Spring Data JPA] as spring_jpa
+        [Spring Web] as spring_web
+        [Spring Validation] as spring_validation
+        [JWT] as jwt_lib
+        [PostgreSQL Driver] as postgres_driver
+        [Hibernate] as hibernate
+        [Maven] as maven
+    }
+}
+
+package "🗄️ Database Layer" as database_layer #lightyellow {
+    
+    package "🐘 PostgreSQL Database" as postgres_db #lemonchiffon {
+        [usuarios] as usuarios_table
+        [clientes] as clientes_table
+        [funcionarios] as funcionarios_table
+        [gerentes] as gerentes_table
+        [administradores] as admin_table
+        [veiculos] as veiculos_table
+        [reservas] as reservas_table
+        [filiais] as filiais_table
+        [estoques] as estoques_table
+        [transferencia_veiculos] as transferencia_table
+        [agendar_manutencao] as manutencao_table
+        [estacao_servico] as estacao_table
+    }
+    
+    package "🔗 Database Features" as db_features #white {
+        [Constraints & Indexes] as constraints
+        [Foreign Keys] as foreign_keys
+        [Triggers] as triggers
+        [Views] as views
+    }
+}
+
+package "🌍 External Services" as external_services #lightpink {
+    [Payment Gateway] as payment_gateway
+    [Email Service] as email_service
+    [SMS Service] as sms_service
+    [File Storage] as file_storage
+}
+
+' === RELACIONAMENTOS ===
+
+' Frontend interno
+pages --> components : usa
+pages --> frontend_services : consome
+frontend_services --> api_service : utiliza
+routing --> pages : navega
+components --> styles_assets : aplica
+utils_types --> frontend_services : suporte
+
+' Frontend para Backend
+api_service --> controllers : HTTP/REST
+
+' Backend interno - fluxo de dados
+controllers --> services : delega
+services --> repositories : acessa
+repositories --> entities : mapeia
+security --> controllers : protege
+dtos --> controllers : transfere dados
+exceptions --> controllers : trata erros
+config --> spring_app : configura
+
+' Backend para Database
+repositories --> postgres_db : JPA/Hibernate
+entities --> postgres_db : persiste
+
+' Backend para External
+services --> external_services : integra
+
+' Dependencies
+react_app --> frontend_deps : usa
+spring_app --> backend_deps : usa
+postgres_db --> db_features : implementa
+
+note top of frontend_layer
+  <b>Frontend Technologies:</b>
+  • React 19.1.0 com TypeScript
+  • Vite para build e desenvolvimento
+  • React Router para navegação
+  • Axios para requisições HTTP
+  • TanStack Query para cache de dados
+  • GSAP para animações
+end note
+
+note top of backend_layer
+  <b>Backend Technologies:</b>
+  • Spring Boot 3.5.3 com Java 21
+  • Spring Security com JWT
+  • Spring Data JPA com Hibernate
+  • Arquitetura em camadas
+  • RESTful API design
+  • Tratamento global de exceções
+end note
+
+note top of database_layer
+  <b>Database Features:</b>
+  • PostgreSQL como SGBD
+  • Relacionamentos bem definidos
+  • Constraints de integridade
+  • Índices para performance
+  • Estratégia de herança JOINED
+end note
+
+note right of external_services
+  <b>Integrações Externas:</b>
+  • Gateway de pagamento
+  • Serviço de email/SMS
+  • Armazenamento de arquivos
+  • APIs de terceiros
+end note
+
+@enduml
