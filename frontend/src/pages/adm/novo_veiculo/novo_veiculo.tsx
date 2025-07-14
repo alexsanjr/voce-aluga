@@ -25,20 +25,49 @@ const NovoVeiculo: React.FC = () => {
     const cores = [
         {
             label: "Branco",
-            value: "1",
+            value: "Branco",
         },
         {
             label: "Azul",
-            value: "2",
+            value: "Azul",
         },
         {
             label: "Cinza",
-            value: "3",
+            value: "Cinza",
         },
         {
             label: "Preto",
-            value: "4",
+            value: "Preto",
         },
+    ];
+
+    const grupos = [
+        {
+            label: "A",
+            value: "A",
+        },
+        {
+            label: "B",
+            value: "B",
+        },
+        {
+            label: "C",
+            value: "C",
+        }
+    ]
+
+    const estoques = [
+        { label: "Estoque 1 - Rio de Janeiro", value: "1" },
+        { label: "Estoque 2 - São Paulo", value: "2" },
+        { label: "Estoque 3 - Salvador", value: "3" }
+    ];
+
+    // Opções de status do veículo
+    const statusVeiculoOptions = [
+        { label: "RESERVADO", value: "RESERVADO" },
+        { label: "DISPONIVEL", value: "DISPONIVEL" },
+        { label: "EM_USO", value: "EM_USO" },
+        { label: "MANUTENCAO", value: "MANUTENCAO" },
     ];
 
     return (
@@ -61,22 +90,30 @@ const NovoVeiculo: React.FC = () => {
                                         icon="mdi:car-info"
                                         value={veiculo.modelo}
                                         onChange={(e) => pegarVeiculo("modelo", e.target.value)}
+                                        placeholder="Ex: Gol, Onix, Uno..."
                                     />
-                                    <InputText
+                                    <InputSelect
                                         label="Grupo"
                                         icon="lets-icons:group-fill"
-                                        value={veiculo.grupo}
+                                        options={grupos}
+                                        value={veiculo.grupo || ""}
                                         onChange={(e) => pegarVeiculo("grupo", e.target.value)}
                                     />
-                                    <InputText
+                                    <InputSelect
                                         label="Ano"
                                         icon="solar:calendar-bold"
+                                        options={Array.from({ length: new Date().getFullYear() - 1999 }, (_, i) => {
+                                            const year = 2000 + i;
+                                            return { label: year.toString(), value: year.toString() };
+                                        }).reverse()}
+                                        value={veiculo.ano}
                                         onChange={(e) => pegarVeiculo("ano", e.target.value)}
                                     />
                                     <InputSelect
                                         label="Cor"
                                         icon="ion:color-filter-sharp"
                                         options={cores}
+                                        value={veiculo.cor}
                                         onChange={(e) => pegarVeiculo("cor", e.target.value)}
                                     />
                                 </div>
@@ -85,37 +122,69 @@ const NovoVeiculo: React.FC = () => {
                                     <InputText
                                         label="Valor diário"
                                         icon="material-symbols:attach-money-rounded"
-                                        value={veiculo.valor_diaria}
-                                        onChange={(e) => pegarVeiculo("valor_diaria", e.target.value)}
+                                        value={
+                                            veiculo.valorDiaria !== undefined && veiculo.valorDiaria !== null && veiculo.valorDiaria !== ""
+                                                ? Number(veiculo.valorDiaria).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                                                : ""
+                                        }
+                                        onChange={(e) => {
+                                            // Aceita apenas números
+                                            let value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                            // Converte para centavos
+                                            let numeric = value ? (parseInt(value, 10) / 100).toFixed(2) : "";
+                                            pegarVeiculo("valorDiaria", numeric);
+                                        }}
+                                        placeholder="R$ 0,00"
+                                        inputMode="numeric"
+                                        maxLength={10}
                                     />
                                     <InputText
                                         label="KM"
                                         icon="icon-park-solid:map-distance"
-                                        value={veiculo.km}
-                                        onChange={(e) => pegarVeiculo("km", e.target.value)}
+                                        value={veiculo.quilometragem}
+                                        onChange={(e) => {
+                                            // Aceita apenas números
+                                            let value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                            pegarVeiculo("quilometragem", value);
+                                        }}
+                                        placeholder="Ex: 50000"
+                                        inputMode="numeric"
+                                        maxLength={10}
                                     />
-                                    <InputText
+                                    <InputSelect
                                         label="Status do veículo"
                                         icon="pajamas:status-alert"
-                                        value={veiculo.status_veiculo}
+                                        options={statusVeiculoOptions}
+                                        value={veiculo.statusVeiculo}
                                         onChange={(e) => pegarVeiculo("status_veiculo", e.target.value)}
                                     />
-                                    <InputText
+                                    <InputSelect
                                         label="Estoque ID"
                                         icon="mingcute:stock-fill"
-                                        value={veiculo.estoque_id}
-                                        onChange={(e) => pegarVeiculo("estoque_id", e.target.value)}
+                                        options={estoques}
+                                        value={veiculo.estoqueId || ""}
+                                        onChange={(e) => pegarVeiculo("estoqueId", e.target.value)}
                                     />
                                     <InputText
                                         label="Placa"
                                         icon="solar:plate-bold"
                                         value={veiculo.placa}
-                                        onChange={(e) => pegarVeiculo("placa", e.target.value)}
+                                        onChange={(e) => {
+                                            // Permitir apenas letras e números, converter para maiúsculo
+                                            let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+                                            // Limitar a 7 caracteres
+                                            value = value.slice(0, 7);
+                                            pegarVeiculo("placa", value);
+                                        }}
+                                        placeholder="ABC1D23 ou ABC1234"
+                                        maxLength={7}
+                                        pattern="[A-Z]{3}[0-9][A-Z0-9][0-9]{2}"
+                                        title="Placa no formato ABC1D23 ou ABC1234"
                                     />
                                 </div>
                             </div>
 
-                            <button>Salvar</button>
+                            <button>Criar</button>
                         </form>
                     </section>
                 </section>

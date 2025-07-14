@@ -1,8 +1,10 @@
 /////////////////////////////////////////////////////////////////
 /// Importações de dependências necessárias
 /////////////////////////////////////////////////////////////////
+
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import { createVeiculo } from "../../../../services/veiculosService";
 
 /////////////////////////////////////////////////////////////////
 /// Hook customizado para controle do formulário de veículo
@@ -17,10 +19,10 @@ const useHookVeiculo = () => {
         grupo: "",
         ano: "",
         cor: "",
-        valor_diaria: "",
-        km: "",
-        status_veiculo: "",
-        estoque_id: "",
+        valorDiaria: "",
+        quilometragem: "",
+        statusVeiculo: "",
+        estoqueId: "",
         placa: "",
     });
 
@@ -40,21 +42,20 @@ const useHookVeiculo = () => {
     const { mutateAsync: ajuste_veiculo } = useMutation({
         mutationKey: ["ajuste_veiculo"],
         mutationFn: async () => {
+            // Envia os campos com nomes e tipos corretos
             const dados = {
                 marca: veiculo.marca,
                 modelo: veiculo.modelo,
-                grupo: Number(veiculo.grupo),
+                grupo: veiculo.grupo,
                 ano: Number(veiculo.ano),
-                cor: Number(veiculo.cor),
-                valor_Diaria: Number(veiculo.valor_diaria),
-                quilometragem: Number(veiculo.km),
-                statusVeiculo: Number(veiculo.status_veiculo),
-                estoqueId: Number(veiculo.estoque_id),
-                placa: Number(veiculo.placa),
+                cor: veiculo.cor,
+                valorDiaria: Number(veiculo.valorDiaria),
+                quilometragem: Number(veiculo.quilometragem),
+                statusVeiculo: veiculo.statusVeiculo,
+                estoqueId: veiculo.estoqueId,
+                placa: veiculo.placa,
             };
-
-            const response = ""; // Substituir pela chamada real da API
-            return response;
+            return await createVeiculo(dados);
         },
     });
 
@@ -64,6 +65,25 @@ const useHookVeiculo = () => {
     //////////////////////////////////////////////////////////////////
     const enviar_form = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        // Validação simples: todos os campos obrigatórios preenchidos
+        const obrigatorios = [
+            veiculo.marca,
+            veiculo.modelo,
+            veiculo.grupo,
+            veiculo.ano,
+            veiculo.cor,
+            veiculo.valorDiaria,
+            veiculo.quilometragem,
+            veiculo.statusVeiculo,
+            veiculo.estoqueId,
+            veiculo.placa,
+        ];
+        // Permite zero como valor válido para campos numéricos
+        const algumVazio = obrigatorios.some((v) => v === undefined || v === null || (typeof v === "string" && v.trim() === ""));
+        if (algumVazio) {
+            alert("Preencha todos os campos obrigatórios antes de salvar.");
+            return;
+        }
         ajuste_veiculo();
     };
 

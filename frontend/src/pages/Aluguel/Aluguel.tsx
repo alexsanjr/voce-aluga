@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 
 import { InputDate, InputSelect } from "../../components/inputs";
-import { getVeiculos } from "../../services/veiculosService";
+import { getAllVeiculosDisponivel } from "../../services/veiculosService";
 import type { Veiculo } from "../../types/veiculo";
 import AluguelCard from "../AluguelCard/AluguelCard";
 import NavBar from "../../components/NavBar/NavBar";
@@ -51,13 +51,11 @@ const Aluguel: React.FC = () => {
   async function buscarVeiculos() {
     setLoading(true);
     try {
-      const data = await getVeiculos(marca);
-      let filtrados = data.content || [];
+      let veiculosDisponiveis = await getAllVeiculosDisponivel(marca);
       if (local) {
-        // local é o filialId ("1", "2", "3")
-        filtrados = filtrados.filter((v: Veiculo) => String(v.filialId) === local);
+        veiculosDisponiveis = veiculosDisponiveis.filter((v: Veiculo) => String(v.filialId) === local);
       }
-      setVeiculos(filtrados);
+      setVeiculos(veiculosDisponiveis);
     } finally {
       setLoading(false);
     }

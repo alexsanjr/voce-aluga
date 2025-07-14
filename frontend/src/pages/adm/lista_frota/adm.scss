@@ -119,7 +119,7 @@
                                         background-color: $accent;
                                     }
                                 }
-                                &.MANUTENCAO {
+                                &.MANUNTENCAO {
                                     background-color: #ffe7e2;
                                     color: #ff6041;
 
@@ -127,12 +127,20 @@
                                         background-color: #ff6041;
                                     }
                                 }
-                                &.LOCADO {
+                                &.EM_USO {
                                     background-color: #d6ffe7;
                                     color: #2ecc71;
 
                                     &::before {
                                         background-color: #2ecc71;
+                                    }
+                                }
+                                &.RESERVADO {
+                                    background-color: #d6feff;
+                                    color: #2e80cc;
+
+                                    &::before {
+                                        background-color: #2e80cc;
                                     }
                                 }
                             }

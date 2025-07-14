@@ -41,7 +41,7 @@ const ListaFrota: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {Lista_veiculos.map((item) => (
+                                        {Lista_veiculos.map((item: any) => (
                                             <tr key={item.id}>
                                                 <td>{item.marca}</td>
                                                 <td>{item.modelo}</td>

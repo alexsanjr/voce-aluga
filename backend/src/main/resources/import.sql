@@ -31,7 +31,7 @@ INSERT INTO filial (nome, local) VALUES ('Filial 3', 'Salvador');
 INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 1',1);
 INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 2',2);
 
-INSERT INTO veiculo (marca, modelo, grupo, ano, cor, valor_Diaria, quilometragem, status_Veiculo, placa, estoque_id) VALUES ('Toyota', 'Corolla', 0, 2022, 2, 199.9, 34800, 1, 'ABC-1234', 1);
+INSERT INTO veiculo (marca, modelo, grupo, ano, cor, valor_Diaria, quilometragem, status_Veiculo, placa, estoque_id) VALUES ('Toyota', 'Corolla', 0, 2022, 2, 199.9, 34800, 2, 'ABC-1234', 1);
 INSERT INTO veiculo (marca, modelo, grupo, ano, cor, valor_Diaria, quilometragem, status_Veiculo, placa, estoque_id)VALUES ('Honda', 'Civic', 1, 2023, 3, 249.90, 12800, 1, 'XYZ-5678', 2);
 INSERT INTO veiculo (marca, modelo, grupo, ano, cor, valor_Diaria, quilometragem, status_Veiculo, placa, estoque_id)VALUES ('Chevrolet', 'Onix', 2, 2021, 4, 159.50, 45200, 0, 'DEF-4321', 1);
 INSERT INTO veiculo (marca, modelo, grupo, ano, cor, valor_Diaria, quilometragem, status_Veiculo, placa, estoque_id)VALUES ('Ford', 'Ka', 2, 2020, 1, 129.99, 67800, 3, 'GHI-8765', 2);
