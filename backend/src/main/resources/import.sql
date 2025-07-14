@@ -25,7 +25,7 @@ INSERT INTO administrador (id) VALUES (2);
 
 
 INSERT INTO filial (nome, local) VALUES ('Filial 1', 'Rio de Janeiro')
-INSERT INTO filial (nome, local) VALUES ('Filial 2', 'São Paulo');
+    INSERT INTO filial (nome, local) VALUES ('Filial 2', 'São Paulo');
 INSERT INTO filial (nome, local) VALUES ('Filial 3', 'Salvador');
 
 INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 1',1);

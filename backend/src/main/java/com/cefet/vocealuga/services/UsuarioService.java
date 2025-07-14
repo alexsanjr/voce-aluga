@@ -1,5 +1,7 @@
 package com.cefet.vocealuga.services;
 
+import com.cefet.vocealuga.dtos.AuthResponse;
+import com.cefet.vocealuga.dtos.LoginRequest;
 import com.cefet.vocealuga.dtos.RegisterRequest;
 import com.cefet.vocealuga.entities.*;
 import com.cefet.vocealuga.repositories.FilialRepository;
@@ -18,13 +20,15 @@ public class UsuarioService {
 
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenService jwtTokenService;
 
     private FilialRepository filialRepository;
 
     public UsuarioService(UsuarioRepository repository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder, JwtTokenService tokenService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenService = tokenService;
     }
 
     public ResponseEntity<?> registerUser(RegisterRequest request) {
@@ -102,5 +106,18 @@ public class UsuarioService {
 
     public static int calcularIdade(LocalDate nascimento) {
         return Period.between(nascimento, LocalDate.now()).getYears();
+    }
+
+    public AuthResponse authenticateUser(LoginRequest loginRequest) {
+        Usuario user = findByEmail(loginRequest.getEmail());
+        if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            String tipo = user instanceof Gerente ? "ROLE_GERENTE" :
+                    user instanceof Administrador ? "ROLE_ADMIN" :
+                            user instanceof Funcionario ? "ROLE_FUNCIONARIO" :
+                                    "ROLE_CLIENTE";
+            String token = jwtTokenService.generateToken(user.getEmail(), tipo);
+            return new AuthResponse(token, tipo, "Login realizado com sucesso");
+        }
+        return new AuthResponse("Credenciais inválidas");
     }
 }

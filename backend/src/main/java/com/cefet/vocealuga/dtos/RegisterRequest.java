@@ -4,6 +4,7 @@ import com.cefet.vocealuga.dtos.enums.TipoRegister;
 import jakarta.persistence.Column;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ public class RegisterRequest {
     @Column(unique = true)
     @NotBlank
     private String documento;
-    @NotBlank
+    @NotNull
     private LocalDate dataNascimento;
     @Column(unique = true)
     @NotBlank
