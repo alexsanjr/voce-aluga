@@ -8,7 +8,7 @@ interface Options {
 }
 
 interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    label: string;
+    label?: string;
     icon: string;
     options: Options[];
 }
@@ -16,7 +16,7 @@ interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
 const InputSelect: React.FC<Props> = ({ label, options = [], value, onChange, icon }) => {
     return (
         <div className="input-wrapper">
-            <label className="input-label">{label}</label>
+            {label && <label className="input-label">{label}</label>}
             <div className="input-container">
                 {icon && <Icon icon={icon} className="input-icon" />}
                 <select value={value} onChange={onChange} className="input-field">

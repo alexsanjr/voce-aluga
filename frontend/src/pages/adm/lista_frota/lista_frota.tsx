@@ -5,6 +5,7 @@ import { deleteVeiculo } from "../../../services/veiculosService";
 
 import "./adm.min.css";
 import { useNavigate } from "react-router-dom";
+import { InputSelect } from "../../../components/inputs";
 
 const ListaFrota: React.FC = () => {
     const { Lista_veiculos, atualizarLista } = useHookAdmList();
@@ -22,6 +23,21 @@ const ListaFrota: React.FC = () => {
 
     const navigate = useNavigate();
 
+    const filiais = [
+        {
+            label: "Seleciona a filial",
+            value: "",
+        },
+        {
+            label: "Rio de janeiro",
+            value: "Rio de janeiro",
+        },
+        {
+            label: "São paulo",
+            value: "São paulo",
+        },
+    ];
+
     return (
         <>
             <DashboardDefaults title="Gerenciamento de frota">
@@ -33,6 +49,8 @@ const ListaFrota: React.FC = () => {
                             </i>
                             <p>Adicionar veículo</p>
                         </button>
+
+                        <InputSelect options={filiais} icon="icon-park-solid:city" />
                     </div>
 
                     <div className="table">

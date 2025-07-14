@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { InputDate, InputSelect } from "../../components/inputs";
 import { getAllVeiculosDisponivel } from "../../services/veiculosService";
@@ -23,17 +22,15 @@ const locais = [
 ];
 
 const Aluguel: React.FC = () => {
-  const [marca, setMarca] = useState("");
-  const [local, setLocal] = useState("");
-  const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
-  const [loading, setLoading] = useState(false);
+    const [marca, setMarca] = useState("");
+    const [local, setLocal] = useState("");
+    const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
+    const [loading, setLoading] = useState(false);
 
-
-
-  useEffect(() => {
-    buscarVeiculos();
-    // eslint-disable-next-line
-  }, [marca, local]);
+    useEffect(() => {
+        buscarVeiculos();
+        // eslint-disable-next-line
+    }, [marca, local]);
 
   async function buscarVeiculos() {
     setLoading(true);
@@ -48,53 +45,49 @@ const Aluguel: React.FC = () => {
     }
   }
 
-  function handleMarcaChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    setMarca(e.target.value);
-  }
-  function handleLocalChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    setLocal(e.target.value);
-  }
+    function handleMarcaChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        setMarca(e.target.value);
+    }
+    function handleLocalChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        setLocal(e.target.value);
+    }
 
-
-
-  return (
-    <>
-      <NavBar />
-      <section className="container-aluguel">
-        <div className="container">
-          <strong className="titulo">Encontre o seu carro perfeito</strong>
-          <div className="inputs">
-            <InputSelect
-              icon={"mdi:location"}
-              label={"Local de retirada"}
-              options={locais}
-              value={local}
-              onChange={handleLocalChange}
-            />
-            <InputSelect
-              icon={"mdi:car"}
-              label={"Marca"}
-              options={marcas}
-              value={marca}
-              onChange={handleMarcaChange}
-            />
-          </div>
-          <div className="aluguel-cards-list">
-            {loading ? (
-              <span>Carregando veículos...</span>
-            ) : veiculos.length === 0 ? (
-              <span>Nenhum veículo encontrado.</span>
-            ) : (
-              veiculos.map((v) => (
-                <AluguelCard key={v.id} veiculo={v} />
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-      <Footer />
-    </>
-  );
+    return (
+        <>
+            <NavBar />
+            <section className="container-aluguel">
+                <div className="container">
+                    <strong className="titulo">Encontre o seu carro perfeito</strong>
+                    <div className="inputs">
+                        <InputSelect
+                            icon={"mdi:location"}
+                            label={"Local de retirada"}
+                            options={locais}
+                            value={local}
+                            onChange={handleLocalChange}
+                        />
+                        <InputSelect
+                            icon={"mdi:car"}
+                            label={"Marca"}
+                            options={marcas}
+                            value={marca}
+                            onChange={handleMarcaChange}
+                        />
+                    </div>
+                    <div className="aluguel-cards-list">
+                        {loading ? (
+                            <span>Carregando veículos...</span>
+                        ) : veiculos.length === 0 ? (
+                            <span>Nenhum veículo encontrado.</span>
+                        ) : (
+                            veiculos.map((v) => <AluguelCard key={v.id} veiculo={v} />)
+                        )}
+                    </div>
+                </div>
+            </section>
+            <Footer />
+        </>
+    );
 };
 
 export default Aluguel;

@@ -6,13 +6,12 @@ import { useNavigate } from "react-router-dom";
 import "./HomeAluguel.css";
 
 const HomeAluguel: React.FC = () => {
-  const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
-  const [loading, setLoading] = useState(false);
+    const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
+    const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    buscarVeiculos();
-    // eslint-disable-next-line
-  }, []);
+    useEffect(() => {
+        buscarVeiculos();
+    }, []);
 
   async function buscarVeiculos() {
     setLoading(true);
@@ -24,30 +23,36 @@ const HomeAluguel: React.FC = () => {
     }
   }
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  function handleReservar(veiculo: Veiculo) {
-    navigate("/reserva", { state: { veiculo } });
-  }
+    function handleReservar(veiculo: Veiculo) {
+        navigate("/reserva", { state: { veiculo } });
+    }
 
-  return (
-    <section className="container-aluguel home-aluguel">
-      <div className="container">
-        <strong className="titulo">Destaques da nossa frota</strong>
-        <div className="aluguel-cards-list">
-          {loading ? (
-            <span>Carregando veículos...</span>
-          ) : veiculos.length === 0 ? (
-            <span>Nenhum veículo em destaque.</span>
-          ) : (
-            veiculos.map((v) => (
-              <AluguelCard key={v.id} veiculo={v} onReservar={handleReservar} />
-            ))
-          )}
-        </div>
-      </div>
-    </section>
-  );
+    return (
+        <section className="home-aluguel">
+            <div className="container">
+                <div className="title-separator">
+                    <strong>
+                        Nossa Frota <span>Premium</span>
+                    </strong>
+                    <p>
+                        Escolha entre nossa ampla seleção de veículos de alta qualidade para atender a todas as
+                        necessidades e orçamentos.
+                    </p>
+                </div>
+                <div className="aluguel-cards-list">
+                    {loading ? (
+                        <span>Carregando veículos...</span>
+                    ) : veiculos.length === 0 ? (
+                        <span>Nenhum veículo em destaque.</span>
+                    ) : (
+                        veiculos.map((v) => <AluguelCard key={v.id} veiculo={v} onReservar={handleReservar} />)
+                    )}
+                </div>
+            </div>
+        </section>
+    );
 };
 
 export default HomeAluguel;

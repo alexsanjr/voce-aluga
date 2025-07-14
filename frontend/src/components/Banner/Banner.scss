@@ -46,22 +46,26 @@
                 animation: textEffect 1s forwards;
                 animation-delay: 3.5s;
 
-                button {
-                    background-color: #fff;
-                    padding: 0.8rem 1.5rem;
-                    border: none;
-                    border-radius: 2rem;
-                    color: $accent;
-                    font-weight: 700;
-                    font-size: 1rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    cursor: pointer;
+                a {
+                    text-decoration: none;
 
-                    i {
+                    button {
+                        background-color: #fff;
+                        padding: 0.8rem 1.5rem;
+                        border: none;
+                        border-radius: 2rem;
+                        color: $accent;
+                        font-weight: 700;
+                        font-size: 1rem;
                         display: flex;
-                        font-size: 1.3rem;
+                        align-items: center;
+                        gap: 0.5rem;
+                        cursor: pointer;
+
+                        i {
+                            display: flex;
+                            font-size: 1.3rem;
+                        }
                     }
                 }
             }
