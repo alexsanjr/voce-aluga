@@ -115,4 +115,49 @@ class UsuarioServiceTest {
         Map<String, Object> body = (Map<String, Object>) response.getBody();
         assertEquals("Telefone inválido", body.get("erro"));
     }
+
+    @Test
+    void naoDeveRegistrarUsuarioComCpfJaCadastrado() {
+        RegisterRequest request = new RegisterRequest(
+                "Robson", "12345678954", LocalDate.of(1998, 12, 12),
+                "robson2@gmail.com", "21999999999", "Senha123!", TipoRegister.CLIENTE
+        );
+
+        when(usuarioRepository.findByEmail("robson2@gmail.com")).thenReturn(null);
+        when(usuarioRepository.findByDocumento("12345678954")).thenReturn(new Cliente());
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("CPF já existe", body.get("erro"));
+    }
+
+    @Test
+    void naoDeveRegistrarUsuarioComCamposObrigatoriosEmBranco() {
+        RegisterRequest request = new RegisterRequest(
+                "", "", null, "", "", "", TipoRegister.CLIENTE
+        );
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertTrue(body.get("erro").toString().contains("Campos obrigatórios em branco"));
+    }
+
+    @Test
+    void naoDeveRegistrarUsuarioComEmailInvalido() {
+        RegisterRequest request = new RegisterRequest(
+                "Robson", "12345678954", LocalDate.of(1998, 12, 12),
+                "email-invalido", "21999999999", "Senha123!", TipoRegister.CLIENTE
+        );
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertTrue(body.get("erro").toString().toLowerCase().contains("email"));
+    }
+
 }

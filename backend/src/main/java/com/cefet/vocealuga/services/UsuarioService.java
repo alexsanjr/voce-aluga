@@ -28,6 +28,20 @@ public class UsuarioService {
     }
 
     public ResponseEntity<?> registerUser(RegisterRequest request) {
+
+        if (request.getNome() == null || request.getNome().isBlank() ||
+                request.getDocumento() == null || request.getDocumento().isBlank() ||
+                request.getDataNascimento() == null ||
+                request.getEmail() == null || request.getEmail().isBlank() ||
+                request.getTelefone() == null || request.getTelefone().isBlank() ||
+                request.getPassword() == null || request.getPassword().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Campos obrigatórios em branco"));
+        }
+
+        if (!request.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Email inválido"));
+        }
+
         if (findByEmail(request.getEmail()) != null) {
             return ResponseEntity.badRequest().body(Map.of("erro", "Usuário já existe"));
         }
@@ -44,6 +58,10 @@ public class UsuarioService {
 
         if (request.getTelefone() == null || !request.getTelefone().matches("^\\d{10,13}$")) {
             return ResponseEntity.badRequest().body(Map.of("erro", "Telefone inválido"));
+        }
+
+        if (repository.findByDocumento(request.getDocumento()) != null) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "CPF já existe"));
         }
 
 
