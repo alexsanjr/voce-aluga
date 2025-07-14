@@ -46,6 +46,21 @@ public class ReservaService {
 
     @Transactional
     public ReservaDTO insert(ReservaDTO dto) {
+        if (dto.getUsuarioId() == null) {
+            throw new IllegalArgumentException("Usuário é obrigatório");
+        }
+        if (dto.getLocalRetiradaId() == null) {
+            throw new IllegalArgumentException("Local de retirada é obrigatório");
+        }
+        if (dto.getDataReserva() == null || dto.getDataVencimento() == null) {
+            throw new IllegalArgumentException("Datas não podem ser nulas");
+        }
+        if (dto.getDataVencimento() == null || dto.getDataReserva() == null) {
+            throw new IllegalArgumentException("Datas não podem ser nulas");
+        }
+        if (!dto.getDataVencimento().isAfter(dto.getDataReserva())) {
+            throw new IllegalArgumentException("Data de vencimento deve ser posterior à data de reserva");
+        }
         Reserva entity = convertToEntity(dto);
         entity = repository.save(entity);
         return convertToDTO(entity);
