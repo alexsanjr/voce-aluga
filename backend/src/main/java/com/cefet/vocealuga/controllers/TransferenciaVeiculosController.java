@@ -22,21 +22,21 @@ public class TransferenciaVeiculosController {
     private TransferenciaVeiculosService transferenciaVeiculosService;
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<TransferenciaVeiculosDTO> findById(@PathVariable Long id) {
         TransferenciaVeiculosDTO dto = transferenciaVeiculosService.findById(id);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<Page<TransferenciaVeiculosDTO>> findAll(Pageable pageable) {
         Page<TransferenciaVeiculosDTO> dto = transferenciaVeiculosService.findAll(pageable);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<TransferenciaVeiculosDTO> insert(@Valid @RequestBody TransferenciaVeiculosDTO dto) {
         dto = transferenciaVeiculosService.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -45,7 +45,7 @@ public class TransferenciaVeiculosController {
     }
 
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<TransferenciaVeiculosDTO> update(@PathVariable Long id, @Valid @RequestBody TransferenciaVeiculosDTO dto) {
         dto = transferenciaVeiculosService.update(id, dto);
         return ResponseEntity.ok(dto);
