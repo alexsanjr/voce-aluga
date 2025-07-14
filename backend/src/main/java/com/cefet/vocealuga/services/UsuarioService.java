@@ -42,6 +42,11 @@ public class UsuarioService {
             return ResponseEntity.badRequest().body(Map.of("erro", "Tipo de usuário inválido"));
         }
 
+        if (request.getTelefone() == null || !request.getTelefone().matches("^\\d{10,13}$")) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Telefone inválido"));
+        }
+
+
         saveUser(novoUsuario);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(

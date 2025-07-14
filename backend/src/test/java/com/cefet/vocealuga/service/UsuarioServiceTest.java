@@ -37,7 +37,7 @@ class UsuarioServiceTest {
     void deveRegistrarUsuarioComDadosValidos() {
         RegisterRequest request = new RegisterRequest(
                 "Robson", "12345678954", LocalDate.of(1998, 12, 12),
-                "robson@gmail.com", "Senha123!", "21999999999", TipoRegister.CLIENTE
+                "robson@gmail.com", "21999999999", "Senha123!", TipoRegister.CLIENTE
         );
 
         when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(null);
@@ -56,7 +56,7 @@ class UsuarioServiceTest {
     void naoDeveRegistrarUsuarioComEmailJaCadastrado() {
         RegisterRequest request = new RegisterRequest(
                 "Robson", "12345678954", LocalDate.of(1998, 12, 12),
-                "robson@gmail.com", "Senha123!", "21999999999", TipoRegister.CLIENTE
+                "robson@gmail.com", "21999999999", "Senha123!", TipoRegister.CLIENTE
         );
 
         when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(new Cliente());
@@ -72,7 +72,7 @@ class UsuarioServiceTest {
     void naoDeveRegistrarUsuarioMenorDeIdade() {
         RegisterRequest request = new RegisterRequest(
                 "Robson", "12345678954", LocalDate.now().minusYears(17),
-                "robson@gmail.com", "Senha123!", "21999999999", TipoRegister.CLIENTE
+                "robson@gmail.com", "21999999999", "Senha123!", TipoRegister.CLIENTE
         );
 
         when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(null);
@@ -88,7 +88,7 @@ class UsuarioServiceTest {
     void naoDeveRegistrarUsuarioComTipoInvalido() {
         RegisterRequest request = new RegisterRequest(
                 "Robson", "12345678954", LocalDate.of(1990, 1, 1),
-                "robson@gmail.com", "Senha123!", "21999999999", null
+                "robson@gmail.com", "21999999999", "Senha123!", null
         );
 
         when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(null);
@@ -98,5 +98,21 @@ class UsuarioServiceTest {
         assertEquals(400, response.getStatusCodeValue());
         Map<String, Object> body = (Map<String, Object>) response.getBody();
         assertEquals("Tipo de usuário inválido", body.get("erro"));
+    }
+
+    @Test
+    void naoDeveRegistrarUsuarioComTelefoneInvalido() {
+        RegisterRequest request = new RegisterRequest(
+                "Robson", "12345678954", LocalDate.of(1990, 1, 1),
+                "robson@gmail.com", "123abc", "123abc", TipoRegister.CLIENTE // telefone inválido
+        );
+
+        when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(null);
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Telefone inválido", body.get("erro"));
     }
 }
