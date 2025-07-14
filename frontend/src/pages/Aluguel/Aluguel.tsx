@@ -5,20 +5,12 @@ import type { Veiculo } from "../../types/veiculo";
 import AluguelCard from "../AluguelCard/AluguelCard";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
-import { marcas as marcasOptions } from "../../utils/veiculoOptions";
+import { marcas as marcasOptions, locais } from "../../utils/veiculoOptions";
 import "./Aluguel.css";
 
 const marcas = [
   { label: "Todas", value: "" },
   ...marcasOptions
-];
-
-// Mapeamento dos locais para seus respectivos filialId (como string)
-const locais = [
-  { label: "Todos", value: "" },
-  { label: "Rio de Janeiro", value: "1" },
-  { label: "São Paulo", value: "2" },
-  { label: "Salvador", value: "3" },
 ];
 
 const Aluguel: React.FC = () => {

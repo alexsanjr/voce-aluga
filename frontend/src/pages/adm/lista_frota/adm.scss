@@ -32,6 +32,10 @@
                 background-color: $accentHover;
             }
         }
+
+        .input-wrapper {
+            margin-bottom: 0rem;
+        }
     }
 
     .table {
@@ -54,7 +58,7 @@
                     th {
                         background-color: $gray-200;
                         padding: 1rem;
-                        text-align: start;
+                        text-align: center;
                         font-weight: 600;
 
                         &:first-child {

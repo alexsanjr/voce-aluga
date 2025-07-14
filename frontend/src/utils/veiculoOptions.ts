@@ -1,3 +1,10 @@
+// Lista de locais compartilhada para selects de local/filial
+export const locais = [
+    { label: "Todos", value: "" },
+    { label: "Rio de Janeiro", value: "1" },
+    { label: "São Paulo", value: "2" },
+    { label: "Salvador", value: "3" },
+];
 // Listas compartilhadas para selects de veículos
 export const marcas = [
     { label: "Volkswagen", value: "Volkswagen" },
