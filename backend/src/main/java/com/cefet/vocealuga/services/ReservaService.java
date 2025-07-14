@@ -4,6 +4,7 @@ import com.cefet.vocealuga.dtos.ReservaDTO;
 import com.cefet.vocealuga.entities.Filial;
 import com.cefet.vocealuga.entities.Reserva;
 import com.cefet.vocealuga.entities.Usuario;
+import com.cefet.vocealuga.entities.enums.StatusReserva;
 import com.cefet.vocealuga.repositories.FilialRepository;
 import com.cefet.vocealuga.repositories.ReservaRepository;
 import com.cefet.vocealuga.repositories.UsuarioRepository;
@@ -29,7 +30,7 @@ public class ReservaService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
-    
+
 
     @Transactional(readOnly = true)
     public ReservaDTO findById(Long id) {
@@ -71,6 +72,19 @@ public class ReservaService {
         try {
             Reserva entity = repository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + id));
+
+            if (entity.getStatus() == StatusReserva.EM_ANDAMENTO) {
+                throw new IllegalArgumentException("Não é permitido atualizar reservas aprovadas ou em andamento");
+            }
+
+            if (dto.getDataReserva() == null || dto.getDataVencimento() == null) {
+                throw new IllegalArgumentException("Datas não podem ser nulas");
+            }
+
+            if (!dto.getDataVencimento().isAfter(dto.getDataReserva())) {
+                throw new IllegalArgumentException("Data de vencimento deve ser posterior à data de reserva");
+            }
+
             dto.setId(entity.getId());
             entity = convertToEntity(dto);
             entity = repository.save(entity);
@@ -101,8 +115,8 @@ public class ReservaService {
         dto.setDataVencimento(entity.getDataVencimento());
         dto.setCategoria(entity.getCategoria());
         dto.setStatus(entity.getStatus());
-        dto.setLocalRetiradaId(entity.getLocalRetirada().getId());
-        dto.setUsuarioId(entity.getUsuario().getId());
+        dto.setLocalRetiradaId(entity.getLocalRetirada() != null ? entity.getLocalRetirada().getId() : null);
+        dto.setUsuarioId(entity.getUsuario() != null ? entity.getUsuario().getId() : null);
         return dto;
     }
 
