@@ -25,3 +25,21 @@ export const createVeiculo = async (veiculo: any) => {
     const response = await api.post(API_URL, veiculo);
     return response.data;
 };
+
+// Busca um veículo pelo ID
+export const getVeiculoById = async (id: string | number) => {
+    const response = await api.get(`${API_URL}/${id}`);
+    return response.data;
+};
+
+// Atualiza um veículo existente
+export const updateVeiculo = async (id: string | number, veiculo: any) => {
+    const response = await api.put(`${API_URL}/${id}`, veiculo);
+    return response.data;
+};
+
+// Deleta um veículo pelo ID
+export const deleteVeiculo = async (id: string | number) => {
+    const response = await api.delete(`${API_URL}/${id}`);
+    return response.data;
+};

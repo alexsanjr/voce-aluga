@@ -1,30 +1,17 @@
 
 import { useEffect, useState } from "react";
-
-
 import { InputDate, InputSelect } from "../../components/inputs";
 import { getAllVeiculosDisponivel } from "../../services/veiculosService";
 import type { Veiculo } from "../../types/veiculo";
 import AluguelCard from "../AluguelCard/AluguelCard";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
+import { marcas as marcasOptions } from "../../utils/veiculoOptions";
 import "./Aluguel.css";
 
 const marcas = [
   { label: "Todas", value: "" },
-  { label: "Fiat", value: "Fiat" },
-  { label: "Volkswagen", value: "Volkswagen" },
-  { label: "Chevrolet", value: "Chevrolet" },
-  { label: "Ford", value: "Ford" },
-  { label: "Toyota", value: "Toyota" },
-  { label: "Hyundai", value: "Hyundai" },
-  { label: "Renault", value: "Renault" },
-  { label: "Honda", value: "Honda" },
-  { label: "Nissan", value: "Nissan" },
-  { label: "Peugeot", value: "Peugeot" },
-  { label: "Citroën", value: "Citroën" },
-  { label: "Kia", value: "Kia" },
-  { label: "Outros", value: "Outros" },
+  ...marcasOptions
 ];
 
 // Mapeamento dos locais para seus respectivos filialId (como string)
