@@ -1,9 +1,14 @@
 import ListaFrota from "./lista_frota/lista_frota";
+import ListaTransferencia from "./lista_transferencia/lista_transferencia";
+import { useState } from "react";
 
 const Adm: React.FC = () => {
+    const [pagina, setPagina] = useState<"frota" | "transferencia">("frota");
+
     return (
         <>
-            <ListaFrota />
+            {pagina === "frota" && <ListaFrota />}
+            {pagina === "transferencia" && <ListaTransferencia />}
         </>
     );
 };

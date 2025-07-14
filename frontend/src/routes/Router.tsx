@@ -10,6 +10,7 @@ import MinhasReservas from "../pages/MinhasReservas/MinhasReservas";
 
 import { lazy } from "react";
 import EditarVeiculo from "../pages/adm/editar_veiculo/editar_veiculo";
+import ListaTransferencia from "../pages/adm/lista_transferencia/lista_transferencia";
 
 const Adm = lazy(() => import("../pages/adm/adm"));
 const NovoVeiculo = lazy(() => import("../pages/adm/novo_veiculo/novo_veiculo"));
@@ -83,6 +84,16 @@ export default function Router() {
                     </PrivateRoute>
                 }
             />
+
+            <Route
+                path="/lista_transferencias"
+                element={
+                    <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
+                        <ListaTransferencia />
+                    </PrivateRoute>
+                }
+            />
+
         </Routes>
     );
 }
