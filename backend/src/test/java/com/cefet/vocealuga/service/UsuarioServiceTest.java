@@ -1,0 +1,102 @@
+package com.cefet.vocealuga.service;
+
+import com.cefet.vocealuga.dtos.RegisterRequest;
+import com.cefet.vocealuga.dtos.enums.TipoRegister;
+import com.cefet.vocealuga.entities.Cliente;
+import com.cefet.vocealuga.repositories.UsuarioRepository;
+import com.cefet.vocealuga.services.UsuarioService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDate;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class UsuarioServiceTest {
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private UsuarioService usuarioService;
+
+    @BeforeEach
+    void setUp() {
+        usuarioRepository = mock(UsuarioRepository.class);
+        passwordEncoder = mock(PasswordEncoder.class);
+        usuarioService = new UsuarioService(usuarioRepository, passwordEncoder);
+    }
+
+    @Test
+    void deveRegistrarUsuarioComDadosValidos() {
+        RegisterRequest request = new RegisterRequest(
+                "Robson", "12345678954", LocalDate.of(1998, 12, 12),
+                "robson@gmail.com", "Senha123!", "21999999999", TipoRegister.CLIENTE
+        );
+
+        when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(null);
+        when(passwordEncoder.encode(any())).thenReturn("senhaCodificada");
+        when(usuarioRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(201, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Usuário CLIENTE criado com sucesso!", body.get("mensagem"));
+        assertEquals("robson@gmail.com", body.get("email"));
+    }
+
+    @Test
+    void naoDeveRegistrarUsuarioComEmailJaCadastrado() {
+        RegisterRequest request = new RegisterRequest(
+                "Robson", "12345678954", LocalDate.of(1998, 12, 12),
+                "robson@gmail.com", "Senha123!", "21999999999", TipoRegister.CLIENTE
+        );
+
+        when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(new Cliente());
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Usuário já existe", body.get("erro"));
+    }
+
+    @Test
+    void naoDeveRegistrarUsuarioMenorDeIdade() {
+        RegisterRequest request = new RegisterRequest(
+                "Robson", "12345678954", LocalDate.now().minusYears(17),
+                "robson@gmail.com", "Senha123!", "21999999999", TipoRegister.CLIENTE
+        );
+
+        when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(null);
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Usuário é menor de idade", body.get("erro"));
+    }
+
+    @Test
+    void naoDeveRegistrarUsuarioComTipoInvalido() {
+        RegisterRequest request = new RegisterRequest(
+                "Robson", "12345678954", LocalDate.of(1990, 1, 1),
+                "robson@gmail.com", "Senha123!", "21999999999", null
+        );
+
+        when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(null);
+
+        ResponseEntity<?> response = usuarioService.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Tipo de usuário inválido", body.get("erro"));
+    }
+}

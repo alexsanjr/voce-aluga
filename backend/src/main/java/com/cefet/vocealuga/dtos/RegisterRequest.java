@@ -17,6 +17,19 @@ public class RegisterRequest {
     private String password;
     private TipoRegister tipo;
 
+    public RegisterRequest(String nome, String documento, LocalDate dataNascimento, String email, String telefone, String password, TipoRegister tipo) {
+        this.nome = nome;
+        this.documento = documento;
+        this.dataNascimento = dataNascimento;
+        this.email = email;
+        this.telefone = telefone;
+        this.password = password;
+        this.tipo = tipo;
+    }
+
+    public RegisterRequest() {
+    }
+
     public String getEmail() {
         return email;
     }

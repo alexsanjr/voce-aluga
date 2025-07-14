@@ -1,15 +1,17 @@
 package com.cefet.vocealuga.services;
 
-import com.cefet.vocealuga.dtos.MeDTO;
-import com.cefet.vocealuga.dtos.VeiculoDTO;
+import com.cefet.vocealuga.dtos.RegisterRequest;
 import com.cefet.vocealuga.entities.*;
+import com.cefet.vocealuga.repositories.FilialRepository;
 import com.cefet.vocealuga.repositories.UsuarioRepository;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Map;
 
 @Service
 public class UsuarioService {
@@ -17,11 +19,54 @@ public class UsuarioService {
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
 
+    private FilialRepository filialRepository;
+
     public UsuarioService(UsuarioRepository repository,
                           PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
+
+    public ResponseEntity<?> registerUser(RegisterRequest request) {
+        if (findByEmail(request.getEmail()) != null) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Usuário já existe"));
+        }
+
+        if (calcularIdade(request.getDataNascimento()) < 18) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Usuário é menor de idade"));
+        }
+
+        Usuario novoUsuario = criarUsuarioPeloTipo(request);
+
+        if (novoUsuario == null) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Tipo de usuário inválido"));
+        }
+
+        saveUser(novoUsuario);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "mensagem", "Usuário " + request.getTipo() + " criado com sucesso!",
+                "email", novoUsuario.getEmail()
+        ));
+    }
+
+    private Usuario criarUsuarioPeloTipo(RegisterRequest request) {
+        if (request.getTipo() == null) {
+            return null;
+        }
+
+        return switch (request.getTipo()) {
+            case CLIENTE -> new Cliente(null, request.getNome(), request.getDocumento(), request.getDataNascimento(),
+                    request.getEmail(), request.getPassword(), request.getTelefone(), 0);
+            case FUNCIONARIO -> new Funcionario(null, request.getNome(), request.getDocumento(), request.getDataNascimento(),
+                    request.getEmail(), request.getPassword(), request.getTelefone(), "", null);
+            case GERENTE -> new Gerente(null, request.getNome(), request.getDocumento(), request.getDataNascimento(),
+                    request.getEmail(), request.getPassword(), request.getTelefone(), "", null);
+            case ADMINISTRADOR -> new Administrador(null, request.getNome(), request.getDocumento(), request.getDataNascimento(),
+                    request.getEmail(), request.getPassword(), request.getTelefone(), "", null);
+        };
+    }
+
 
     public Usuario saveUser(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
@@ -30,5 +75,9 @@ public class UsuarioService {
 
     public Usuario findByEmail(String email) {
         return repository.findByEmail(email);
+    }
+
+    public static int calcularIdade(LocalDate nascimento) {
+        return Period.between(nascimento, LocalDate.now()).getYears();
     }
 }

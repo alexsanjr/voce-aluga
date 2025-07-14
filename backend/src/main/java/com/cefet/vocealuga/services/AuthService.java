@@ -28,7 +28,9 @@ public class AuthService {
             dto.setEmail(func.getEmail());
             dto.setTelefone(func.getTelefone());
             dto.setCargo(func.getCargo());
-            dto.setFilial_id(func.getFilial().getId());
+            if (func.getFilial() != null) {
+                dto.setFilial_id(func.getFilial().getId());
+            }
             dto.setDocumento(func.getDocumento());
             dto.setDataDeNascimento(func.getDataDeNascimento());
 
