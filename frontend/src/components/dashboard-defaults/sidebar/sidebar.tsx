@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./sidebar.min.css";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { NavLink } from "react-router-dom";
+import userSvg from "../../../assets/user.svg";
 // import useAuthStore from "../../context/auth_store/auth_store";
 
 interface SidebarItem {
@@ -46,7 +47,7 @@ const Sidebar: React.FC = () => {
                 </nav>
 
                 <div className="user-profile">
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" />
+                    <img src={userSvg} alt="User" />
                     <div className="user-info">
                         <p className="user-name">Admin user</p>
                         <p className="userRole">Admin</p>
@@ -54,7 +55,7 @@ const Sidebar: React.FC = () => {
 
                     <button
                         className="btn-logout"
-                        // onClick={() => logout()}
+                        onClick={() => window.location.href = "/"}
                     >
                         <i>
                             <Icon icon="wpf:shutdown" />

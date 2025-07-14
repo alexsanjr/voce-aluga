@@ -1,3 +1,8 @@
+html, body {
+    overflow-x: hidden !important;
+    width: 100vw;
+    box-sizing: border-box;
+}
 .container-body {
     display: flex;
     flex-direction: column;

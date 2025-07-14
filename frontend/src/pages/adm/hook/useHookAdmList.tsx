@@ -1,17 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
-import { getVeiculos, type Veiculo } from "../lista-ficticia";
+import { getAllVeiculos } from "../../../services/veiculosService";
 
 const useHookAdmList = () => {
     const {
-        data: Lista_veiculos,
+        data,
+        refetch,
         // isLoading,
         // isError,
-    } = useQuery<Veiculo[]>({
+    } = useQuery({
         queryKey: ["veiculos"],
-        queryFn: getVeiculos,
+        queryFn: getAllVeiculos,
     });
 
-    return { Lista_veiculos };
+    // O backend pode retornar { content: Veiculo[] }, então normaliza
+    const Lista_veiculos = data?.content || data || [];
+
+    const atualizarLista = () => {
+        refetch();
+    };
+
+    console.log("Lista de veículos:", Lista_veiculos);
+    return { Lista_veiculos, atualizarLista };
 };
 
 export default useHookAdmList;

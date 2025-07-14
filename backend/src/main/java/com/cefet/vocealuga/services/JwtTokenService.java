@@ -25,7 +25,7 @@ public class JwtTokenService {
                 .setClaims(claims)
                 .subject(email)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 600000)) // 10 minutos
+                .expiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
                 .signWith(KEY, SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -9,6 +9,7 @@ import Aluguel from "../pages/Aluguel/Aluguel";
 import MinhasReservas from "../pages/MinhasReservas/MinhasReservas";
 
 import { lazy } from "react";
+import EditarVeiculo from "../pages/adm/editar_veiculo/editar_veiculo";
 
 const Adm = lazy(() => import("../pages/adm/adm"));
 const NovoVeiculo = lazy(() => import("../pages/adm/novo_veiculo/novo_veiculo"));
@@ -19,7 +20,6 @@ export default function Router() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            {/*<Route path="/veiculos" element={< />} />*/}
             <Route
                 path="/reserva"
                 element={
@@ -56,21 +56,31 @@ export default function Router() {
                 }
             />
 
+
             <Route
                 path="/adm"
                 element={
-                    // <PrivateRoute>
-                    <Adm />
-                    // </PrivateRoute>
+                    <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
+                        <Adm />
+                    </PrivateRoute>
                 }
             />
 
             <Route
                 path="/novoveiculo"
                 element={
-                    // <PrivateRoute>
-                    <NovoVeiculo />
-                    // </PrivateRoute>
+                    <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
+                        <NovoVeiculo />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/editarveiculo/:id"
+                element={
+                    <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
+                        <EditarVeiculo />
+                    </PrivateRoute>
                 }
             />
         </Routes>

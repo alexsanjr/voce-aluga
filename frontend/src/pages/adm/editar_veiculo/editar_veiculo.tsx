@@ -1,15 +1,16 @@
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
-import { InputSelect, InputText } from "../../../components/inputs";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createVeiculo } from "../../../services/veiculosService";
+import { InputText } from "../../../components/inputs";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getVeiculoById, updateVeiculo } from "../../../services/veiculosService";
+
+import "./editar_veiculo.min.css";
+
 import { marcas, cores, grupos, estoques, statusVeiculoOptions } from "../../../utils/veiculoOptions";
 
-import "./novo_veiculo.min.css";
-
-
-const NovoVeiculo: React.FC = () => {
+const EditarVeiculo: React.FC = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
     const [veiculo, setVeiculo] = useState({
         marca: "",
         modelo: "",
@@ -22,6 +23,85 @@ const NovoVeiculo: React.FC = () => {
         estoqueId: "",
         placa: "",
     });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchVeiculo() {
+            if (!id) {
+                alert("ID do veículo não informado.");
+                navigate("/adm");
+                return;
+            }
+            try {
+                const v = await getVeiculoById(String(id));
+
+                console.log("Veículo carregado:", v);
+
+                setVeiculo({
+                    marca: (() => {
+                        if (marcas.some((m) => m.value === v.marca)) return v.marca;
+                        if (typeof v.marca === "string") {
+                            const marcaLower = v.marca.toLowerCase();
+                            const marcaMatch = marcas.find((m) => m.value.toLowerCase() === marcaLower);
+                            if (marcaMatch) return marcaMatch.value;
+                        }
+                        return "";
+                    })(),
+                    modelo: v.modelo || "",
+                    grupo: v.grupo || "",
+                    ano: v.ano ? String(v.ano) : "",
+                    cor: (() => {
+                        // Se já for igual ao value do select
+                        if (cores.some((c) => c.value === v.cor)) return v.cor;
+                        // Se vier como label (ex: PRETO), busca o value correspondente
+                        if (typeof v.cor === "string") {
+                            const corMatch = cores.find((c) => c.label.toUpperCase() === v.cor.toUpperCase());
+                            if (corMatch) return corMatch.value;
+                        }
+                        if (typeof v.cor === "number") {
+                            // Se vier como código, converte para string
+                            if (cores[v.cor]) return cores[v.cor].value;
+                        }
+                        return "";
+                    })(),
+                    valorDiaria: v.valorDiaria || "",
+                        // v.valor_Diaria !== undefined && v.valor_Diaria !== null
+                        //     ? String(Number(v.valor_Diaria).toFixed(2)).replace(".", ",")
+                        //     : "",
+                    quilometragem:
+                        v.quilometragem !== undefined && v.quilometragem !== null ? String(v.quilometragem) : "",
+                    statusVeiculo: (() => {
+                        // Se já for igual ao value do select
+                        if (statusVeiculoOptions.some((s) => s.value === v.statusVeiculo)) return v.statusVeiculo;
+                        // Se vier como label (ex: "EM_USO"), busca o value correspondente
+                        if (typeof v.statusVeiculo === "string") {
+                            // Tenta encontrar por label
+                            const statusMatchLabel = statusVeiculoOptions.find((s) => s.label.toUpperCase() === v.statusVeiculo.toUpperCase());
+                            if (statusMatchLabel) return statusMatchLabel.value;
+                            // Tenta encontrar por value (case-insensitive)
+                            const statusMatchValue = statusVeiculoOptions.find((s) => s.value.toUpperCase() === v.statusVeiculo.toUpperCase());
+                            if (statusMatchValue) return statusMatchValue.value;
+                        }
+                        if (typeof v.statusVeiculo === "number") {
+                            // Se vier como código numérico, mapeia para o value string (ordem: EM_USO, DISPONIVEL, RESERVADO, MANUTENCAO)
+                            // Ajuste conforme a ordem correta do seu backend
+                            const statusMap = ["EM_USO", "DISPONIVEL", "RESERVADO", "MANUTENCAO"];
+                            return statusMap[v.statusVeiculo] || "";
+                        }
+                        return "";
+                    })(),
+                    estoqueId: v.estoqueId ? String(v.estoqueId) : "",
+                    placa: v.placa.replace("-","") || "",
+                });
+            } catch {
+                alert("Erro ao carregar veículo.");
+                navigate("/adm");
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchVeiculo();
+    }, [id, navigate]);
 
     const pegarVeiculo = (name: string, value: string) => {
         setVeiculo((i) => ({ ...i, [name]: value }));
@@ -29,7 +109,6 @@ const NovoVeiculo: React.FC = () => {
 
     const enviar_form = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Validação básica
         const obrigatorios = [
             veiculo.marca,
             veiculo.modelo,
@@ -42,15 +121,11 @@ const NovoVeiculo: React.FC = () => {
             veiculo.estoqueId,
             veiculo.placa,
         ];
-
-        console.log("Campos obrigatórios:", obrigatorios);
-
-        const algumVazio = obrigatorios.some((v) => v === undefined || v === null || v === "");
-        if (algumVazio) {
+        if (obrigatorios.some((v) => v === undefined || v === null || v === "")) {
             alert("Preencha todos os campos obrigatórios antes de salvar.");
             return;
         }
-        // Monta o objeto para API
+        // Se o backend espera statusVeiculo como string (ex: "EM_USO"), mantenha assim. Se espera como número, descomente a linha abaixo e comente a de string.
         const dados = {
             marca: veiculo.marca,
             modelo: veiculo.modelo,
@@ -65,29 +140,26 @@ const NovoVeiculo: React.FC = () => {
             estoqueId: Number(veiculo.estoqueId),
             placa: (veiculo.placa ? String(veiculo.placa) : "").replace(/^([A-Z]{3})(\d{4})$/, "$1-$2"),
         };
+
+        console.log("Dados do veículo para atualização:", dados);
+
         try {
-            await createVeiculo(dados);
-            setVeiculo({
-                marca: "",
-                modelo: "",
-                grupo: "",
-                ano: "",
-                cor: "",
-                valorDiaria: "",
-                quilometragem: "",
-                statusVeiculo: "",
-                estoqueId: "",
-                placa: "",
-            });
+            if (!id) {
+                alert("ID do veículo não informado.");
+                return;
+            }
+            await updateVeiculo(String(id), dados);
             navigate("/adm");
-        } catch (err) {
-            alert("Erro ao cadastrar veículo. Verifique os dados e tente novamente.");
+        } catch {
+            alert("Erro ao atualizar veículo. Verifique os dados e tente novamente.");
         }
     };
 
+    if (loading) return <div>Carregando...</div>;
+
     return (
         <>
-            <DashboardDefaults title="Adicionar novo veículo">
+            <DashboardDefaults title="Editar veículo">
                 <section className="criar-veiculo">
                     <section className="form-criar-veiculo">
                         <form onSubmit={enviar_form}>
@@ -195,9 +267,7 @@ const NovoVeiculo: React.FC = () => {
                                                     : ""
                                             }
                                             onChange={(e) => {
-                                                // Aceita apenas números
                                                 let value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                                                // Converte para centavos
                                                 let numeric = value ? (parseInt(value, 10) / 100).toFixed(2) : "";
                                                 pegarVeiculo("valorDiaria", numeric);
                                             }}
@@ -214,7 +284,6 @@ const NovoVeiculo: React.FC = () => {
                                             icon="icon-park-solid:map-distance"
                                             value={veiculo.quilometragem}
                                             onChange={(e) => {
-                                                // Aceita apenas números
                                                 let value = e.target.value.replace(/\D/g, "").slice(0, 10);
                                                 pegarVeiculo("quilometragem", value);
                                             }}
@@ -265,9 +334,7 @@ const NovoVeiculo: React.FC = () => {
                                             icon="solar:plate-bold"
                                             value={veiculo.placa}
                                             onChange={(e) => {
-                                                // Permitir apenas letras e números, converter para maiúsculo
                                                 let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
-                                                // Limitar a 7 caracteres
                                                 value = value.slice(0, 7);
                                                 pegarVeiculo("placa", value);
                                             }}
@@ -279,8 +346,7 @@ const NovoVeiculo: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-
-                            <button>Criar</button>
+                            <button>Salvar</button>
                         </form>
                     </section>
                 </section>
@@ -289,4 +355,4 @@ const NovoVeiculo: React.FC = () => {
     );
 };
 
-export default NovoVeiculo;
+export default EditarVeiculo;

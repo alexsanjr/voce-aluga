@@ -1,34 +1,24 @@
 import { useEffect, useState } from "react";
-
-import { InputSelect } from "../../components/inputs";
-import { getVeiculos } from "../../services/veiculosService";
+import { InputDate, InputSelect } from "../../components/inputs";
+import { getAllVeiculosDisponivel } from "../../services/veiculosService";
 import type { Veiculo } from "../../types/veiculo";
 import AluguelCard from "../AluguelCard/AluguelCard";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
+import { marcas as marcasOptions } from "../../utils/veiculoOptions";
 import "./Aluguel.css";
 
 const marcas = [
-    { label: "Todas", value: "" },
-    { label: "Fiat", value: "Fiat" },
-    { label: "Volkswagen", value: "Volkswagen" },
-    { label: "Chevrolet", value: "Chevrolet" },
-    { label: "Ford", value: "Ford" },
-    { label: "Toyota", value: "Toyota" },
-    { label: "Hyundai", value: "Hyundai" },
-    { label: "Renault", value: "Renault" },
-    { label: "Honda", value: "Honda" },
-    { label: "Nissan", value: "Nissan" },
-    { label: "Peugeot", value: "Peugeot" },
-    { label: "Citroën", value: "Citroën" },
-    { label: "Kia", value: "Kia" },
-    { label: "Outros", value: "Outros" },
+  { label: "Todas", value: "" },
+  ...marcasOptions
 ];
 
+// Mapeamento dos locais para seus respectivos filialId (como string)
 const locais = [
-    { label: "Todos", value: "" },
-    { label: "Campo Grande - RJ", value: "Campo Grande - RJ" },
-    { label: "Nova Iguaçu - RJ", value: "Nova Iguaçu - RJ" },
+  { label: "Todos", value: "" },
+  { label: "Rio de Janeiro", value: "1" },
+  { label: "São Paulo", value: "2" },
+  { label: "Salvador", value: "3" },
 ];
 
 const Aluguel: React.FC = () => {
@@ -42,22 +32,18 @@ const Aluguel: React.FC = () => {
         // eslint-disable-next-line
     }, [marca, local]);
 
-    async function buscarVeiculos() {
-        setLoading(true);
-        try {
-            // Aqui você pode adaptar para passar ambos filtros se o backend aceitar
-            const data = await getVeiculos(marca); // Adapte para getVeiculos(marca, local) se necessário
-            let filtrados = data.content || [];
-            if (local) {
-                filtrados = filtrados.filter((v: Veiculo) =>
-                    (v.filial || "").toLowerCase().includes(local.toLowerCase())
-                );
-            }
-            setVeiculos(filtrados);
-        } finally {
-            setLoading(false);
-        }
+  async function buscarVeiculos() {
+    setLoading(true);
+    try {
+      let veiculosDisponiveis = await getAllVeiculosDisponivel(marca);
+      if (local) {
+        veiculosDisponiveis = veiculosDisponiveis.filter((v: Veiculo) => String(v.filialId) === local);
+      }
+      setVeiculos(veiculosDisponiveis);
+    } finally {
+      setLoading(false);
     }
+  }
 
     function handleMarcaChange(e: React.ChangeEvent<HTMLSelectElement>) {
         setMarca(e.target.value);

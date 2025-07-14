@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMe } from "../../services/meService";
+import api from "../../services/api";
 import "./MinhasReservas.css";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
@@ -11,15 +12,7 @@ interface Reserva {
     dataReserva: string;
     dataVencimento: string;
     localRetiradaId: number;
-    veiculoId: number;
-    veiculo?: {
-        modelo: string;
-        marca: string;
-        placa: string;
-        ano: number;
-        cor: string;
-        imagemUrl?: string;
-    };
+    localRetiradaNome?: string; // Novo campo
 }
 
 const MinhasReservas: React.FC = () => {
@@ -28,19 +21,36 @@ const MinhasReservas: React.FC = () => {
     const [erro, setErro] = useState("");
 
     useEffect(() => {
-        async function fetchMe() {
+        async function fetchReservas() {
             setLoading(true);
             setErro("");
             try {
                 const me = await getMe();
-                setReservas(me.reservas || []);
+                const reservaIds: number[] = me.reservas || [];
+                const reservasDetalhes = await Promise.all(
+                    reservaIds.map(async (id) => {
+                        const res = await api.get(`/reservas/${id}`);
+                        const reserva = res.data;
+                        // Busca o nome da filial/local de retirada
+                        let localRetiradaNome = "";
+                        try {
+                            const filialRes = await api.get(`/filiais/${reserva.localRetiradaId}`);
+                            localRetiradaNome = filialRes.data.nome || `ID ${reserva.localRetiradaId}`;
+                        } catch {
+                            localRetiradaNome = `ID ${reserva.localRetiradaId}`;
+                        }
+                        return { id, ...reserva, localRetiradaNome };
+                    })
+                );
+                setReservas(reservasDetalhes);
             } catch (err) {
+                console.error("Erro detalhado:", err);
                 setErro("Erro ao buscar reservas do usuário.");
             } finally {
                 setLoading(false);
             }
         }
-        fetchMe();
+        fetchReservas();
     }, []);
 
     return (
@@ -58,20 +68,8 @@ const MinhasReservas: React.FC = () => {
                     <div className="minhas-reservas-list">
                         {reservas.map((r) => (
                             <div className="minhas-reserva-card" key={r.id}>
-                                <div className="minhas-reserva-imgbox">
-                                    <img
-                                        src={r.veiculo?.imagemUrl || "/vite.svg"}
-                                        alt={r.veiculo?.modelo || "Veículo"}
-                                    />
-                                </div>
                                 <div className="minhas-reserva-info">
-                                    <div className="minhas-reserva-title">
-                                        {r.veiculo?.marca} {r.veiculo?.modelo}
-                                    </div>
-                                    <div className="minhas-reserva-detalhes">
-                                        Placa: <b>{r.veiculo?.placa}</b> | Ano: <b>{r.veiculo?.ano}</b> | Cor:{" "}
-                                        <b>{r.veiculo?.cor}</b>
-                                    </div>
+                                    <div className="minhas-reserva-title">Reserva #{r.id}</div>
                                     <div className="minhas-reserva-datas">
                                         <span>
                                             Reserva: <b>{r.dataReserva}</b>
@@ -84,7 +82,7 @@ const MinhasReservas: React.FC = () => {
                                         Categoria: <b>{r.categoria}</b> | Status: <b>{r.status}</b>
                                     </div>
                                     <div className="minhas-reserva-local">
-                                        Local de Retirada (ID): <b>{r.localRetiradaId}</b>
+                                        Local de Retirada: <b>{r.localRetiradaNome}</b>
                                     </div>
                                 </div>
                             </div>
@@ -98,3 +96,4 @@ const MinhasReservas: React.FC = () => {
 };
 
 export default MinhasReservas;
+

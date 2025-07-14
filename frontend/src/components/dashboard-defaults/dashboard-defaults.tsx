@@ -8,7 +8,7 @@ interface Props {
 }
 
 const DashboardDefaults: React.FC<Props> = ({ children, title }) => {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    //const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <>
@@ -16,7 +16,7 @@ const DashboardDefaults: React.FC<Props> = ({ children, title }) => {
                 <section className="container-responsive">
                     <Sidebar />
                     <div className="main-content">
-                        <Header onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} title={title} />
+                        {/*<Header onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} title={title} />*/}
 
                         <main className="content">{children}</main>
                     </div>

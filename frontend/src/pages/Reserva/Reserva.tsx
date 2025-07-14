@@ -49,7 +49,7 @@ const Reserva: React.FC = () => {
       status,
       dataReserva,
       dataVencimento,
-      localRetiradaId: veiculo.estoqueId,
+      localRetiradaId: veiculo.filialId,
       veiculoId: veiculo.id,
       veiculo: {
         ...veiculo
@@ -83,7 +83,7 @@ const Reserva: React.FC = () => {
             Placa: <b>{veiculo.placa}</b><br />
             Ano: <b>{veiculo.ano}</b> <br />
             Cor: <b>{veiculo.cor}</b> <br />
-            Filial: <b>{veiculo.estoqueId}</b>
+            Filial: <b>{veiculo.filialId}</b>
           </div>
         </div>
         <form className="reserva-form" onSubmit={handleSubmit}>

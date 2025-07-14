@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getVeiculos } from "../../../services/veiculosService";
+import { getAllVeiculosDisponivel } from "../../../services/veiculosService";
 import type { Veiculo } from "../../../types/veiculo";
 import AluguelCard from "../../AluguelCard/AluguelCard";
 import { useNavigate } from "react-router-dom";
@@ -13,15 +13,15 @@ const HomeAluguel: React.FC = () => {
         buscarVeiculos();
     }, []);
 
-    async function buscarVeiculos() {
-        setLoading(true);
-        try {
-            const data = await getVeiculos();
-            setVeiculos((data.content || []).slice(0, 2));
-        } finally {
-            setLoading(false);
-        }
+  async function buscarVeiculos() {
+    setLoading(true);
+    try {
+      const data = await getAllVeiculosDisponivel();
+      setVeiculos((data || []).slice(0, 2));
+    } finally {
+      setLoading(false);
     }
+  }
 
     const navigate = useNavigate();
 

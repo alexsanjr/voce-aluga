@@ -1,13 +1,25 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
 import useHookAdmList from "../hook/useHookAdmList";
+import { deleteVeiculo } from "../../../services/veiculosService";
 
 import "./adm.min.css";
 import { useNavigate } from "react-router-dom";
 import { InputSelect } from "../../../components/inputs";
 
 const ListaFrota: React.FC = () => {
-    const { Lista_veiculos } = useHookAdmList();
+    const { Lista_veiculos, atualizarLista } = useHookAdmList();
+
+    const handleDelete = async (id: string | number) => {
+        if (window.confirm("Tem certeza que deseja excluir este veículo?")) {
+            try {
+                await deleteVeiculo(id);
+                if (typeof atualizarLista === "function") atualizarLista();
+            } catch (err) {
+                alert("Erro ao excluir veículo.");
+            }
+        }
+    };
 
     const navigate = useNavigate();
 
@@ -59,7 +71,7 @@ const ListaFrota: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {Lista_veiculos.map((item) => (
+                                        {Lista_veiculos.map((item: any) => (
                                             <tr key={item.id}>
                                                 <td>{item.marca}</td>
                                                 <td>{item.modelo}</td>
@@ -73,12 +85,12 @@ const ListaFrota: React.FC = () => {
                                                 </td>
                                                 <td className="edit">
                                                     <div>
-                                                        <button>
+                                                        <button onClick={() => navigate(`/editarveiculo/${item.id}`)}>
                                                             <i>
                                                                 <Icon icon="tabler:edit" />
                                                             </i>
                                                         </button>
-                                                        <button className="trash">
+                                                        <button className="trash" onClick={() => handleDelete(item.id)}>
                                                             <i>
                                                                 <Icon icon="iconamoon:trash-fill" />
                                                             </i>
