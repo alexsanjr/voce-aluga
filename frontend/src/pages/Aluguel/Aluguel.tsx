@@ -6,7 +6,7 @@ import AluguelCard from "../AluguelCard/AluguelCard";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import { marcas as marcasOptions, locais } from "../../utils/veiculoOptions";
-import "./Aluguel.css";
+import "./Aluguel.min.css";
 
 const marcas = [
   { label: "Todas", value: "" },
