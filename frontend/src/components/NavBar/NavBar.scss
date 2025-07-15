@@ -34,30 +34,53 @@
                 align-items: center;
                 gap: 1rem;
 
-                li {
+                .menu-item {
+                    border-radius: 0.5rem;
+                    transition: all 0.2s ease-in-out;
+
                     a {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        padding: 0.7rem 1rem;
                         font-size: 0.8rem;
                         text-decoration: none;
                         color: #000;
                         font-weight: 600;
+
+                        svg {
+                            width: 1.2rem;
+                            height: 1.2rem;
+                        }
                     }
 
-                    &:last-child {
+                    &.active {
+                        background-color: rgba($accent, 0.1);
                         a {
-                            padding: 0.7rem 1.5rem;
+                            color: $accent;
+                        }
+                    }
+
+                    &:hover:not(.active) {
+                        background-color: rgba($gray-200, 0.8);
+                    }
+
+                    &.logout, &.login {
+                        a {
                             background-color: $accent;
                             color: #fff;
-                            border-radius: 10rem;
-                            transition: 0.1s ease-in-out;
+                            border-radius: 0.5rem;
+                            transition: 0.2s ease-in-out;
+                            padding: 0.7rem 1.5rem;
+
+                            svg {
+                                color: #fff;
+                            }
 
                             &:hover {
                                 background-color: $accentHover;
                             }
                         }
-                    }
-
-                    &:hover {
-                        background-color: rgba($gray-200, 0.8);
                     }
                 }
             }

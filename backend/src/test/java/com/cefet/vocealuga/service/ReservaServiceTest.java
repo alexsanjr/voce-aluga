@@ -69,7 +69,10 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto, null);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(usuario);
+
+        ReservaDTO result = reservaService.insert(dto, authentication);
 
         ArgumentCaptor<Reserva> captor = ArgumentCaptor.forClass(Reserva.class);
         verify(reservaRepository).save(captor.capture());
@@ -100,7 +103,10 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto, null);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(funcionario);
+
+        ReservaDTO result = reservaService.insert(dto, authentication);
 
         assertEquals(StatusReserva.PENDENTE, result.getStatus());
         assertEquals(TipoReserva.IMEDIATA, result.getCategoria());
@@ -126,7 +132,10 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto, null);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(gerente);
+
+        ReservaDTO result = reservaService.insert(dto, authentication);
 
         assertEquals(StatusReserva.PENDENTE, result.getStatus());
         assertEquals(TipoReserva.IMEDIATA, result.getCategoria());
@@ -152,7 +161,10 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto, null);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(admin);
+
+        ReservaDTO result = reservaService.insert(dto, authentication);
 
         assertEquals(StatusReserva.PENDENTE, result.getStatus());
         assertEquals(TipoReserva.IMEDIATA, result.getCategoria());

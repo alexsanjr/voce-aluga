@@ -2,6 +2,8 @@ import "./NavBar.min.css";
 import logoImg from "../../assets/logo_footer_s.png";
 import { useState, useEffect } from "react";
 import { parseJwt } from "../../utils/jwt";
+import { Icon } from "@iconify/react";
+
 
 export default function NavBar() {
     const [isLogged, setIsLogged] = useState(() => !!localStorage.getItem("token"));
@@ -43,29 +45,45 @@ export default function NavBar() {
 
                 <nav className="navegacao">
                     <ul className="menus">
-                        <li className="HomePage">
-                            <a href="/">HOME</a>
+                        <li className={`menu-item ${window.location.pathname === '/' ? 'active' : ''}`}>
+                            <a href="/">
+                                <Icon icon="tabler:home" />
+                                <span>HOME</span>
+                            </a>
                         </li>
-                        <li className="ReservarAgora">
-                            <a href="/aluguel">RESERVAR AGORA</a>
+                        <li className={`menu-item ${window.location.pathname === '/aluguel' ? 'active' : ''}`}>
+                            <a href="/aluguel">
+                                <Icon icon="tabler:car" />
+                                <span>RESERVAR AGORA</span>
+                            </a>
                         </li>
-                        <li className="MinhasReservas">
-                            <a href="/minhas-reservas">MINHAS RESERVAS</a>
+                        <li className={`menu-item ${window.location.pathname === '/minhas-reservas' ? 'active' : ''}`}>
+                            <a href="/minhas-reservas">
+                                <Icon icon="tabler:list" />
+                                <span>MINHAS RESERVAS</span>
+                            </a>
                         </li>
                         {isLogged && (role === "ROLE_ADMININISTRADOR" || role === "ROLE_GERENTE") && (
-                            <li className="Painel">
-                                <a href="/adm">PAINEL</a>
+                            <li className={`menu-item ${window.location.pathname.startsWith('/adm') ? 'active' : ''}`}>
+                                <a href="/adm">
+                                    <Icon icon="tabler:dashboard" />
+                                    <span>PAINEL</span>
+                                </a>
                             </li>
                         )}
                         {isLogged ? (
-                            <li className="Logout">
+                            <li className="menu-item logout">
                                 <a href="#" onClick={handleLogout}>
-                                    SAIR
+                                    <Icon icon="tabler:logout" />
+                                    <span>SAIR</span>
                                 </a>
                             </li>
                         ) : (
-                            <li className="Login">
-                                <a href="/login">ENTRAR</a>
+                            <li className="menu-item login">
+                                <a href="/login">
+                                    <Icon icon="tabler:login" />
+                                    <span>ENTRAR</span>
+                                </a>
                             </li>
                         )}
                     </ul>

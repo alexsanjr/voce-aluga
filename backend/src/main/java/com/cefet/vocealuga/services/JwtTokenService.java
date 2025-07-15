@@ -53,7 +53,7 @@ public class JwtTokenService {
                     .getPayload()
                     .getSubject();
         } catch (Exception e) {
-            return null;
+            throw new InvalidDataAccessApiUsageException("Token inválido");
         }
 
     }

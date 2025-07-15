@@ -48,6 +48,12 @@ public class ReservaService {
 
     @Transactional
     public ReservaDTO insert(ReservaDTO dto, Authentication authentication) {
+        if (dto.getUsuarioId() == null) {
+            throw new IllegalArgumentException("UsuárioId é obrigatório");
+        }
+        if (authentication == null) {
+            throw new IllegalArgumentException("Authentication é obrigatório");
+        }
         if (dto.getLocalRetiradaId() == null) {
             throw new IllegalArgumentException("Local de retirada é obrigatório");
         }
