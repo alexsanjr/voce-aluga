@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,22 +47,21 @@ public class ReservaService {
     }
 
     @Transactional
-    public ReservaDTO insert(ReservaDTO dto) {
-        if (dto.getUsuarioId() == null) {
-            throw new IllegalArgumentException("Usuário é obrigatório");
-        }
+    public ReservaDTO insert(ReservaDTO dto, Authentication authentication) {
         if (dto.getLocalRetiradaId() == null) {
             throw new IllegalArgumentException("Local de retirada é obrigatório");
         }
         if (dto.getDataReserva() == null || dto.getDataVencimento() == null) {
             throw new IllegalArgumentException("Datas não podem ser nulas");
         }
-        if (dto.getDataVencimento() == null || dto.getDataReserva() == null) {
-            throw new IllegalArgumentException("Datas não podem ser nulas");
-        }
         if (!dto.getDataVencimento().isAfter(dto.getDataReserva())) {
             throw new IllegalArgumentException("Data de vencimento deve ser posterior à data de reserva");
         }
+
+        // Obtém o usuário logado do contexto de autenticação
+        Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
+        dto.setUsuarioId(usuarioLogado.getId());
+
         Reserva entity = convertToEntity(dto);
         entity = repository.save(entity);
         return convertToDTO(entity);

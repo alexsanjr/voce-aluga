@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,11 +37,11 @@ public class ReservaController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENTE', 'ROLE_FUNCIONARIO', 'ROLE_GERENTE')")
-    public ResponseEntity<ReservaDTO> insert(@Valid @RequestBody ReservaDTO dto) {
-        dto = service.insert(dto);
+    public ResponseEntity<ReservaDTO> insert(@RequestBody ReservaDTO dto, Authentication authentication) {
+        ReservaDTO result = service.insert(dto, authentication);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
+                .buildAndExpand(result.getId()).toUri();
+        return ResponseEntity.created(uri).body(result);
     }
 
     @PutMapping(value = "/{id}")
