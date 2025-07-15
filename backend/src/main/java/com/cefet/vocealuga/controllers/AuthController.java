@@ -42,21 +42,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        Usuario user = usuarioService.findByEmail(loginRequest.getEmail());
-
-        if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-
-            String tipo = user instanceof Gerente ? "ROLE_GERENTE" :
-                    user instanceof Administrador ? "ROLE_ADMIN"   :
-                            user instanceof Funcionario ? "ROLE_FUNCIONARIO" :
-                                    "ROLE_CLIENTE";
-
-
-            String token = jwtTokenService.generateToken(user.getEmail(), tipo);
-            return ResponseEntity.ok(new AuthResponse(token, tipo, "Login realizado com sucesso"));
+        AuthResponse response = usuarioService.authenticateUser(loginRequest);
+        if (response.getToken() != null) {
+            return ResponseEntity.ok(response);
         }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Credenciais inválidas"));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @GetMapping("/me")

@@ -1,0 +1,102 @@
+@startuml Fluxo de Reserva - Voce Aluga
+
+!theme plain
+title <size:16><color:#1976D2>Sistema Você Aluga - Processo de Reserva de Veículo</color></size>
+
+actor Cliente
+participant "Frontend\n(React)" as Frontend
+participant "Auth Controller" as AuthCtrl
+participant "Vehicle Controller" as VehicleCtrl
+participant "Reservation Controller" as ReservCtrl
+participant "Payment Controller" as PaymentCtrl
+participant "Vehicle Service" as VehicleSvc
+participant "Reservation Service" as ReservSvc
+participant "Payment Service" as PaymentSvc
+participant "Database" as DB
+participant "Payment Gateway" as PaymentGW
+
+== Autenticação ==
+Cliente -> Frontend: Acessa sistema
+Frontend -> AuthCtrl: POST /auth/login
+AuthCtrl -> DB: Valida credenciais
+DB --> AuthCtrl: Usuario válido
+AuthCtrl --> Frontend: JWT Token
+Frontend --> Cliente: Autenticado
+
+== Busca de Veículos ==
+Cliente -> Frontend: Busca veículos disponíveis
+Frontend -> VehicleCtrl: GET /veiculos?disponivel=true
+VehicleCtrl -> VehicleSvc: buscarVeiculosDisponiveis()
+VehicleSvc -> DB: SELECT * FROM veiculos WHERE status = 'DISPONIVEL'
+DB --> VehicleSvc: Lista de veículos
+VehicleSvc --> VehicleCtrl: List<Veiculo>
+VehicleCtrl --> Frontend: JSON com veículos
+Frontend --> Cliente: Exibe veículos disponíveis
+
+== Seleção e Reserva ==
+Cliente -> Frontend: Seleciona veículo e datas
+Frontend -> Frontend: Valida dados do formulário
+Frontend -> ReservCtrl: POST /reservas
+note right of ReservCtrl: Headers: Authorization: Bearer {token}
+
+ReservCtrl -> ReservSvc: criarReserva(dadosReserva)
+ReservSvc -> DB: BEGIN TRANSACTION
+
+alt Veículo disponível
+    ReservSvc -> DB: INSERT INTO reservas
+    DB --> ReservSvc: Reserva criada
+    
+    ReservSvc -> VehicleSvc: atualizarStatusVeiculo(id, RESERVADO)
+    VehicleSvc -> DB: UPDATE veiculos SET status = 'RESERVADO'
+    DB --> VehicleSvc: Status atualizado
+    VehicleSvc --> ReservSvc: Confirmação
+    
+    ReservSvc -> DB: COMMIT TRANSACTION
+    DB --> ReservSvc: Transação confirmada
+    ReservSvc --> ReservCtrl: Reserva criada com sucesso
+    ReservCtrl --> Frontend: 201 Created + dados da reserva
+    
+else Veículo indisponível
+    ReservSvc -> DB: ROLLBACK TRANSACTION
+    ReservSvc --> ReservCtrl: Exception: VeiculoIndisponivelException
+    ReservCtrl --> Frontend: 409 Conflict
+    Frontend --> Cliente: "Veículo não disponível"
+end
+
+== Processo de Pagamento ==
+Cliente -> Frontend: Procede para pagamento
+Frontend -> PaymentCtrl: POST /pagamentos
+PaymentCtrl -> PaymentSvc: processarPagamento(dadosPagamento)
+
+PaymentSvc -> PaymentGW: Processa pagamento
+PaymentGW --> PaymentSvc: Resposta do pagamento
+
+alt Pagamento aprovado
+    PaymentSvc -> DB: INSERT INTO pagamentos
+    PaymentSvc -> ReservSvc: confirmarReserva(reservaId)
+    ReservSvc -> DB: UPDATE reservas SET status = 'CONFIRMADA'
+    DB --> ReservSvc: Status atualizado
+    ReservSvc --> PaymentSvc: Reserva confirmada
+    PaymentSvc --> PaymentCtrl: Pagamento processado
+    PaymentCtrl --> Frontend: 200 OK + confirmação
+    Frontend --> Cliente: "Reserva confirmada!"
+    
+else Pagamento recusado
+    PaymentSvc -> ReservSvc: cancelarReserva(reservaId)
+    ReservSvc -> DB: UPDATE reservas SET status = 'CANCELADA'
+    ReservSvc -> VehicleSvc: liberarVeiculo(veiculoId)
+    VehicleSvc -> DB: UPDATE veiculos SET status = 'DISPONIVEL'
+    PaymentSvc --> PaymentCtrl: Pagamento recusado
+    PaymentCtrl --> Frontend: 402 Payment Required
+    Frontend --> Cliente: "Pagamento recusado"
+end
+
+== Confirmação Final ==
+Frontend -> Cliente: Exibe confirmação da reserva
+note over Cliente, PaymentGW
+  O cliente recebe email de confirmação
+  e pode acompanhar o status da reserva
+  na página "Minhas Reservas"
+end note
+
+@enduml

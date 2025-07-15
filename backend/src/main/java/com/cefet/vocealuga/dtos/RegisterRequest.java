@@ -1,21 +1,42 @@
 package com.cefet.vocealuga.dtos;
 
 import com.cefet.vocealuga.dtos.enums.TipoRegister;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 public class RegisterRequest {
+    @NotBlank
     private String nome;
     @Column(unique = true)
+    @NotBlank
     private String documento;
+    @NotNull
     private LocalDate dataNascimento;
     @Column(unique = true)
+    @NotBlank
     private String email;
+    @NotBlank
     private String telefone;
+    @NotBlank
     private String password;
     private TipoRegister tipo;
+
+    public RegisterRequest(String nome, String documento, LocalDate dataNascimento, String email, String telefone, String password, TipoRegister tipo) {
+        this.nome = nome;
+        this.documento = documento;
+        this.dataNascimento = dataNascimento;
+        this.email = email;
+        this.telefone = telefone;
+        this.password = password;
+        this.tipo = tipo;
+    }
+
+    public RegisterRequest() {
+    }
 
     public String getEmail() {
         return email;

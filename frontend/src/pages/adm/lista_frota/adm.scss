@@ -32,6 +32,10 @@
                 background-color: $accentHover;
             }
         }
+
+        .input-wrapper {
+            margin-bottom: 0rem;
+        }
     }
 
     .table {
@@ -54,7 +58,7 @@
                     th {
                         background-color: $gray-200;
                         padding: 1rem;
-                        text-align: start;
+                        text-align: center;
                         font-weight: 600;
 
                         &:first-child {
@@ -116,7 +120,7 @@
                                     border-radius: 50%;
                                 }
 
-                                &.DISPONIVEL {
+                                &.RESERVADO {
                                     background-color: #f2eaff;
                                     color: $accent;
 
@@ -140,7 +144,7 @@
                                         background-color: #2ecc71;
                                     }
                                 }
-                                &.RESERVADO {
+                                &.DISPONIVEL {
                                     background-color: #d6feff;
                                     color: #2e80cc;
 

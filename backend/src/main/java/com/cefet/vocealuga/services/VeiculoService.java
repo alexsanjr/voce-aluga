@@ -41,9 +41,17 @@ public class VeiculoService {
 
     @Transactional
     public VeiculoDTO insert(VeiculoDTO dto) {
-        Veiculo entity = convertToEntity(dto);
-        entity = veiculoRepository.save(entity);
-        return convertToDTO(entity);
+        try {
+            Veiculo entity = convertToEntity(dto);
+            entity = veiculoRepository.save(entity);
+            return convertToDTO(entity);
+        }
+        catch (DataIntegrityViolationException e) {
+            if (e.getMessage().contains("placa") || e.getCause().getMessage().contains("placa")) {
+                throw new DatabaseException("Veículo já cadastrado");
+            }
+            throw new DatabaseException("Falha de integridade referencial");
+        }
     }
 
     @Transactional
@@ -71,6 +79,13 @@ public class VeiculoService {
         catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Falha de integridade referencial");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public VeiculoDTO findByPlaca(String placa) {
+        Veiculo veiculo = veiculoRepository.findByPlaca(placa)
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado com a placa: " + placa));
+        return convertToDTO(veiculo);
     }
 
 

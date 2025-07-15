@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Exportar Todos os Diagramas PlantUML",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"Write-Host 'Exportando diagramas PlantUML...' -ForegroundColor Green; if (!(Test-Path 'docs')) { New-Item -ItemType Directory -Name 'docs' }; if (!(Test-Path 'docs\\diagramas')) { New-Item -ItemType Directory -Path 'docs\\diagramas' }; Write-Host 'Diretórios criados. Use Ctrl+Shift+P -> PlantUML: Export Workspace Diagrams para exportar.' -ForegroundColor Yellow"
+			],
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

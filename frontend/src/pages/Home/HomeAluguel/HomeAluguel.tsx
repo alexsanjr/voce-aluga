@@ -17,7 +17,7 @@ const HomeAluguel: React.FC = () => {
     setLoading(true);
     try {
       const data = await getAllVeiculosDisponivel();
-      setVeiculos((data || []).slice(0, 2));
+      setVeiculos((data || []).slice(0, 3));
     } finally {
       setLoading(false);
     }

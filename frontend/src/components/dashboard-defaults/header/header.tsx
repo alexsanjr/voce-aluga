@@ -20,8 +20,8 @@ const Header = ({ onMenuToggle, title }: HeaderProps) => {
                 </div>
 
                 <div className="right-section">
-                    <div className="notification">
-                        {/* ICONE AQUI */}
+                    {/*<div className="notification">
+                        {/* ICONE AQUI *//*}
                         <Icon icon="fluent:alert-24-filled" fontSize={18} />
                         <span className="notification-badge"></span>
                     </div>
@@ -29,7 +29,7 @@ const Header = ({ onMenuToggle, title }: HeaderProps) => {
                     <div className="user">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" />
                         <span className="user-name">Admin user</span>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </header>

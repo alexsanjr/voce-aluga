@@ -310,23 +310,6 @@ const EditarVeiculo: React.FC = () => {
                                         </select>
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="estoqueId">Estoque</label>
-                                        <select
-                                            id="estoqueId"
-                                            className="input-select"
-                                            value={veiculo.estoqueId}
-                                            onChange={(e) => pegarVeiculo("estoqueId", e.target.value)}
-                                            required
-                                        >
-                                            <option value="">Selecione o estoque</option>
-                                            {estoques.map((e) => (
-                                                <option key={e.value} value={e.value}>
-                                                    {e.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
                                         <label htmlFor="placa">Placa</label>
                                         <InputText
                                             id="placa"

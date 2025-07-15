@@ -2,10 +2,12 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
 import useHookAdmList from "../hook/useHookAdmList";
 import { deleteVeiculo } from "../../../services/veiculosService";
+import { useState } from "react";
 
 import "./adm.min.css";
 import { useNavigate } from "react-router-dom";
 import { InputSelect } from "../../../components/inputs";
+import { locais } from "../../../utils/veiculoOptions";
 
 const ListaFrota: React.FC = () => {
     const { Lista_veiculos, atualizarLista } = useHookAdmList();
@@ -23,20 +25,13 @@ const ListaFrota: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const filiais = [
-        {
-            label: "Seleciona a filial",
-            value: "",
-        },
-        {
-            label: "Rio de janeiro",
-            value: "Rio de janeiro",
-        },
-        {
-            label: "São paulo",
-            value: "São paulo",
-        },
-    ];
+
+    const [filialSelecionada, setFilialSelecionada] = useState("");
+
+    // Filtra veículos pela filial selecionada (filialId)
+    const veiculosFiltrados = filialSelecionada
+        ? Lista_veiculos.filter((v: any) => String(v.filialId) === filialSelecionada)
+        : Lista_veiculos;
 
     return (
         <>
@@ -50,12 +45,17 @@ const ListaFrota: React.FC = () => {
                             <p>Adicionar veículo</p>
                         </button>
 
-                        <InputSelect options={filiais} icon="icon-park-solid:city" />
+                        <InputSelect
+                            options={locais}
+                            icon="icon-park-solid:city"
+                            value={filialSelecionada}
+                            onChange={e => setFilialSelecionada(e.target.value)}
+                        />
                     </div>
 
                     <div className="table">
                         <div className="arredondar">
-                            {Lista_veiculos && (
+                            {veiculosFiltrados && (
                                 <table>
                                     <thead>
                                         <tr>
@@ -71,7 +71,7 @@ const ListaFrota: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {Lista_veiculos.map((item: any) => (
+                                        {veiculosFiltrados.map((item: any) => (
                                             <tr key={item.id}>
                                                 <td>{item.marca}</td>
                                                 <td>{item.modelo}</td>
@@ -87,7 +87,7 @@ const ListaFrota: React.FC = () => {
                                                     <div>
                                                         <button onClick={() => navigate(`/editarveiculo/${item.id}`)}>
                                                             <i>
-                                                                <Icon icon="tabler:edit" />
+                                                                <Icon icon="tabler:edit" style={{color:"black"}} />
                                                             </i>
                                                         </button>
                                                         <button className="trash" onClick={() => handleDelete(item.id)}>
