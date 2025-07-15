@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Veiculo } from "../../types/veiculo";
 import car from "../../assets/background-banner.png";
+import { getLoggedUserId } from "../../services/authService";
 // import { criarReserva } from "../../services/reservaService";
 import "./Reserva.css";
 
@@ -21,7 +22,7 @@ const Reserva: React.FC = () => {
   const todayStr = new Date().toISOString().slice(0, 10);
   const [dataReserva, setDataReserva] = useState(todayStr);
   const [dataVencimento, setDataVencimento] = useState("");
-  const [status] = useState("AGENDADO");
+  const [status] = useState("PENDENTE");
   const [erro, setErro] = useState("");
 
   if (!veiculo) {
@@ -44,11 +45,18 @@ const Reserva: React.FC = () => {
       return;
     }
 
+    const usuarioId = getLoggedUserId();
+    if (!usuarioId) {
+      setErro("Usuário não está logado. Por favor, faça login novamente.");
+      return;
+    }
+
     const reservaPayload = {
       categoria,
       status,
       dataReserva,
       dataVencimento,
+      usuarioId,
       localRetiradaId: veiculo.filialId,
       veiculoId: veiculo.id,
       veiculo: {
@@ -117,10 +125,6 @@ const Reserva: React.FC = () => {
           <label>
             Local de Retirada (ID):
             <input type="text" value={veiculo.estoqueId} disabled />
-          </label>
-          <label>
-            Status:
-            <input type="text" value={status} disabled />
           </label>
           {erro && <div className="erro">{erro}</div>}
           <button type="submit">Confirmar Reserva</button>

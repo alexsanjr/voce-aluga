@@ -124,7 +124,7 @@
                                         background-color: #2ecc71;
                                     }
                                 }
-                                &.PENDENTE {
+                                &.CANCELADO {
                                     background-color: #ffe7e2;
                                     color: #ff6041;
 
@@ -132,7 +132,7 @@
                                         background-color: #ff6041;
                                     }
                                 }
-                                &.CONCLUIDA, &.CONCLUÍDA {
+                                &.CONCLUIDA, &.CONCLUÍDA, &.PENDENTE {
                                     background-color: #d6feff;
                                     color: #2e80cc;
 

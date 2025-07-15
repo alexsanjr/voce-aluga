@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
 
 import { useEffect, useState } from "react";
-import { getTransferencias } from "../../../services/lista_tranferenciaService";
+import { getTransferencias } from "../../../services/tranferenciaService";
 import { estoques } from "../../../utils/veiculoOptions";
 import { useNavigate } from "react-router-dom";
 
@@ -53,7 +53,7 @@ const ListaTransferencia: React.FC = () => {
             <DashboardDefaults title="Transferências de veículos">
                 <section className="container-table-frota">
                     <div className="title">
-                        <button onClick={() => navigate(`/novatransferencia`)}>
+                        <button onClick={() => navigate(`/nova_transferencia`)}>
                             <i>
                                 <Icon icon="fluent-emoji-high-contrast:plus" />
                             </i>
@@ -86,15 +86,6 @@ const ListaTransferencia: React.FC = () => {
                                                 <td>{formatarData(item.data)}</td>
                                                 <td className="status">
                                                     <span className={item.status}>{item.status}</span>
-                                                </td>
-                                                <td className="edit">
-                                                    <div>
-                                                        <button onClick={() => navigate(`/editartransferencia/${item.id}`)}>
-                                                            <i>
-                                                                <Icon icon="tabler:edit" />
-                                                            </i>
-                                                        </button>
-                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}

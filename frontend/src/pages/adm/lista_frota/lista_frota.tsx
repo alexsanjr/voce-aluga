@@ -87,7 +87,7 @@ const ListaFrota: React.FC = () => {
                                                     <div>
                                                         <button onClick={() => navigate(`/editarveiculo/${item.id}`)}>
                                                             <i>
-                                                                <Icon icon="tabler:edit" />
+                                                                <Icon icon="tabler:edit" style={{color:"black"}} />
                                                             </i>
                                                         </button>
                                                         <button className="trash" onClick={() => handleDelete(item.id)}>
