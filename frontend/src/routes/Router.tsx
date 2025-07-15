@@ -59,7 +59,6 @@ export default function Router() {
                 }
             />
 
-
             <Route
                 path="/adm"
                 element={
@@ -113,7 +112,6 @@ export default function Router() {
                     </PrivateRoute>
                 }
             />
-
         </Routes>
     );
 }
