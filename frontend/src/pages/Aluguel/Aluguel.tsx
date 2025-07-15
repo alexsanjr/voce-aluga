@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
-import { InputDate, InputSelect } from "../../components/inputs";
+import { InputSelect } from "../../components/inputs";
 import { getAllVeiculosDisponivel } from "../../services/veiculosService";
 import type { Veiculo } from "../../types/veiculo";
 import AluguelCard from "../AluguelCard/AluguelCard";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import { marcas as marcasOptions } from "../../utils/veiculoOptions";
-import "./Aluguel.css";
+import "./Aluguel.min.css";
 
-const marcas = [
-  { label: "Todas", value: "" },
-  ...marcasOptions
-];
+const marcas = [{ label: "Todas", value: "" }, ...marcasOptions];
 
 // Mapeamento dos locais para seus respectivos filialId (como string)
 const locais = [
-  { label: "Todos", value: "" },
-  { label: "Rio de Janeiro", value: "1" },
-  { label: "São Paulo", value: "2" },
-  { label: "Salvador", value: "3" },
+    { label: "Todos", value: "" },
+    { label: "Rio de Janeiro", value: "1" },
+    { label: "São Paulo", value: "2" },
+    { label: "Salvador", value: "3" },
 ];
 
 const Aluguel: React.FC = () => {
@@ -32,18 +29,18 @@ const Aluguel: React.FC = () => {
         // eslint-disable-next-line
     }, [marca, local]);
 
-  async function buscarVeiculos() {
-    setLoading(true);
-    try {
-      let veiculosDisponiveis = await getAllVeiculosDisponivel(marca);
-      if (local) {
-        veiculosDisponiveis = veiculosDisponiveis.filter((v: Veiculo) => String(v.filialId) === local);
-      }
-      setVeiculos(veiculosDisponiveis);
-    } finally {
-      setLoading(false);
+    async function buscarVeiculos() {
+        setLoading(true);
+        try {
+            let veiculosDisponiveis = await getAllVeiculosDisponivel(marca);
+            if (local) {
+                veiculosDisponiveis = veiculosDisponiveis.filter((v: Veiculo) => String(v.filialId) === local);
+            }
+            setVeiculos(veiculosDisponiveis);
+        } finally {
+            setLoading(false);
+        }
     }
-  }
 
     function handleMarcaChange(e: React.ChangeEvent<HTMLSelectElement>) {
         setMarca(e.target.value);
@@ -56,25 +53,41 @@ const Aluguel: React.FC = () => {
         <>
             <NavBar />
             <section className="container-aluguel">
-                <div className="container">
-                    <strong className="titulo">Encontre o seu carro perfeito</strong>
-                    <div className="inputs">
-                        <InputSelect
-                            icon={"mdi:location"}
-                            label={"Local de retirada"}
-                            options={locais}
-                            value={local}
-                            onChange={handleLocalChange}
-                        />
-                        <InputSelect
-                            icon={"mdi:car"}
-                            label={"Marca"}
-                            options={marcas}
-                            value={marca}
-                            onChange={handleMarcaChange}
-                        />
+                <div className="container-tamanho">
+                    <div className="title">
+                        <strong>
+                            Alugue o <span>Carro</span> dos Seus Sonhos
+                        </strong>
+                        <p>
+                            Experimente a emoção de dirigir o carro dos seus sonhos. Escolha o local de retirada e a
+                            marca para começar.
+                        </p>
                     </div>
+
+                    <div className="container-agendamento">
+                        <div className="container">
+                            <strong className="titulo">Encontre o seu carro perfeito</strong>
+                            <div className="inputs">
+                                <InputSelect
+                                    icon={"mdi:location"}
+                                    label={"Local de retirada"}
+                                    options={locais}
+                                    value={local}
+                                    onChange={handleLocalChange}
+                                />
+                                <InputSelect
+                                    icon={"mdi:car"}
+                                    label={"Marca"}
+                                    options={marcas}
+                                    value={marca}
+                                    onChange={handleMarcaChange}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="aluguel-cards-list">
+                        {}
                         {loading ? (
                             <span>Carregando veículos...</span>
                         ) : veiculos.length === 0 ? (
