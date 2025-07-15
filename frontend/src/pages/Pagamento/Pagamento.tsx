@@ -2,7 +2,7 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { criarPagamento } from "../../services/pagamentoService";
+import { criarPagamento, type PagamentoDTO } from "../../services/pagamentoService";
 import { criarReserva } from "../../services/reservaService";
 import "./Pagamento.css";
 
@@ -29,25 +29,46 @@ export default function Pagamento() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    let payload: any = { metodo };
-    if (metodo === "credit-card" || metodo === "debit-card") {
-      payload = {
-        ...payload,
-        cardNumber: form.cardNumber,
-        cardExpiry: form.cardExpiry,
-        cardCVV: form.cardCVV,
-        cardName: form.cardName,
-      };
+    setError("");
+
+    if (!metodo) {
+      setError("Por favor, selecione um método de pagamento");
+      setLoading(false);
+      return;
     }
+
     try {
-      await criarPagamento(payload);
-      // Só cria a reserva se o pagamento for aprovado
+      // Primeiro cria a reserva
+      let reservaResponse;
       if (reservaPayload) {
-        await criarReserva(reservaPayload);
+        reservaResponse = await criarReserva(reservaPayload);
       }
-      navigate("/minhas-reservas");
-    } catch (err) {
-      // Trate o erro se necessário
+
+      if (!reservaResponse?.id) {
+        throw new Error("Erro ao criar reserva");
+      }
+
+      // Prepara o payload do pagamento
+      const pagamentoPayload: PagamentoDTO = {
+        metodo,
+        ...(metodo === "credit-card" || metodo === "debit-card" ? {
+          cardNumber: form.cardNumber.replace(/\s/g, ''), // remove espaços do número do cartão
+          cardExpiry: form.cardExpiry,
+          cardCVV: form.cardCVV,
+          cardName: form.cardName,
+        } : {})
+      };
+
+      // Cria o pagamento
+      await criarPagamento(pagamentoPayload);
+
+      setSuccess("Pagamento realizado com sucesso!");
+      setTimeout(() => {
+        navigate("/minhas-reservas");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "Erro ao processar pagamento. Tente novamente.");
+      console.error("Erro no pagamento:", err);
     } finally {
       setLoading(false);
     }
