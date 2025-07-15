@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { getReservas, aprovarReserva, cancelarReserva, encerrarReserva, iniciarReserva } from "../../../services/reservaService";
+import type { ApiError } from "../../../types/api-error";
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
 import "./lista_reservas.min.css";
 
@@ -53,13 +54,22 @@ const ListaReservas: React.FC = () => {
         };
     };
 
+    const handleError = (error: any) => {
+        console.error('Erro:', error);
+        if (error.response?.data) {
+            const apiError = error.response.data as ApiError;
+            alert(apiError.message || 'Ocorreu um erro. Tente novamente.');
+        } else {
+            alert('Ocorreu um erro inesperado. Tente novamente.');
+        }
+    };
+
     const handleAprovar = async (reserva: Reserva) => {
         try {
             await aprovarReserva(reserva.id, getReservaUpdateData(reserva));
             setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "AGENDADO" } : r));
         } catch (error) {
-            console.error('Erro ao aprovar reserva:', error);
-            alert('Erro ao aprovar reserva. Tente novamente.');
+            handleError(error);
         }
     };
 
@@ -68,8 +78,7 @@ const ListaReservas: React.FC = () => {
             await cancelarReserva(reserva.id, getReservaUpdateData(reserva));
             setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "CANCELADO" } : r));
         } catch (error) {
-            console.error('Erro ao cancelar reserva:', error);
-            alert('Erro ao cancelar reserva. Tente novamente.');
+            handleError(error);
         }
     };
 
@@ -78,8 +87,7 @@ const ListaReservas: React.FC = () => {
             await iniciarReserva(reserva.id, getReservaUpdateData(reserva));
             setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "EM_ANDAMENTO" } : r));
         } catch (error) {
-            console.error('Erro ao iniciar reserva:', error);
-            alert('Erro ao iniciar reserva. Tente novamente.');
+            handleError(error);
         }
     };
 
@@ -88,8 +96,7 @@ const ListaReservas: React.FC = () => {
             await encerrarReserva(reserva.id, getReservaUpdateData(reserva));
             setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "ENCERRADO" } : r));
         } catch (error) {
-            console.error('Erro ao encerrar reserva:', error);
-            alert('Erro ao encerrar reserva. Tente novamente.');
+            handleError(error);
         }
     };
 
