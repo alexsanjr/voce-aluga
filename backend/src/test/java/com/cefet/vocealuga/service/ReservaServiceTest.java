@@ -69,7 +69,7 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto);
+        ReservaDTO result = reservaService.insert(dto, null);
 
         ArgumentCaptor<Reserva> captor = ArgumentCaptor.forClass(Reserva.class);
         verify(reservaRepository).save(captor.capture());
@@ -100,7 +100,7 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto);
+        ReservaDTO result = reservaService.insert(dto, null);
 
         assertEquals(StatusReserva.PENDENTE, result.getStatus());
         assertEquals(TipoReserva.IMEDIATA, result.getCategoria());
@@ -126,7 +126,7 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto);
+        ReservaDTO result = reservaService.insert(dto, null);
 
         assertEquals(StatusReserva.PENDENTE, result.getStatus());
         assertEquals(TipoReserva.IMEDIATA, result.getCategoria());
@@ -152,7 +152,7 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ReservaDTO result = reservaService.insert(dto);
+        ReservaDTO result = reservaService.insert(dto, null);
 
         assertEquals(StatusReserva.PENDENTE, result.getStatus());
         assertEquals(TipoReserva.IMEDIATA, result.getCategoria());
@@ -176,7 +176,7 @@ public class ReservaServiceTest {
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
 
-        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto));
+        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto, null));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class ReservaServiceTest {
         dto.setDataReserva(LocalDate.now());
         dto.setDataVencimento(LocalDate.now().plusDays(1));
 
-        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto));
+        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto, null));
     }
 
     @Test
@@ -200,7 +200,7 @@ public class ReservaServiceTest {
         dto.setDataReserva(LocalDate.now());
         dto.setDataVencimento(LocalDate.now().plusDays(1));
 
-        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto));
+        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto, null));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class ReservaServiceTest {
         dto.setStatus(StatusReserva.PENDENTE);
         dto.setDataVencimento(LocalDate.now().plusDays(1));
 
-        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto));
+        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto, null));
     }
 
     @Test
@@ -224,7 +224,7 @@ public class ReservaServiceTest {
         dto.setStatus(StatusReserva.PENDENTE);
         dto.setDataReserva(LocalDate.now());
 
-        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto));
+        assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto, null));
     }
 
     @Test
