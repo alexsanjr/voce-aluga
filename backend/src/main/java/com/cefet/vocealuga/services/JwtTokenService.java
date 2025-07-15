@@ -18,9 +18,10 @@ public class JwtTokenService {
     private static final String SECRET = "uma-chave-super-secreta-muito-mais-longa-que-32-bytes!123";
     private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
-    public String generateToken(String email, String role) {
+    public String generateToken(String email, String role, Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
+        claims.put("usuario_id", userId);
         return Jwts.builder()
                 .setClaims(claims)
                 .subject(email)
@@ -28,6 +29,19 @@ public class JwtTokenService {
                 .expiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
                 .signWith(KEY, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Long getUserIdFromToken(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("usuario_id", Long.class);
+        } catch (Exception e) {
+            throw new InvalidDataAccessApiUsageException("Token invalid");
+        }
     }
 
     public String getUsernameFromToken(String token) {

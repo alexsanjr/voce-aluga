@@ -115,7 +115,7 @@ public class UsuarioService {
                     user instanceof Administrador ? "ROLE_ADMIN" :
                             user instanceof Funcionario ? "ROLE_FUNCIONARIO" :
                                     "ROLE_CLIENTE";
-            String token = jwtTokenService.generateToken(user.getEmail(), tipo);
+            String token = jwtTokenService.generateToken(user.getEmail(), tipo, user.getId());
             return new AuthResponse(token, tipo, "Login realizado com sucesso");
         }
         return new AuthResponse("Credenciais inválidas");

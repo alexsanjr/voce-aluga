@@ -171,13 +171,13 @@ class UsuarioServiceTest {
         Cliente usuario = new Cliente();
         usuario.setEmail("robson@gmail.com");
         usuario.setPassword("senhaCodificada");
+        usuario.setId(1L); // Adicionando um ID ao usuário para passar ao generateToken
 
         when(usuarioRepository.findByEmail("robson@gmail.com")).thenReturn(usuario);
         when(passwordEncoder.matches("Senha123!", "senhaCodificada")).thenReturn(true);
 
-
         JwtTokenService jwtTokenService = mock(JwtTokenService.class);
-        when(jwtTokenService.generateToken(anyString(), anyString())).thenReturn("tokenFake");
+        when(jwtTokenService.generateToken(anyString(), anyString(), anyLong())).thenReturn("tokenFake");
 
         UsuarioService usuarioServiceReal = new UsuarioService(usuarioRepository, passwordEncoder, jwtTokenService);
 
