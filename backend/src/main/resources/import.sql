@@ -24,8 +24,8 @@ INSERT INTO administrador (id) VALUES (2);
 
 
 
-INSERT INTO filial (nome, local) VALUES ('Filial 1', 'Rio de Janeiro')
-    INSERT INTO filial (nome, local) VALUES ('Filial 2', 'São Paulo');
+INSERT INTO filial (nome, local) VALUES ('Filial 1', 'Rio de Janeiro');
+INSERT INTO filial (nome, local) VALUES ('Filial 2', 'São Paulo');
 INSERT INTO filial (nome, local) VALUES ('Filial 3', 'Salvador');
 
 INSERT INTO estoque (nome, filial_id) VALUES ('Estoque 1',1);
@@ -58,7 +58,7 @@ INSERT INTO ESTACAO_DE_SERVICO (local, nome) VALUES ('São Paulo - SP', 'Filial 
 INSERT INTO ESTACAO_DE_SERVICO (local, nome) VALUES ( 'Rio de Janeiro - RJ', 'Filial Centro');
 INSERT INTO ESTACAO_DE_SERVICO (local, nome) VALUES ('Curitiba - PR', 'Pátio Sul');
 
-INSERT INTO Agendar_Manutencao (data_manutencao, estacao_de_servico_id, veiculo_id, motivo_manutencao) VALUES (TIMESTAMP WITH TIME ZONE '2025-07-03T10:00:00Z', 2, 4, 'pneu furado');
+INSERT INTO Agendar_Manutencao (data_manutencao, estacao_de_servico_id, veiculo_id, motivo_manutencao) VALUES (TIMESTAMP WITH TIME ZONE '2025-07-03T10:00:00Z', 2, 3, 'pneu furado');
 
 INSERT INTO Reserva (categoria, status, data_reserva, data_vencimento, filial_id, usuario_id) VALUES (0, 1, DATE '2025-07-03', DATE '2025-07-10', 1, 3);
 INSERT INTO Reserva (categoria, status, data_reserva, data_vencimento, filial_id,  usuario_id) VALUES (1, 2, DATE '2025-07-03', DATE '2025-07-10', 2, 3);

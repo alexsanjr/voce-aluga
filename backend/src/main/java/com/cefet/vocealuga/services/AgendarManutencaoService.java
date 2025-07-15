@@ -4,6 +4,7 @@ import com.cefet.vocealuga.dtos.AgendarManutencaoDTO;
 import com.cefet.vocealuga.entities.AgendarManutencao;
 import com.cefet.vocealuga.entities.EstacaoDeServico;
 import com.cefet.vocealuga.entities.Veiculo;
+import com.cefet.vocealuga.entities.enums.StatusVeiculo;
 import com.cefet.vocealuga.repositories.AgendarManutencaoRepository;
 import com.cefet.vocealuga.repositories.EstacaoDeServicoRepository;
 import com.cefet.vocealuga.repositories.VeiculoRepository;
@@ -47,8 +48,19 @@ public class AgendarManutencaoService {
 
     @Transactional
     public AgendarManutencaoDTO insert(AgendarManutencaoDTO dto) {
+        Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId())
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
+
+        if (veiculo.getStatusVeiculo() != StatusVeiculo.DISPONIVEL) {
+            throw new IllegalStateException("Veículo não está disponível para manutenção");
+        }
+
+        veiculo.setStatusVeiculo(StatusVeiculo.MANUTENCAO);
+        veiculoRepository.save(veiculo);
+
         AgendarManutencao entity = convertToEntity(dto);
         entity = repository.save(entity);
+
         return convertToDTO(entity);
     }
 
