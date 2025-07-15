@@ -1,0 +1,36 @@
+{
+    "plantuml.server": "https://www.plantuml.com/plantuml",
+    "plantuml.render": "PlantUMLServer",
+    "plantuml.exportFormat": "svg",
+    "plantuml.exportSubFolder": true,
+    "plantuml.exportConcurrency": 3,
+    "plantuml.exportMapFile": false,
+    "plantuml.diagramsRoot": ".",
+    "plantuml.includes": [
+        "**/*.puml",
+        "**/*.plantuml"
+    ],
+    "plantuml.previewAutoUpdate": true,
+    "plantuml.urlFormat": "svg",
+    "plantuml.urlResult": "MarkDown",
+    "files.associations": {
+        "*.puml": "plantuml",
+        "*.plantuml": "plantuml"
+    },
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": false
+    },
+    "[plantuml]": {
+        "editor.autoIndent": "full",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.wordWrap": "on",
+        "editor.fontSize": 14,
+        "editor.lineHeight": 1.4,
+        "editor.minimap.enabled": false,
+        "editor.folding": true,
+        "editor.foldingStrategy": "indentation"
+    }
+}

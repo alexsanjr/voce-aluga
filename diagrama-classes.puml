@@ -1,0 +1,178 @@
+@startuml "Diagrama de Classes - Você Aluga"
+
+abstract class Usuario {
+  -Long id
+  -String nome
+  -String documento
+  -LocalDate dataDeNascimento
+  -String email
+  -String password
+  -String telefone
+}
+
+class Cliente extends Usuario {
+  -int pontosFidelidade
+}
+
+class Funcionario extends Usuario {
+  -String cargo
+  -Filial filial
+}
+
+class Gerente extends Usuario {
+  -String setor
+  -Filial filial
+}
+
+class Administrador extends Usuario {
+  -String nivel
+}
+
+class Veiculo {
+  -Long id
+  -String marca
+  -String modelo
+  -Grupo grupo
+  -int ano
+  -Cor cor
+  -double valorDiaria
+  -Long quilometragem
+  -StatusVeiculo statusVeiculo
+  -String placa
+  -Estoque estoque
+  -Filial filial
+}
+
+class Reserva {
+  -Long id
+  -Usuario usuario
+  -TipoReserva categoria
+  -StatusReserva status
+  -LocalDate dataReserva
+  -LocalDate dataVencimento
+  -Filial localRetirada
+}
+
+class Filial {
+  -Long id
+  -String nome
+  -String local
+  -Estoque estoque
+}
+
+class Estoque {
+  -Long id
+  -String nome
+  -Filial filial
+}
+
+class TransferenciaVeiculos {
+  -Long id
+  -Veiculo veiculo
+  -Filial filialOrigem
+  -Filial filialDestino
+  -LocalDate dataTransferencia
+  -StatusTransferencia status
+  -String observacoes
+}
+
+class AgendarManutencao {
+  -Long id
+  -Veiculo veiculo
+  -LocalDate dataAgendamento
+  -String descricao
+  -StatusManutencao status
+  -double custo
+  -String responsavel
+}
+
+class EstacaoDeServico {
+  -Long id
+  -String nome
+  -String local
+}
+
+enum Grupo {
+  A
+  B
+  C
+}
+
+enum Cor {
+  BRANCO
+  PRETO
+  PRATA
+  AZUL
+  VERMELHO
+  OUTRO
+}
+
+enum StatusVeiculo {
+  DISPONIVEL
+  EM_USO
+  RESERVADO
+  MANUTENCAO
+}
+
+enum TipoReserva {
+  DIARIA
+  SEMANAL
+  MENSAL
+}
+
+enum StatusReserva {
+  PENDENTE
+  AGENDADO
+  EM_ANDAMENTO
+  ENCERRADO
+  CANCELADO
+}
+
+enum StatusManutencao {
+  AGENDADA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum StatusTransferencia {
+  SOLICITADA
+  APROVADA
+  EM_TRANSITO
+  CONCLUIDA
+  CANCELADA
+}
+
+' Relacionamentos de Herança
+Usuario <|-- Cliente
+Usuario <|-- Funcionario
+Usuario <|-- Gerente
+Usuario <|-- Administrador
+
+' Relacionamentos JPA
+Filial ||--|| Estoque
+Estoque ||--o{ Veiculo
+Veiculo }o--|| Filial
+
+Usuario ||--o{ Reserva
+Reserva }o--|| Filial
+
+Veiculo ||--o{ TransferenciaVeiculos
+Filial ||--o{ TransferenciaVeiculos : origem
+Filial ||--o{ TransferenciaVeiculos : destino
+
+Veiculo ||--o{ AgendarManutencao
+
+Funcionario }o--|| Filial
+Gerente }o--|| Filial
+
+' Relacionamentos com Enums
+Veiculo }o--|| Grupo
+Veiculo }o--|| Cor
+Veiculo }o--|| StatusVeiculo
+Reserva }o--|| TipoReserva
+Reserva }o--|| StatusReserva
+AgendarManutencao }o--|| StatusManutencao
+TransferenciaVeiculos }o--|| StatusTransferencia
+
+@enduml

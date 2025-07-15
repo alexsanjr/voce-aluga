@@ -1,0 +1,97 @@
+{
+    "PlantUML Basic Diagram": {
+        "prefix": "puml-basic",
+        "body": [
+            "@startuml ${1:Nome do Diagrama}",
+            "",
+            "!theme plain",
+            "title ${1:Nome do Diagrama}",
+            "",
+            "${2:// Conteúdo do diagrama}",
+            "",
+            "@enduml"
+        ],
+        "description": "Estrutura básica de um diagrama PlantUML"
+    },
+    "PlantUML Entity": {
+        "prefix": "puml-entity",
+        "body": [
+            "entity ${1:NomeEntidade} {",
+            "  * ${2:id} : ${3:Long} <<PK>>",
+            "  --",
+            "  * ${4:campo} : ${5:String}",
+            "}"
+        ],
+        "description": "Entidade para diagrama ER"
+    },
+    "PlantUML Package": {
+        "prefix": "puml-package",
+        "body": [
+            "package \"${1:📦 Nome do Pacote}\" as ${2:package_alias} #${3:lightblue} {",
+            "    ${4:// Conteúdo do pacote}",
+            "}"
+        ],
+        "description": "Pacote com emoji e cor"
+    },
+    "PlantUML Class": {
+        "prefix": "puml-class",
+        "body": [
+            "class ${1:NomeClasse} {",
+            "    +${2:Long} ${3:id}",
+            "    +${4:String} ${5:nome}",
+            "    --",
+            "    +${6:void} ${7:metodo}()",
+            "}"
+        ],
+        "description": "Classe para diagrama de classes"
+    },
+    "PlantUML Note": {
+        "prefix": "puml-note",
+        "body": [
+            "note ${1|top,bottom,left,right|} of ${2:elemento}",
+            "  ${3:Texto da nota}",
+            "end note"
+        ],
+        "description": "Nota explicativa"
+    },
+    "PlantUML Sequence": {
+        "prefix": "puml-sequence",
+        "body": [
+            "@startuml ${1:Diagrama de Sequência}",
+            "",
+            "actor ${2:Usuario} as user",
+            "participant \"${3:Sistema}\" as system",
+            "",
+            "user -> system: ${4:acao()}",
+            "system --> user: ${5:resposta}",
+            "",
+            "@enduml"
+        ],
+        "description": "Diagrama de sequência básico"
+    },
+    "PlantUML Component": {
+        "prefix": "puml-component",
+        "body": [
+            "[${1:Nome do Componente}] as ${2:alias}",
+            "",
+            "${2:alias} --> ${3:outro_componente} : ${4:relacao}"
+        ],
+        "description": "Componente para diagrama de componentes"
+    },
+    "PlantUML Styled Package Voce Aluga": {
+        "prefix": "puml-voce-aluga-package",
+        "body": [
+            "package \"${1:🌐 Frontend Layer}\" as ${2:frontend_layer} #lightblue {",
+            "    ",
+            "    package \"${3:📱 React Application}\" as ${4:react_app} #aliceblue {",
+            "        ",
+            "        package \"${5:🏠 Pages}\" as ${6:pages} #white {",
+            "            [${7:Home Page}] as ${8:home_page}",
+            "            ${9:// Mais componentes...}",
+            "        }",
+            "    }",
+            "}"
+        ],
+        "description": "Pacote estilizado no padrão do projeto Você Aluga"
+    }
+}

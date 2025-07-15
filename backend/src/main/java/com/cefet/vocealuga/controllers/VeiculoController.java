@@ -35,6 +35,12 @@ public class VeiculoController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/placa/{placa}")
+    public ResponseEntity<VeiculoDTO> findByPlaca(@PathVariable String placa) {
+        VeiculoDTO dto = veiculoService.findByPlaca(placa);
+        return ResponseEntity.ok(dto);
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_GERENTE', 'ROLE_ADMIN')")
     public ResponseEntity<VeiculoDTO> insert(@Valid @RequestBody VeiculoDTO dto) {

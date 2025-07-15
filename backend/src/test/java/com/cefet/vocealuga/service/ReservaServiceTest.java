@@ -1,4 +1,5 @@
 package com.cefet.vocealuga.service;
+import com.cefet.vocealuga.dtos.MeDTO;
 import com.cefet.vocealuga.dtos.ReservaDTO;
 import com.cefet.vocealuga.entities.*;
 import com.cefet.vocealuga.entities.enums.StatusReserva;
@@ -6,12 +7,15 @@ import com.cefet.vocealuga.entities.enums.TipoReserva;
 import com.cefet.vocealuga.repositories.FilialRepository;
 import com.cefet.vocealuga.repositories.ReservaRepository;
 import com.cefet.vocealuga.repositories.UsuarioRepository;
+import com.cefet.vocealuga.services.AuthService;
 import com.cefet.vocealuga.services.ReservaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -162,7 +166,7 @@ public class ReservaServiceTest {
         dto.setCategoria(TipoReserva.ANTECIPADA);
         dto.setStatus(StatusReserva.PENDENTE);
         dto.setDataReserva(LocalDate.now());
-        dto.setDataVencimento(LocalDate.now()); // igual à data de início
+        dto.setDataVencimento(LocalDate.now());
 
         Usuario usuario = new Usuario();
         usuario.setId(1L);
@@ -222,4 +226,203 @@ public class ReservaServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> reservaService.insert(dto));
     }
+
+    @Test
+    void funcionarioBuscaReservaPorId() {
+        Reserva reserva = new Reserva();
+        reserva.setId(100L);
+        reserva.setStatus(StatusReserva.PENDENTE);
+
+        when(reservaRepository.findById(100L)).thenReturn(Optional.of(reserva));
+
+        ReservaDTO dto = reservaService.findById(100L);
+
+        assertEquals(100L, dto.getId());
+        assertEquals(StatusReserva.PENDENTE, dto.getStatus());
+    }
+
+    @Test
+    void gerenteBuscaReservaPorId() {
+        Reserva reserva = new Reserva();
+        reserva.setId(200L);
+        reserva.setStatus(StatusReserva.AGENDADO);
+
+        when(reservaRepository.findById(200L)).thenReturn(Optional.of(reserva));
+
+        ReservaDTO dto = reservaService.findById(200L);
+
+        assertEquals(200L, dto.getId());
+        assertEquals(StatusReserva.AGENDADO, dto.getStatus());
+    }
+
+    @Test
+    void administradorBuscaReservaPorId() {
+        Reserva reserva = new Reserva();
+        reserva.setId(300L);
+        reserva.setStatus(StatusReserva.CANCELADO);
+
+        when(reservaRepository.findById(300L)).thenReturn(Optional.of(reserva));
+
+        ReservaDTO dto = reservaService.findById(300L);
+
+        assertEquals(300L, dto.getId());
+        assertEquals(StatusReserva.CANCELADO, dto.getStatus());
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoClienteNaoTemReservas() throws Exception {
+        ReservaRepository reservaRepository = mock(ReservaRepository.class);
+        AuthService authService = new AuthService();
+        var field = AuthService.class.getDeclaredField("reservaRepository");
+        field.setAccessible(true);
+        field.set(authService, reservaRepository);
+
+        Cliente cliente = new Cliente();
+        cliente.setId(99L);
+        cliente.setNome("Maria");
+        cliente.setEmail("maria@email.com");
+        cliente.setTelefone("987654321");
+        cliente.setDataDeNascimento(LocalDate.of(1985, 5, 20));
+        cliente.setPontosFidelidade(50);
+        cliente.setDocumento("98765432100");
+
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn(cliente);
+        when(reservaRepository.findIdsByUsuarioId(99L)).thenReturn(List.of());
+
+        MeDTO dto = authService.findMe(auth);
+
+        assertEquals("Maria", dto.getNome());
+        assertEquals(List.of(), dto.getReservas());
+    }
+
+    @Test
+    void deveAtualizarReservaPendenteComDadosValidos() {
+        // Reserva original
+        Reserva reserva = new Reserva();
+        reserva.setId(400L);
+        reserva.setStatus(StatusReserva.PENDENTE);
+        reserva.setDataReserva(LocalDate.now());
+        reserva.setDataVencimento(LocalDate.now().plusDays(2));
+        reserva.setCategoria(TipoReserva.ANTECIPADA);
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        reserva.setUsuario(usuario);
+
+        Filial filial = new Filial();
+        filial.setId(2L);
+        reserva.setLocalRetirada(filial);
+
+        // Mock busca reserva
+        when(reservaRepository.findById(400L)).thenReturn(Optional.of(reserva));
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(filialRepository.findById(3L)).thenReturn(Optional.of(filial));
+        when(reservaRepository.save(any(Reserva.class))).thenAnswer(inv -> inv.getArgument(0));
+
+
+        ReservaDTO dto = new ReservaDTO();
+        dto.setId(400L);
+        dto.setUsuarioId(1L);
+        dto.setLocalRetiradaId(3L);
+        dto.setCategoria(TipoReserva.IMEDIATA);
+        dto.setStatus(StatusReserva.PENDENTE);
+        dto.setDataReserva(LocalDate.now().plusDays(1));
+        dto.setDataVencimento(LocalDate.now().plusDays(4));
+
+        ReservaDTO atualizado = reservaService.update(400L, dto);
+
+        assertEquals(400L, atualizado.getId());
+        assertEquals(StatusReserva.PENDENTE, atualizado.getStatus());
+        assertEquals(TipoReserva.IMEDIATA, atualizado.getCategoria());
+        assertEquals(LocalDate.now().plusDays(1), atualizado.getDataReserva());
+        assertEquals(LocalDate.now().plusDays(4), atualizado.getDataVencimento());
+        assertEquals(3L, atualizado.getLocalRetiradaId());
+    }
+
+    @Test
+    void deveImpedirAtualizacaoDeReservaAprovada() {
+        Reserva reserva = new Reserva();
+        reserva.setId(500L);
+        reserva.setStatus(StatusReserva.EM_ANDAMENTO);
+        reserva.setDataReserva(LocalDate.now());
+        reserva.setDataVencimento(LocalDate.now().plusDays(2));
+        reserva.setCategoria(TipoReserva.ANTECIPADA);
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        reserva.setUsuario(usuario);
+
+        Filial filial = new Filial();
+        filial.setId(2L);
+        reserva.setLocalRetirada(filial);
+
+        when(reservaRepository.findById(500L)).thenReturn(Optional.of(reserva));
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(filialRepository.findById(2L)).thenReturn(Optional.of(filial)); // Adicione esta linha
+
+        ReservaDTO dto = new ReservaDTO();
+        dto.setId(500L);
+        dto.setUsuarioId(1L);
+        dto.setLocalRetiradaId(2L);
+        dto.setCategoria(TipoReserva.IMEDIATA);
+        dto.setStatus(StatusReserva.EM_ANDAMENTO);
+        dto.setDataReserva(LocalDate.now().plusDays(1));
+        dto.setDataVencimento(LocalDate.now().plusDays(4));
+
+        assertThrows(IllegalArgumentException.class, () -> reservaService.update(500L, dto));
+    }
+
+    @Test
+    void deveImpedirAtualizacaoComDataVencimentoMenorOuIgualDataReserva() {
+        // Reserva original
+        Reserva reserva = new Reserva();
+        reserva.setId(600L);
+        reserva.setStatus(StatusReserva.PENDENTE);
+        reserva.setDataReserva(LocalDate.now());
+        reserva.setDataVencimento(LocalDate.now().plusDays(2));
+        reserva.setCategoria(TipoReserva.ANTECIPADA);
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        reserva.setUsuario(usuario);
+
+        Filial filial = new Filial();
+        filial.setId(2L);
+        reserva.setLocalRetirada(filial);
+
+        when(reservaRepository.findById(600L)).thenReturn(Optional.of(reserva));
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
+
+        ReservaDTO dto = new ReservaDTO();
+        dto.setId(600L);
+        dto.setUsuarioId(1L);
+        dto.setLocalRetiradaId(2L);
+        dto.setCategoria(TipoReserva.IMEDIATA);
+        dto.setStatus(StatusReserva.PENDENTE);
+        dto.setDataReserva(LocalDate.now());
+        dto.setDataVencimento(LocalDate.now());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> reservaService.update(600L, dto));
+
+        assertEquals("Data de vencimento deve ser posterior à data de reserva", exception.getMessage());
+    }
+
+    @Test
+    void deveImpedirAcessoNaoAutenticado() {
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
+
+        when(reservaRepository.findById(anyLong())).thenThrow(
+                new RuntimeException("Acesso negado. É necessário fazer login"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            reservaService.findById(1L);
+        });
+
+        assertEquals("Acesso negado. É necessário fazer login", exception.getMessage());
+    }
+
+
 }
