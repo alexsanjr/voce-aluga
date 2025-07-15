@@ -7,6 +7,7 @@ import com.cefet.vocealuga.entities.enums.TipoReserva;
 import com.cefet.vocealuga.repositories.FilialRepository;
 import com.cefet.vocealuga.repositories.ReservaRepository;
 import com.cefet.vocealuga.repositories.UsuarioRepository;
+import com.cefet.vocealuga.repositories.VeiculoRepository;
 import com.cefet.vocealuga.services.AuthService;
 import com.cefet.vocealuga.services.ReservaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,12 +30,14 @@ public class ReservaServiceTest {
     private FilialRepository filialRepository;
     private UsuarioRepository usuarioRepository;
     private ReservaService reservaService;
+    private VeiculoRepository veiculoRepository;
 
     @BeforeEach
     void setUp() throws Exception {
         reservaRepository = mock(ReservaRepository.class);
         filialRepository = mock(FilialRepository.class);
         usuarioRepository = mock(UsuarioRepository.class);
+        veiculoRepository = mock(VeiculoRepository.class);
         reservaService = new ReservaService();
 
         var reservaField = ReservaService.class.getDeclaredField("repository");
@@ -48,6 +51,10 @@ public class ReservaServiceTest {
         var usuarioField = ReservaService.class.getDeclaredField("usuarioRepository");
         usuarioField.setAccessible(true);
         usuarioField.set(reservaService, usuarioRepository);
+
+        var veiculoField = ReservaService.class.getDeclaredField("veiculoRepository");
+        veiculoField.setAccessible(true);
+        veiculoField.set(reservaService, veiculoRepository);
     }
 
     @Test
@@ -59,14 +66,19 @@ public class ReservaServiceTest {
         dto.setStatus(StatusReserva.PENDENTE);
         dto.setDataReserva(LocalDate.now());
         dto.setDataVencimento(LocalDate.now().plusDays(3));
+        dto.setVeiculoId(1L);
 
         Usuario usuario = new Usuario();
         usuario.setId(1L);
         Filial filial = new Filial();
         filial.setId(2L);
 
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(1L);
+
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
+        when(veiculoRepository.findById(1L)).thenReturn(Optional.of(veiculo)); // Adicionar esta linha
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Authentication authentication = mock(Authentication.class);
@@ -92,6 +104,7 @@ public class ReservaServiceTest {
         dto.setStatus(StatusReserva.PENDENTE);
         dto.setDataReserva(LocalDate.now());
         dto.setDataVencimento(LocalDate.now().plusDays(1));
+        dto.setVeiculoId(1L);
 
         Funcionario funcionario = new Funcionario();
         funcionario.setId(10L);
@@ -99,8 +112,12 @@ public class ReservaServiceTest {
         Filial filial = new Filial();
         filial.setId(2L);
 
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(1L);
+
         when(usuarioRepository.findById(10L)).thenReturn(Optional.of(funcionario));
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
+        when(veiculoRepository.findById(1L)).thenReturn(Optional.of(veiculo)); // Adicionar esta linha
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Authentication authentication = mock(Authentication.class);
@@ -121,6 +138,7 @@ public class ReservaServiceTest {
         dto.setStatus(StatusReserva.PENDENTE);
         dto.setDataReserva(LocalDate.now());
         dto.setDataVencimento(LocalDate.now().plusDays(1));
+        dto.setVeiculoId(1L);
 
         Gerente gerente = new Gerente();
         gerente.setId(20L);
@@ -128,8 +146,12 @@ public class ReservaServiceTest {
         Filial filial = new Filial();
         filial.setId(2L);
 
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(1L);
+
         when(usuarioRepository.findById(20L)).thenReturn(Optional.of(gerente));
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
+        when(veiculoRepository.findById(1L)).thenReturn(Optional.of(veiculo)); // Adicionar esta linha
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Authentication authentication = mock(Authentication.class);
@@ -150,6 +172,7 @@ public class ReservaServiceTest {
         dto.setStatus(StatusReserva.PENDENTE);
         dto.setDataReserva(LocalDate.now());
         dto.setDataVencimento(LocalDate.now().plusDays(1));
+        dto.setVeiculoId(1L);
 
         Administrador admin = new Administrador();
         admin.setId(30L);
@@ -157,8 +180,12 @@ public class ReservaServiceTest {
         Filial filial = new Filial();
         filial.setId(2L);
 
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(1L);
+
         when(usuarioRepository.findById(30L)).thenReturn(Optional.of(admin));
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
+        when(veiculoRepository.findById(1L)).thenReturn(Optional.of(veiculo)); // Adicionar esta linha
         when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Authentication authentication = mock(Authentication.class);
