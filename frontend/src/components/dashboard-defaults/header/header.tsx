@@ -21,7 +21,8 @@ const Header = ({ onMenuToggle, title }: HeaderProps) => {
 
                 <div className="right-section">
                     {/*<div className="notification">
-                        {/* ICONE AQUI *//*}
+                        {/* ICONE AQUI */
+                    /*}
                         <Icon icon="fluent:alert-24-filled" fontSize={18} />
                         <span className="notification-badge"></span>
                     </div>

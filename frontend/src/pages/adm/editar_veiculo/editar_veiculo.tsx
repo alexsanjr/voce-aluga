@@ -65,9 +65,9 @@ const EditarVeiculo: React.FC = () => {
                         return "";
                     })(),
                     valorDiaria: v.valorDiaria || "",
-                        // v.valor_Diaria !== undefined && v.valor_Diaria !== null
-                        //     ? String(Number(v.valor_Diaria).toFixed(2)).replace(".", ",")
-                        //     : "",
+                    // v.valor_Diaria !== undefined && v.valor_Diaria !== null
+                    //     ? String(Number(v.valor_Diaria).toFixed(2)).replace(".", ",")
+                    //     : "",
                     quilometragem:
                         v.quilometragem !== undefined && v.quilometragem !== null ? String(v.quilometragem) : "",
                     statusVeiculo: (() => {
@@ -76,10 +76,14 @@ const EditarVeiculo: React.FC = () => {
                         // Se vier como label (ex: "EM_USO"), busca o value correspondente
                         if (typeof v.statusVeiculo === "string") {
                             // Tenta encontrar por label
-                            const statusMatchLabel = statusVeiculoOptions.find((s) => s.label.toUpperCase() === v.statusVeiculo.toUpperCase());
+                            const statusMatchLabel = statusVeiculoOptions.find(
+                                (s) => s.label.toUpperCase() === v.statusVeiculo.toUpperCase(),
+                            );
                             if (statusMatchLabel) return statusMatchLabel.value;
                             // Tenta encontrar por value (case-insensitive)
-                            const statusMatchValue = statusVeiculoOptions.find((s) => s.value.toUpperCase() === v.statusVeiculo.toUpperCase());
+                            const statusMatchValue = statusVeiculoOptions.find(
+                                (s) => s.value.toUpperCase() === v.statusVeiculo.toUpperCase(),
+                            );
                             if (statusMatchValue) return statusMatchValue.value;
                         }
                         if (typeof v.statusVeiculo === "number") {
@@ -91,7 +95,7 @@ const EditarVeiculo: React.FC = () => {
                         return "";
                     })(),
                     estoqueId: v.estoqueId ? String(v.estoqueId) : "",
-                    placa: v.placa.replace("-","") || "",
+                    placa: v.placa.replace("-", "") || "",
                 });
             } catch {
                 alert("Erro ao carregar veículo.");
@@ -133,7 +137,9 @@ const EditarVeiculo: React.FC = () => {
             ano: Number(veiculo.ano),
             cor: Number(veiculo.cor),
             valorDiaria: Number(
-                parseFloat((veiculo.valorDiaria ? String(veiculo.valorDiaria) : "0").replace(/\./g, "").replace(",", ".")).toFixed(2)
+                parseFloat(
+                    (veiculo.valorDiaria ? String(veiculo.valorDiaria) : "0").replace(/\./g, "").replace(",", "."),
+                ).toFixed(2),
             ),
             quilometragem: Number(veiculo.quilometragem),
             statusVeiculo: veiculo.statusVeiculo,

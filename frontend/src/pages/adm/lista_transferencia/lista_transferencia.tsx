@@ -37,7 +37,7 @@ const ListaTransferencia: React.FC = () => {
 
     // Mapeia id do estoque para nome
     const getEstoqueNome = (id: number) => {
-        const found = estoques.find(e => String(e.value) === String(id));
+        const found = estoques.find((e) => String(e.value) === String(id));
         return found ? found.label : id;
     };
 
@@ -80,7 +80,11 @@ const ListaTransferencia: React.FC = () => {
                                         {transferencias.map((item: any) => (
                                             <tr key={item.id}>
                                                 <td>{item.id}</td>
-                                                <td>{Array.isArray(item.idVeiculos) ? item.idVeiculos.join(", ") : item.idVeiculos}</td>
+                                                <td>
+                                                    {Array.isArray(item.idVeiculos)
+                                                        ? item.idVeiculos.join(", ")
+                                                        : item.idVeiculos}
+                                                </td>
                                                 <td>{getEstoqueNome(item.estoqueOrigem)}</td>
                                                 <td>{getEstoqueNome(item.estoqueDestino)}</td>
                                                 <td>{formatarData(item.data)}</td>

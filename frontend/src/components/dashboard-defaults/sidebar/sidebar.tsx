@@ -57,10 +57,7 @@ const Sidebar: React.FC = () => {
                         <p className="userRole">Admin</p>
                     </div>
 
-                    <button
-                        className="btn-logout"
-                        onClick={() => window.location.href = "/"}
-                    >
+                    <button className="btn-logout" onClick={() => (window.location.href = "/")}>
                         <i>
                             <Icon icon="wpf:shutdown" />
                         </i>

@@ -1,14 +1,11 @@
-
 import "./NavBar.min.css";
 import logoImg from "../../assets/logo_footer_s.png";
 import { useState, useEffect } from "react";
 import { parseJwt } from "../../utils/jwt";
 
-
 export default function NavBar() {
     const [isLogged, setIsLogged] = useState(() => !!localStorage.getItem("token"));
     const [role, setRole] = useState<string | null>(null);
-
 
     function handleLogout(e: React.MouseEvent) {
         e.preventDefault();
@@ -17,7 +14,6 @@ export default function NavBar() {
         setRole(null);
         window.location.href = "/login";
     }
-
 
     // Atualiza o estado se o token mudar em outra aba
     useEffect(() => {
@@ -35,7 +31,6 @@ export default function NavBar() {
         window.addEventListener("storage", updateAuth);
         return () => window.removeEventListener("storage", updateAuth);
     }, []);
-
 
     return (
         <div className="container-navbar">
@@ -64,7 +59,9 @@ export default function NavBar() {
                         )}
                         {isLogged ? (
                             <li className="Logout">
-                                <a href="#" onClick={handleLogout}>SAIR</a>
+                                <a href="#" onClick={handleLogout}>
+                                    SAIR
+                                </a>
                             </li>
                         ) : (
                             <li className="Login">

@@ -13,15 +13,15 @@ const HomeAluguel: React.FC = () => {
         buscarVeiculos();
     }, []);
 
-  async function buscarVeiculos() {
-    setLoading(true);
-    try {
-      const data = await getAllVeiculosDisponivel();
-      setVeiculos((data || []).slice(0, 3));
-    } finally {
-      setLoading(false);
+    async function buscarVeiculos() {
+        setLoading(true);
+        try {
+            const data = await getAllVeiculosDisponivel();
+            setVeiculos((data || []).slice(0, 3));
+        } finally {
+            setLoading(false);
+        }
     }
-  }
 
     const navigate = useNavigate();
 

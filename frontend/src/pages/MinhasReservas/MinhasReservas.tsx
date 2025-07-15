@@ -40,7 +40,7 @@ const MinhasReservas: React.FC = () => {
                             localRetiradaNome = `ID ${reserva.localRetiradaId}`;
                         }
                         return { id, ...reserva, localRetiradaNome };
-                    })
+                    }),
                 );
                 setReservas(reservasDetalhes);
             } catch (err) {
@@ -96,4 +96,3 @@ const MinhasReservas: React.FC = () => {
 };
 
 export default MinhasReservas;
-

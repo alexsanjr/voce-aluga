@@ -7,7 +7,6 @@ import { marcas, cores, grupos, estoques, statusVeiculoOptions } from "../../../
 
 import "./novo_veiculo.min.css";
 
-
 const NovoVeiculo: React.FC = () => {
     const navigate = useNavigate();
     const [veiculo, setVeiculo] = useState({
@@ -58,7 +57,9 @@ const NovoVeiculo: React.FC = () => {
             ano: Number(veiculo.ano),
             cor: Number(veiculo.cor),
             valorDiaria: Number(
-                parseFloat((veiculo.valorDiaria ? String(veiculo.valorDiaria) : "0").replace(/\./g, "").replace(",", ".")).toFixed(2)
+                parseFloat(
+                    (veiculo.valorDiaria ? String(veiculo.valorDiaria) : "0").replace(/\./g, "").replace(",", "."),
+                ).toFixed(2),
             ),
             quilometragem: Number(veiculo.quilometragem),
             statusVeiculo: veiculo.statusVeiculo,

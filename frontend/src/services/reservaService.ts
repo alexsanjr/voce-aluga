@@ -33,7 +33,7 @@ export const getReservaById = async (id: number) => {
 export const aprovarReserva = async (id: number, reserva: ReservaPayload) => {
     const response = await api.put(`${API_URL}/${id}`, {
         ...reserva,
-        status: "AGENDADO"
+        status: "AGENDADO",
     });
     return response.data;
 };
@@ -42,7 +42,7 @@ export const aprovarReserva = async (id: number, reserva: ReservaPayload) => {
 export const cancelarReserva = async (id: number, reserva: ReservaPayload) => {
     const response = await api.put(`${API_URL}/${id}`, {
         ...reserva,
-        status: "CANCELADO"
+        status: "CANCELADO",
     });
     return response.data;
 };
@@ -51,7 +51,7 @@ export const cancelarReserva = async (id: number, reserva: ReservaPayload) => {
 export const iniciarReserva = async (id: number, reserva: ReservaPayload) => {
     const response = await api.put(`${API_URL}/${id}`, {
         ...reserva,
-        status: "EM_ANDAMENTO"
+        status: "EM_ANDAMENTO",
     });
     return response.data;
 };
@@ -60,7 +60,7 @@ export const iniciarReserva = async (id: number, reserva: ReservaPayload) => {
 export const encerrarReserva = async (id: number, reserva: ReservaPayload) => {
     const response = await api.put(`${API_URL}/${id}`, {
         ...reserva,
-        status: "ENCERRADO"
+        status: "ENCERRADO",
     });
     return response.data;
 };

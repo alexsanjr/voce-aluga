@@ -9,7 +9,7 @@ export const getAllVeiculosDisponivel = async (marca = "") => {
     console.log("Response data:", response);
 
     // Suporta resposta paginada (content) ou lista direta
-    const veiculos = Array.isArray(response) ? response : (response.content || []);
+    const veiculos = Array.isArray(response) ? response : response.content || [];
     // Filtra apenas veículos com status DISPONIVEL
     return veiculos.filter((v: any) => v.statusVeiculo === "DISPONIVEL");
 };

@@ -19,15 +19,14 @@ const NovaTransferencia: React.FC = () => {
     // Filial de origem do veículo selecionado
     const filialOrigem = veiculoSelecionado
         ? (() => {
-            const v = veiculos.find(v => String(v.id) === veiculoSelecionado);
-            return v ? String(v.estoqueId) : "";
-        })()
+              const v = veiculos.find((v) => String(v.id) === veiculoSelecionado);
+              return v ? String(v.estoqueId) : "";
+          })()
         : "";
 
     const origemLabel = filialOrigem
-        ? estoques.find(e => e.value === filialOrigem)?.label || filialOrigem
+        ? estoques.find((e) => e.value === filialOrigem)?.label || filialOrigem
         : "Selecione um veículo";
-
 
     useEffect(() => {
         async function fetchVeiculos() {
@@ -55,7 +54,7 @@ const NovaTransferencia: React.FC = () => {
     }, []);
 
     const handleSelectVeiculo = (id: string) => {
-        setVeiculoSelecionado(prev => prev === id ? "" : id);
+        setVeiculoSelecionado((prev) => (prev === id ? "" : id));
     };
 
     const enviar_form = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,7 +72,7 @@ const NovaTransferencia: React.FC = () => {
                 estoqueOrigem: Number(filialOrigem),
                 estoqueDestino: Number(estoqueDestino),
                 idVeiculos: [Number(veiculoSelecionado)],
-                status: 0 // conforme especificado, status deve ser número 2
+                status: 0, // conforme especificado, status deve ser número 2
             });
             navigate("/lista_transferencias");
         } catch {
@@ -87,7 +86,14 @@ const NovaTransferencia: React.FC = () => {
                 <section className="form-criar-veiculo">
                     <form onSubmit={enviar_form}>
                         <div className="veiculos-lista-transferencia">
-                            <label style={{ fontWeight: 400, fontSize: "1.08rem", marginBottom: "0.7rem", display: "block" }}>
+                            <label
+                                style={{
+                                    fontWeight: 400,
+                                    fontSize: "1.08rem",
+                                    marginBottom: "0.7rem",
+                                    display: "block",
+                                }}
+                            >
                                 Selecione o veículo
                             </label>
                             {loading ? (
@@ -105,7 +111,9 @@ const NovaTransferencia: React.FC = () => {
                                                     checked={veiculoSelecionado === String(v.id)}
                                                     onChange={() => handleSelectVeiculo(String(v.id))}
                                                 />
-                                                {v.marca} {v.modelo} ({v.placa}) - {v.grupo} | Filial: {estoques.find(e => e.value === String(v.estoqueId))?.label || v.estoqueId}
+                                                {v.marca} {v.modelo} ({v.placa}) - {v.grupo} | Filial:{" "}
+                                                {estoques.find((e) => e.value === String(v.estoqueId))?.label ||
+                                                    v.estoqueId}
                                             </label>
                                         </li>
                                     ))}
@@ -116,9 +124,7 @@ const NovaTransferencia: React.FC = () => {
                             <div className="column">
                                 <div className="form-group">
                                     <label>Filial de origem</label>
-                                    <div className="filiais-origem-box">
-                                        {origemLabel}
-                                    </div>
+                                    <div className="filiais-origem-box">{origemLabel}</div>
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="estoqueDestino">Filial de destino</label>
@@ -127,7 +133,7 @@ const NovaTransferencia: React.FC = () => {
                                         icon="mdi:store"
                                         options={estoques}
                                         value={estoqueDestino}
-                                        onChange={e => setEstoqueDestino(e.target.value)}
+                                        onChange={(e) => setEstoqueDestino(e.target.value)}
                                         required
                                     />
                                 </div>

@@ -91,27 +91,37 @@
                                 &.status-PENDENTE {
                                     background-color: #fff3e0;
                                     color: #ff9800;
-                                    &::before { background-color: #ff9800; }
+                                    &::before {
+                                        background-color: #ff9800;
+                                    }
                                 }
                                 &.status-AGENDADO {
                                     background-color: #e3f2fd;
                                     color: #1976d2;
-                                    &::before { background-color: #1976d2; }
+                                    &::before {
+                                        background-color: #1976d2;
+                                    }
                                 }
                                 &.status-EM_ANDAMENTO {
                                     background-color: #f2eaff;
                                     color: #6c47ff;
-                                    &::before { background-color: #6c47ff; }
+                                    &::before {
+                                        background-color: #6c47ff;
+                                    }
                                 }
                                 &.status-ENCERRADO {
                                     background-color: #e8f5e9;
                                     color: #4caf50;
-                                    &::before { background-color: #4caf50; }
+                                    &::before {
+                                        background-color: #4caf50;
+                                    }
                                 }
                                 &.status-CANCELADO {
                                     background-color: #ffe7e2;
                                     color: #ff6041;
-                                    &::before { background-color: #ff6041; }
+                                    &::before {
+                                        background-color: #ff6041;
+                                    }
                                 }
                             }
                         }

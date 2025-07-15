@@ -132,7 +132,9 @@
                                         background-color: #ff6041;
                                     }
                                 }
-                                &.CONCLUIDA, &.CONCLUÍDA, &.PENDENTE {
+                                &.CONCLUIDA,
+                                &.CONCLUÍDA,
+                                &.PENDENTE {
                                     background-color: #d6feff;
                                     color: #2e80cc;
 

@@ -8,10 +8,7 @@ import Footer from "../../components/Footer/Footer";
 import { marcas as marcasOptions, locais } from "../../utils/veiculoOptions";
 import "./Aluguel.min.css";
 
-const marcas = [
-  { label: "Todas", value: "" },
-  ...marcasOptions
-];
+const marcas = [{ label: "Todas", value: "" }, ...marcasOptions];
 
 const Aluguel: React.FC = () => {
     const [marca, setMarca] = useState("");

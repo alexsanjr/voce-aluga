@@ -25,7 +25,6 @@ const ListaFrota: React.FC = () => {
 
     const navigate = useNavigate();
 
-
     const [filialSelecionada, setFilialSelecionada] = useState("");
 
     // Filtra veículos pela filial selecionada (filialId)
@@ -49,7 +48,7 @@ const ListaFrota: React.FC = () => {
                             options={locais}
                             icon="icon-park-solid:city"
                             value={filialSelecionada}
-                            onChange={e => setFilialSelecionada(e.target.value)}
+                            onChange={(e) => setFilialSelecionada(e.target.value)}
                         />
                     </div>
 
@@ -87,7 +86,7 @@ const ListaFrota: React.FC = () => {
                                                     <div>
                                                         <button onClick={() => navigate(`/editarveiculo/${item.id}`)}>
                                                             <i>
-                                                                <Icon icon="tabler:edit" style={{color:"black"}} />
+                                                                <Icon icon="tabler:edit" style={{ color: "black" }} />
                                                             </i>
                                                         </button>
                                                         <button className="trash" onClick={() => handleDelete(item.id)}>

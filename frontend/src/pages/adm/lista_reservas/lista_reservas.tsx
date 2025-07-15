@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { getReservas, aprovarReserva, cancelarReserva, encerrarReserva, iniciarReserva } from "../../../services/reservaService";
+import {
+    getReservas,
+    aprovarReserva,
+    cancelarReserva,
+    encerrarReserva,
+    iniciarReserva,
+} from "../../../services/reservaService";
 import type { ApiError } from "../../../types/api-error";
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
 import "./lista_reservas.min.css";
@@ -20,7 +26,7 @@ const statusLabels: Record<string, string> = {
     AGENDADO: "Agendado",
     EM_ANDAMENTO: "Em andamento",
     ENCERRADO: "Encerrado",
-    CANCELADO: "Cancelado"
+    CANCELADO: "Cancelado",
 };
 
 const ListaReservas: React.FC = () => {
@@ -33,7 +39,7 @@ const ListaReservas: React.FC = () => {
             try {
                 const data = await getReservas();
 
-                console.log('Dados recebidos:', data);
+                console.log("Dados recebidos:", data);
 
                 setReservas(Array.isArray(data) ? data : data.content || []);
             } finally {
@@ -50,24 +56,24 @@ const ListaReservas: React.FC = () => {
             status: reserva.status,
             dataReserva: reserva.dataReserva,
             dataVencimento: reserva.dataVencimento,
-            localRetiradaId: reserva.localRetiradaId
+            localRetiradaId: reserva.localRetiradaId,
         };
     };
 
     const handleError = (error: any) => {
-        console.error('Erro:', error);
+        console.error("Erro:", error);
         if (error.response?.data) {
             const apiError = error.response.data as ApiError;
-            alert(apiError.message || 'Ocorreu um erro. Tente novamente.');
+            alert(apiError.message || "Ocorreu um erro. Tente novamente.");
         } else {
-            alert('Ocorreu um erro inesperado. Tente novamente.');
+            alert("Ocorreu um erro inesperado. Tente novamente.");
         }
     };
 
     const handleAprovar = async (reserva: Reserva) => {
         try {
             await aprovarReserva(reserva.id, getReservaUpdateData(reserva));
-            setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "AGENDADO" } : r));
+            setReservas(reservas.map((r) => (r.id === reserva.id ? { ...r, status: "AGENDADO" } : r)));
         } catch (error) {
             handleError(error);
         }
@@ -76,7 +82,7 @@ const ListaReservas: React.FC = () => {
     const handleCancelar = async (reserva: Reserva) => {
         try {
             await cancelarReserva(reserva.id, getReservaUpdateData(reserva));
-            setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "CANCELADO" } : r));
+            setReservas(reservas.map((r) => (r.id === reserva.id ? { ...r, status: "CANCELADO" } : r)));
         } catch (error) {
             handleError(error);
         }
@@ -85,7 +91,7 @@ const ListaReservas: React.FC = () => {
     const handleIniciar = async (reserva: Reserva) => {
         try {
             await iniciarReserva(reserva.id, getReservaUpdateData(reserva));
-            setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "EM_ANDAMENTO" } : r));
+            setReservas(reservas.map((r) => (r.id === reserva.id ? { ...r, status: "EM_ANDAMENTO" } : r)));
         } catch (error) {
             handleError(error);
         }
@@ -94,7 +100,7 @@ const ListaReservas: React.FC = () => {
     const handleEncerrar = async (reserva: Reserva) => {
         try {
             await encerrarReserva(reserva.id, getReservaUpdateData(reserva));
-            setReservas(reservas.map(r => r.id === reserva.id ? { ...r, status: "ENCERRADO" } : r));
+            setReservas(reservas.map((r) => (r.id === reserva.id ? { ...r, status: "ENCERRADO" } : r)));
         } catch (error) {
             handleError(error);
         }
@@ -105,15 +111,11 @@ const ListaReservas: React.FC = () => {
         const acoes = [];
         if (reserva.status === "PENDENTE") {
             acoes.push(
-                <button
-                    key="aprovar"
-                    title="Aprovar reserva"
-                    onClick={() => handleAprovar(reserva)}
-                >
+                <button key="aprovar" title="Aprovar reserva" onClick={() => handleAprovar(reserva)}>
                     <i>
-                        <Icon icon="tabler:check" style={{color:"black"}} />
+                        <Icon icon="tabler:check" style={{ color: "black" }} />
                     </i>
-                </button>
+                </button>,
             );
             acoes.push(
                 <button
@@ -125,20 +127,16 @@ const ListaReservas: React.FC = () => {
                     <i>
                         <Icon icon="tabler:x" />
                     </i>
-                </button>
+                </button>,
             );
         }
         if (reserva.status === "AGENDADO") {
             acoes.push(
-                <button
-                    key="iniciar"
-                    title="Iniciar reserva (Check-in)"
-                    onClick={() => handleIniciar(reserva)}
-                >
+                <button key="iniciar" title="Iniciar reserva (Check-in)" onClick={() => handleIniciar(reserva)}>
                     <i>
-                        <Icon icon="tabler:key" style={{color:"black"}} />
+                        <Icon icon="tabler:key" style={{ color: "black" }} />
                     </i>
-                </button>
+                </button>,
             );
             acoes.push(
                 <button
@@ -150,20 +148,16 @@ const ListaReservas: React.FC = () => {
                     <i>
                         <Icon icon="tabler:x" />
                     </i>
-                </button>
+                </button>,
             );
         }
         if (reserva.status === "EM_ANDAMENTO") {
             acoes.push(
-                <button
-                    key="encerrar"
-                    title="Encerrar reserva (Check-out)"
-                    onClick={() => handleEncerrar(reserva)}
-                >
+                <button key="encerrar" title="Encerrar reserva (Check-out)" onClick={() => handleEncerrar(reserva)}>
                     <i>
-                        <Icon icon="tabler:flag" style={{color:"black"}} />
+                        <Icon icon="tabler:flag" style={{ color: "black" }} />
                     </i>
-                </button>
+                </button>,
             );
         }
         // ENCERRADO e CANCELADO não têm ações
@@ -204,9 +198,7 @@ const ListaReservas: React.FC = () => {
                                                 </span>
                                             </td>
                                             <td className="edit">
-                                                <div>
-                                                    {getAcoes(reserva)}
-                                                </div>
+                                                <div>{getAcoes(reserva)}</div>
                                             </td>
                                         </tr>
                                     ))}
