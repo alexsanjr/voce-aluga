@@ -90,7 +90,6 @@ export default function Login() {
                 <div className="form-group">
                   <label htmlFor="email">E-mail</label>
                   <div className="input-with-icon">
-                    <Icon icon="tabler:mail" />
                     <input
                       type="email"
                       id="email"
@@ -105,7 +104,6 @@ export default function Login() {
                 <div className="form-group">
                   <label htmlFor="password">Senha</label>
                   <div className="input-with-icon">
-                    <Icon icon="tabler:lock" />
                     <input
                       type="password"
                       id="password"

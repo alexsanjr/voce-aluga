@@ -212,7 +212,6 @@
   font-size: 1rem;
   color: #495057;
   transition: all 0.2s ease;
-  font-family: 'Segoe UI', sans-serif;
 }
 
 .input-with-icon input:focus {
