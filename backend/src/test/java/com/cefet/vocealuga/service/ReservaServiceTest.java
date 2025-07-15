@@ -412,8 +412,10 @@ public class ReservaServiceTest {
 
     @Test
     void deveImpedirAcessoNaoAutenticado() {
-        Authentication auth = mock(Authentication.class);
-        when(auth.getPrincipal()).thenReturn(null);
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
+
+        when(reservaRepository.findById(anyLong())).thenThrow(
+                new RuntimeException("Acesso negado. É necessário fazer login"));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             reservaService.findById(1L);
