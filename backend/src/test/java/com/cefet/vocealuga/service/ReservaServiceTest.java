@@ -391,7 +391,6 @@ public class ReservaServiceTest {
         filial.setId(2L);
         reserva.setLocalRetirada(filial);
 
-        // Mock busca reserva
         when(reservaRepository.findById(600L)).thenReturn(Optional.of(reserva));
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
