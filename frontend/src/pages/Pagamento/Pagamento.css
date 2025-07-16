@@ -60,7 +60,7 @@
 }
 
 .payment-option input[type="radio"] {
-  accent-color: #3c7cad;
+  accent-color: #9F67DD;
   width: 1.2rem;
   height: 1.2rem;
   margin: 0;
@@ -74,9 +74,9 @@
 
 .payment-option:hover,
 .payment-option:focus-within {
-  border: 2px solid #3c7cad;
+  border: 2px solid #9F67DD;
   background: #e6f0fa;
-  box-shadow: 0 4px 16px #3c7cad22;
+  box-shadow: 0 4px 16px #9F67DD22;
 }
 
 .payment-option input[type="radio"]:checked + span {
@@ -132,8 +132,8 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #3c7cad;
-  box-shadow: 0 0 0 2px rgba(60, 124, 173, 0.15);
+  border-color: #9F67DD;
+  box-shadow: 0 0 0 2px rgba(159, 103, 221, 0.15);
 }
 
 .form-row {
@@ -154,7 +154,7 @@
 .pagamento-button {
   width: 100%;
   padding: 0.9rem;
-  background: linear-gradient(90deg, #3c7cad 60%, #16335b 100%);
+  background: linear-gradient(90deg, #9F67DD 60%, #16335b 100%);
   color: white;
   font-weight: bold;
   border: none;
@@ -175,7 +175,7 @@
   display: inline-block;
   width: 1.3em;
   height: 1.3em;
-  border: 3px solid #3c7cad;
+  border: 3px solid #9F67DD;
   border-radius: 50%;
   border-top: 3px solid #fff;
   animation: spin 0.8s linear infinite;

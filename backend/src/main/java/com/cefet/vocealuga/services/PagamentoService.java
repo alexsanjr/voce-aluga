@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 public class PagamentoService {
 
     public PagamentoDTO processarPagamento(PagamentoDTO dto) {
-        // Simulação simples de lógica de aprovação
         if ("pix".equalsIgnoreCase(dto.getMetodo())) {
             System.out.println("Pagamento via PIX aprovado.");
         } else if ("credit-card".equalsIgnoreCase(dto.getMetodo()) || "debit-card".equalsIgnoreCase(dto.getMetodo())) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getMe } from "../../services/meService";
 import api from "../../services/api";
-import "./MinhasReservas.css";
+import "./MinhasReservas.min.css";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 

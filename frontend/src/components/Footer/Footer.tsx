@@ -1,5 +1,5 @@
 import "./Footer.css";
-import logo from "../../assets/logo_footer.png";
+import logo from "/logo_rodape.png";
 import phoneIcon from "../../assets/phone.svg";
 
 export default function Footer() {

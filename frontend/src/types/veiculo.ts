@@ -8,5 +8,6 @@ export interface Veiculo {
     filial: string;
     statusVeiculo: string;
     imagemUrl?: string;
+    imagens?: string[]; // Para múltiplas imagens
     [key: string]: any;
 }

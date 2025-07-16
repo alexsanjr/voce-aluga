@@ -1,8 +1,9 @@
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
 import { InputSelect, InputText } from "../../../components/inputs";
+import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createVeiculo } from "../../../services/veiculosService";
+import { createVeiculo, uploadVeiculoImagens } from "../../../services/veiculosService";
 import { marcas, cores, grupos, estoques, statusVeiculoOptions } from "../../../utils/veiculoOptions";
 
 import "./novo_veiculo.min.css";
@@ -21,6 +22,7 @@ const NovoVeiculo: React.FC = () => {
         estoqueId: "",
         placa: "",
     });
+    const [imagens, setImagens] = useState<File[]>([]);
 
     const pegarVeiculo = (name: string, value: string) => {
         setVeiculo((i) => ({ ...i, [name]: value }));
@@ -67,7 +69,13 @@ const NovoVeiculo: React.FC = () => {
             placa: (veiculo.placa ? String(veiculo.placa) : "").replace(/^([A-Z]{3})(\d{4})$/, "$1-$2"),
         };
         try {
-            await createVeiculo(dados);
+            const veiculoCriado = await createVeiculo(dados);
+            
+            // Se há imagens, fazer upload
+            if (imagens.length > 0) {
+                await uploadVeiculoImagens(veiculoCriado.id, imagens);
+            }
+            
             setVeiculo({
                 marca: "",
                 modelo: "",
@@ -80,6 +88,7 @@ const NovoVeiculo: React.FC = () => {
                 estoqueId: "",
                 placa: "",
             });
+            setImagens([]);
             navigate("/adm");
         } catch (err) {
             alert("Erro ao cadastrar veículo. Verifique os dados e tente novamente.");
@@ -279,6 +288,16 @@ const NovoVeiculo: React.FC = () => {
                                         />
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="form-group full-width">
+                                <label>Imagens do Veículo</label>
+                                <ImageUpload
+                                    multiple={true}
+                                    maxFiles={5}
+                                    onChange={(files) => setImagens(files as File[])}
+                                    placeholder="Adicione fotos do veículo (máximo 5 imagens)"
+                                />
                             </div>
 
                             <button>Criar</button>

@@ -1,5 +1,5 @@
 import "./NavBar.min.css";
-import logoImg from "../../assets/logo_footer_s.png";
+import logoImg from "/logo_header.png";
 import { useState, useEffect } from "react";
 import { parseJwt } from "../../utils/jwt";
 import { Icon } from "@iconify/react";

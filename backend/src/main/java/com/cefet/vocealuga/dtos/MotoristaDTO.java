@@ -1,29 +1,15 @@
-package com.cefet.vocealuga.entities;
-
-import jakarta.persistence.*;
+package com.cefet.vocealuga.dtos;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
-@Entity
-public class Motorista {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MotoristaDTO {
     private Long id;
     private String cnh;
     private String nome;
     private String cpf;
     private LocalDate dataNascimento;
 
-    public Motorista() {
-    }
-
-    public Motorista(Long id, String cnh, String nome, String cpf, LocalDate dataNascimento) {
-        this.id = id;
-        this.cnh = cnh;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
+    public MotoristaDTO() {
     }
 
     public Long getId() {
@@ -33,6 +19,7 @@ public class Motorista {
     public void setId(Long id) {
         this.id = id;
     }
+
 
     public String getCnh() {
         return cnh;
@@ -64,17 +51,5 @@ public class Motorista {
 
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Motorista motorista = (Motorista) o;
-        return Objects.equals(id, motorista.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
     }
 }
