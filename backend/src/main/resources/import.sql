@@ -23,6 +23,8 @@ INSERT INTO gerente (id) VALUES (1);
 INSERT INTO administrador (id) VALUES (2);
 
 
+INSERT INTO motorista (cnh, nome, cpf, data_nascimento) VALUES ('12323243434','Bruno Cliente', '12345678900', '1992-09-22');
+
 
 INSERT INTO filial (nome, local) VALUES ('Filial 1', 'Rio de Janeiro');
 INSERT INTO filial (nome, local) VALUES ('Filial 2', 'São Paulo');
@@ -60,6 +62,6 @@ INSERT INTO ESTACAO_DE_SERVICO (local, nome) VALUES ('Curitiba - PR', 'Pátio Su
 
 INSERT INTO Agendar_Manutencao (data_manutencao, estacao_de_servico_id, veiculo_id, motivo_manutencao) VALUES (TIMESTAMP WITH TIME ZONE '2025-07-03T10:00:00Z', 2, 3, 'pneu furado');
 
-INSERT INTO Reserva (categoria, status, data_reserva, data_vencimento, filial_id, usuario_id) VALUES (0, 1, DATE '2025-07-03', DATE '2025-07-10', 1, 3);
-INSERT INTO Reserva (categoria, status, data_reserva, data_vencimento, filial_id,  usuario_id) VALUES (1, 2, DATE '2025-07-03', DATE '2025-07-10', 2, 3);
+INSERT INTO Reserva (categoria, status, data_reserva, data_vencimento, filial_id, usuario_id, veiculo_id, motorista_id) VALUES (0, 1, DATE '2025-07-03', DATE '2025-07-10', 1, 3, 1, 1);
+INSERT INTO Reserva (categoria, status, data_reserva, data_vencimento, filial_id,  usuario_id, veiculo_id, motorista_id) VALUES (1, 2, DATE '2025-07-03', DATE '2025-07-10', 2, 3, 2, 1);
 INSERT INTO Reserva (categoria, status, data_reserva, data_vencimento, filial_id,  usuario_id) VALUES (1, 2, DATE '2025-07-03', DATE '2025-07-10', 2, 1);
