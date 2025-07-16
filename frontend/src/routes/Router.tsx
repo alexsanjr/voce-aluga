@@ -44,9 +44,9 @@ export default function Router() {
             <Route
                 path="/pagamento"
                 element={
-                    <PrivateRoute>
+                    // <PrivateRoute>
                         <Pagamento />
-                    </PrivateRoute>
+                    // </PrivateRoute>
                 }
             />
 
