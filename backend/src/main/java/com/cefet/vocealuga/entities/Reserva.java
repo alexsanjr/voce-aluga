@@ -16,7 +16,9 @@ public class Reserva {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
-    //Motorista
+    @ManyToOne
+    @JoinColumn(name = "motorista_id")
+    private Motorista motorista;
     private TipoReserva categoria;
     private StatusReserva status;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
@@ -30,7 +32,7 @@ public class Reserva {
     @JoinColumn(name = "veiculo_id")
     private Veiculo veiculo;
 
-    public Reserva(Long id, TipoReserva categoria, StatusReserva status, LocalDate dataReserva, LocalDate dataVencimento, Filial localRetirada, Usuario usuario, Veiculo  veiculo ) {
+    public Reserva(Long id, TipoReserva categoria, StatusReserva status, LocalDate dataReserva, LocalDate dataVencimento, Filial localRetirada, Usuario usuario, Veiculo  veiculo, Motorista motorista) {
         this.id = id;
         this.categoria = categoria;
         this.status = status;
@@ -39,9 +41,18 @@ public class Reserva {
         this.localRetirada = localRetirada;
         this.usuario = usuario;
         this.veiculo = veiculo;
+        this.motorista = motorista;
     }
 
     public Reserva() {
+    }
+
+    public Motorista getMotorista() {
+        return motorista;
+    }
+
+    public void setMotorista(Motorista motorista) {
+        this.motorista = motorista;
     }
 
     public Long getId() {

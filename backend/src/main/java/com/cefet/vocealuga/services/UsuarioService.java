@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {

@@ -1,6 +1,5 @@
 package com.cefet.vocealuga.dtos;
 
-import com.cefet.vocealuga.entities.Usuario;
 import com.cefet.vocealuga.entities.enums.StatusReserva;
 import com.cefet.vocealuga.entities.enums.TipoReserva;
 
@@ -10,13 +9,22 @@ public class ReservaDTO {
 
     private Long id;
     private Long usuarioId;
-    //Motorista
+    private Long motoristaId;
     private TipoReserva categoria;
     private StatusReserva status;
     private LocalDate dataReserva;
     private LocalDate dataVencimento;
     private Long localRetiradaId;
     private Long VeiculoId;
+
+
+    public Long getMotoristaId() {
+        return motoristaId;
+    }
+
+    public void setMotoristaId(Long motoristaId) {
+        this.motoristaId = motoristaId;
+    }
 
     public Long getId() {
         return id;

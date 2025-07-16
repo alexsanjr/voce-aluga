@@ -1,16 +1,10 @@
 package com.cefet.vocealuga.services;
 
 import com.cefet.vocealuga.dtos.ReservaDTO;
-import com.cefet.vocealuga.entities.Filial;
-import com.cefet.vocealuga.entities.Reserva;
-import com.cefet.vocealuga.entities.Usuario;
-import com.cefet.vocealuga.entities.Veiculo;
+import com.cefet.vocealuga.entities.*;
 import com.cefet.vocealuga.entities.enums.StatusReserva;
 import com.cefet.vocealuga.entities.enums.StatusVeiculo;
-import com.cefet.vocealuga.repositories.FilialRepository;
-import com.cefet.vocealuga.repositories.ReservaRepository;
-import com.cefet.vocealuga.repositories.UsuarioRepository;
-import com.cefet.vocealuga.repositories.VeiculoRepository;
+import com.cefet.vocealuga.repositories.*;
 import com.cefet.vocealuga.services.exceptions.DatabaseException;
 import com.cefet.vocealuga.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +27,13 @@ public class ReservaService {
     private FilialRepository filialRepository;
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
-    VeiculoRepository veiculoRepository;
+    private VeiculoRepository veiculoRepository;
 
+    @Autowired
+    private MotoristaRepository motoristaRepository;
 
     @Transactional(readOnly = true)
     public ReservaDTO findById(Long id) {
@@ -54,12 +50,7 @@ public class ReservaService {
 
     @Transactional
     public ReservaDTO insert(ReservaDTO dto, Authentication authentication) {
-        if (dto.getUsuarioId() == null) {
-            throw new IllegalArgumentException("UsuárioId é obrigatório");
-        }
-        if (authentication == null) {
-            throw new IllegalArgumentException("Authentication é obrigatório");
-        }
+        // Validações
         if (dto.getLocalRetiradaId() == null) {
             throw new IllegalArgumentException("Local de retirada é obrigatório");
         }
@@ -69,18 +60,41 @@ public class ReservaService {
         if (!dto.getDataVencimento().isAfter(dto.getDataReserva())) {
             throw new IllegalArgumentException("Data de vencimento deve ser posterior à data de reserva");
         }
+        if (dto.getVeiculoId() == null) {
+            throw new IllegalArgumentException("Veículo é obrigatório");
+        }
+        if (dto.getMotoristaId() == null) {
+            throw new IllegalArgumentException("Motorista é obrigatório");
+        }
 
-
+        // Usar o usuário logado como dono da reserva
         Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
         dto.setUsuarioId(usuarioLogado.getId());
 
-        Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId()).orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+        // Verificar se o veículo existe e está disponível
+        Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId())
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
 
+        // Atualizar status do veículo
         veiculo.setStatusVeiculo(StatusVeiculo.EM_USO);
         veiculoRepository.save(veiculo);
 
+        // Verificar se o motorista existe
+        Motorista motorista = motoristaRepository.findById(dto.getMotoristaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Motorista não encontrado"));
+
+        // Converter DTO para entidade
         Reserva entity = convertToEntity(dto);
+
+        // Definir status inicial da reserva
+        entity.setStatus(StatusReserva.EM_ANDAMENTO);
+
+        // Associar o motorista explicitamente
+        entity.setMotorista(motorista);
+
+        // Salvar a reserva
         entity = repository.save(entity);
+
         return convertToDTO(entity);
     }
 
@@ -88,23 +102,61 @@ public class ReservaService {
     public ReservaDTO update(Long id, ReservaDTO dto) {
         try {
             Reserva entity = repository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada com ID: " + id));
 
             if (entity.getStatus() == StatusReserva.EM_ANDAMENTO) {
-                throw new IllegalArgumentException("Não é permitido atualizar reservas aprovadas ou em andamento");
+                throw new IllegalArgumentException("Não é permitido atualizar reservas em andamento");
             }
 
             if (dto.getDataReserva() == null || dto.getDataVencimento() == null) {
                 throw new IllegalArgumentException("Datas não podem ser nulas");
             }
-
             if (!dto.getDataVencimento().isAfter(dto.getDataReserva())) {
                 throw new IllegalArgumentException("Data de vencimento deve ser posterior à data de reserva");
             }
 
-            dto.setId(entity.getId());
-            entity = convertToEntity(dto);
+            if (dto.getMotoristaId() != null &&
+                    (entity.getMotorista() == null || !dto.getMotoristaId().equals(entity.getMotorista().getId()))) {
+
+                Motorista motorista = motoristaRepository.findById(dto.getMotoristaId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Motorista não encontrado"));
+                entity.setMotorista(motorista);
+            }
+
+            if (dto.getVeiculoId() != null &&
+                    (entity.getVeiculo() == null || !dto.getVeiculoId().equals(entity.getVeiculo().getId()))) {
+
+
+                if (entity.getVeiculo() != null) {
+                    Veiculo veiculoAntigo = entity.getVeiculo();
+                    veiculoAntigo.setStatusVeiculo(StatusVeiculo.DISPONIVEL);
+                    veiculoRepository.save(veiculoAntigo);
+                }
+
+                Veiculo novoVeiculo = veiculoRepository.findById(dto.getVeiculoId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
+                novoVeiculo.setStatusVeiculo(StatusVeiculo.EM_USO);
+                veiculoRepository.save(novoVeiculo);
+                entity.setVeiculo(novoVeiculo);
+            }
+
+            if (dto.getLocalRetiradaId() != null) {
+                Filial filial = filialRepository.findById(dto.getLocalRetiradaId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Local de retirada não encontrado"));
+                entity.setLocalRetirada(filial);
+            }
+
+            entity.setDataReserva(dto.getDataReserva());
+            entity.setDataVencimento(dto.getDataVencimento());
+            if (dto.getCategoria() != null) {
+                entity.setCategoria(dto.getCategoria());
+            }
+            if (dto.getStatus() != null) {
+                entity.setStatus(dto.getStatus());
+            }
+
             entity = repository.save(entity);
+
             return convertToDTO(entity);
         }
         catch (JpaObjectRetrievalFailureException e) {
@@ -135,6 +187,7 @@ public class ReservaService {
         dto.setLocalRetiradaId(entity.getLocalRetirada() != null ? entity.getLocalRetirada().getId() : null);
         dto.setUsuarioId(entity.getUsuario() != null ? entity.getUsuario().getId() : null);
         dto.setVeiculoId(entity.getVeiculo() != null ? entity.getVeiculo().getId() : null);
+        dto.setMotoristaId(entity.getMotorista() != null ? entity.getMotorista().getId() : null);
         return dto;
     }
 
@@ -146,21 +199,28 @@ public class ReservaService {
         entity.setCategoria(dto.getCategoria());
         entity.setStatus(dto.getStatus());
 
+        // Buscar o usuário pelo ID
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        usuario.setId(dto.getUsuarioId());
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
         entity.setUsuario(usuario);
 
+        // Buscar a filial pelo ID
         Filial filial = filialRepository.findById(dto.getLocalRetiradaId())
-                .orElseThrow(() -> new RuntimeException("Local de retirada não encontrada"));
-        filial.setId(dto.getLocalRetiradaId());
+                .orElseThrow(() -> new ResourceNotFoundException("Local de retirada não encontrado"));
         entity.setLocalRetirada(filial);
 
+        // Buscar o veículo pelo ID
         if (dto.getVeiculoId() != null) {
-            entity.setVeiculo(
-                    veiculoRepository.findById(dto.getVeiculoId())
-                            .orElseThrow(() -> new RuntimeException("Veículo não encontrado"))
-            );
+            Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
+            entity.setVeiculo(veiculo);
+        }
+
+        // Buscar o motorista pelo ID
+        if (dto.getMotoristaId() != null) {
+            Motorista motorista = motoristaRepository.findById(dto.getMotoristaId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Motorista não encontrado"));
+            entity.setMotorista(motorista);
         }
 
         return entity;
