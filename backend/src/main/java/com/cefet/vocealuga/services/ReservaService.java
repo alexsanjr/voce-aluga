@@ -129,9 +129,6 @@ public class ReservaService {
                 }
             }
 
-            if (entity.getStatus() == StatusReserva.EM_ANDAMENTO) {
-                throw new IllegalArgumentException("Não é permitido atualizar reservas em andamento");
-            }
 
             if (dto.getDataReserva() == null || dto.getDataVencimento() == null) {
                 throw new IllegalArgumentException("Datas não podem ser nulas");
