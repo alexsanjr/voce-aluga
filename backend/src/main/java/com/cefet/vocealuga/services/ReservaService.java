@@ -87,7 +87,7 @@ public class ReservaService {
         Reserva entity = convertToEntity(dto);
 
         // Definir status inicial da reserva
-        entity.setStatus(StatusReserva.AGENDADO);
+        entity.setStatus(StatusReserva.PENDENTE);
 
         // Associar o motorista explicitamente
         entity.setMotorista(motorista);
