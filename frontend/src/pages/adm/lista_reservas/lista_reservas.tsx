@@ -165,7 +165,7 @@ const ListaReservas: React.FC = () => {
     };
 
     return (
-        <DashboardDefaults title="Reservas para Aprovação">
+        <DashboardDefaults title="Gerenciamento de reservas">
             <section className="container-table-frota">
                 <div className="table">
                     <div className="arredondar">

@@ -1,0 +1,286 @@
+@use "../../../styles/variaveis.scss" as *;
+
+.container-table-frota {
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+
+    .title {
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        button {
+            background-color: $primary-color;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+                background-color: darken($primary-color, 5%);
+            }
+
+            i {
+                display: flex;
+                align-items: center;
+            }
+        }
+    }
+
+    .table {
+        padding: 0 1rem;
+        margin: 1rem 0;
+
+        .section-title {
+            margin-bottom: 1rem;
+            h3 {
+                font-size: 1.2rem;
+                color: $text-color;
+                font-weight: 600;
+            }
+        }
+
+        .arredondar {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            thead {
+                border-radius: 1rem;
+
+                tr {
+                    th {
+                        background-color: $gray-200;
+                        padding: 1rem;
+                        text-align: center;
+                        font-weight: 600;
+
+                        &:first-child {
+                            border-top-left-radius: 1rem;
+                            border-bottom-left-radius: 1rem;
+                        }
+                        &:last-child {
+                            border-top-right-radius: 1rem;
+                            border-bottom-right-radius: 1rem;
+                        }
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    &:hover {
+                        td {
+                            background-color: rgba(0, 0, 0, 0.03);
+                        }
+                    }
+
+                    td {
+                        padding: 0.5rem;
+                        border-bottom: 1px solid $gray-200;
+                        font-size: 0.8rem;
+                        text-align: center;
+
+                        &.status {
+                            display: flex;
+                            justify-content: center;
+
+                            span {
+                                padding: 0.5rem 1rem 0.5rem 1.5rem;
+                                font-size: 0.75rem;
+                                border-radius: 1rem;
+                                display: inline-flex;
+                                justify-content: center;
+                                align-items: center;
+                                position: relative;
+                                font-weight: 600;
+                                line-height: 1;
+
+                                &::before {
+                                    content: "";
+                                    position: absolute;
+                                    width: 0.5rem;
+                                    height: 0.5rem;
+                                    left: 0.5rem;
+                                    border-radius: 50%;
+                                }
+
+                                &.status-AGENDADO {
+                                    background-color: #fff3e0;
+                                    color: #ff9800;
+                                    &::before {
+                                        background-color: #ff9800;
+                                    }
+                                }
+                                &.status-EM_ANDAMENTO {
+                                    background-color: #f2eaff;
+                                    color: #6c47ff;
+                                    &::before {
+                                        background-color: #6c47ff;
+                                    }
+                                }
+                                &.status-FINALIZADO {
+                                    background-color: #e8f5e9;
+                                    color: #4caf50;
+                                    &::before {
+                                        background-color: #4caf50;
+                                    }
+                                }
+                                &.status-CANCELADO {
+                                    background-color: #ffe7e2;
+                                    color: #ff6041;
+                                    &::before {
+                                        background-color: #ff6041;
+                                    }
+                                }
+                            }
+                        }
+
+                        &.edit {
+                            div {
+                                display: flex;
+                                justify-content: center;
+                                gap: 0.5rem;
+
+                                button {
+                                    background-color: transparent;
+                                    border: none;
+                                    cursor: pointer;
+                                    padding: 0.3rem;
+                                    border-radius: 0.3rem;
+                                    transition: background-color 0.2s;
+
+                                    &:hover {
+                                        background-color: rgba(0, 0, 0, 0.05);
+                                    }
+
+                                    &.finish-maintenance {
+                                        color: #4caf50;
+                                    }
+
+                                    &.cancel-maintenance {
+                                        color: #ff6041;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        width: 90%;
+        max-width: 500px;
+
+        h3 {
+            margin-bottom: 1.5rem;
+            color: $text-color;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: $text-color;
+            }
+
+            select, textarea {
+                width: 100%;
+                padding: 0.5rem;
+                border: 1px solid $gray-300;
+                border-radius: 0.3rem;
+                font-size: 0.9rem;
+
+                &:focus {
+                    outline: none;
+                    border-color: $primary-color;
+                }
+            }
+
+            textarea {
+                resize: vertical;
+            }
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+
+            button {
+                padding: 0.5rem 1rem;
+                border-radius: 0.3rem;
+                font-size: 0.9rem;
+                cursor: pointer;
+
+                &:first-child {
+                    background-color: $gray-200;
+                    border: none;
+                    color: $text-color;
+
+                    &:hover {
+                        background-color: darken($gray-200, 5%);
+                    }
+                }
+
+                &:last-child {
+                    background-color: $primary-color;
+                    border: none;
+                    color: white;
+
+                    &:hover {
+                        background-color: darken($primary-color, 5%);
+                    }
+
+                    &:disabled {
+                        opacity: 0.7;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

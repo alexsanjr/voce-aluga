@@ -13,6 +13,7 @@ import EditarVeiculo from "../pages/adm/editar_veiculo/editar_veiculo";
 import ListaTransferencia from "../pages/adm/lista_transferencia/lista_transferencia";
 import NovaTransferencia from "../pages/adm/nova_transferencia/nova_transferencia";
 import ListaReservas from "../pages/adm/lista_reservas/lista_reservas";
+import ListaManutencao from "../pages/adm/lista_manutencao/lista_manutencao";
 
 const Adm = lazy(() => import("../pages/adm/adm"));
 const NovoVeiculo = lazy(() => import("../pages/adm/novo_veiculo/novo_veiculo"));
@@ -109,6 +110,15 @@ export default function Router() {
                 element={
                     <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
                         <ListaReservas />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/lista_manutencao"
+                element={
+                    <PrivateRoute role={["ROLE_ADMININISTRADOR", "ROLE_GERENTE"]}>
+                        <ListaManutencao />
                     </PrivateRoute>
                 }
             />

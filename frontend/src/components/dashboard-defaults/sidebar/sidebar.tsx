@@ -20,6 +20,7 @@ const Sidebar: React.FC = () => {
         { icon: "dashicons:car", label: "Frota", route: "/adm" },
         { icon: "dashicons-randomize", label: "Transferências", route: "/lista_transferencias" },
         { icon: "dashicons-calendar", label: "Reservas", route: "/lista_reservas" },
+        { icon: "dashicons-calendar", label: "Manutencoes", route: "/lista_manutencao" },
     ];
 
     // const { logout } = useAuthStore();
