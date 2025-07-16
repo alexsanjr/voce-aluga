@@ -104,7 +104,7 @@ public class ReservaServiceTest {
         verify(reservaRepository).save(captor.capture());
         Reserva reservaSalva = captor.getValue();
 
-        assertEquals(StatusReserva.EM_ANDAMENTO, reservaSalva.getStatus());
+        assertEquals(StatusReserva.PENDENTE, reservaSalva.getStatus());
         assertEquals(5L, result.getMotoristaId());
         assertEquals(motorista, reservaSalva.getMotorista());
     }
@@ -139,7 +139,7 @@ public class ReservaServiceTest {
         dto.setUsuarioId(1L);
         dto.setLocalRetiradaId(2L);
         dto.setCategoria(TipoReserva.ANTECIPADA);
-        dto.setStatus(StatusReserva.PENDENTE);
+        dto.setStatus(StatusReserva.EM_ANDAMENTO); // Definindo explicitamente como EM_ANDAMENTO
         dto.setDataReserva(LocalDate.now());
         dto.setDataVencimento(LocalDate.now().plusDays(3));
         dto.setVeiculoId(1L);
@@ -161,7 +161,10 @@ public class ReservaServiceTest {
         when(filialRepository.findById(2L)).thenReturn(Optional.of(filial));
         when(veiculoRepository.findById(1L)).thenReturn(Optional.of(veiculo));
         when(motoristaRepository.findById(5L)).thenReturn(Optional.of(motorista));
-        when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(reservaRepository.save(any(Reserva.class))).thenAnswer(invocation -> {
+            Reserva r = invocation.getArgument(0);
+            return r;
+        });
 
         Authentication authentication = mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn(usuario);
@@ -172,8 +175,8 @@ public class ReservaServiceTest {
         verify(reservaRepository).save(captor.capture());
         Reserva reservaSalva = captor.getValue();
 
-        assertEquals(StatusReserva.EM_ANDAMENTO, reservaSalva.getStatus());
-        assertEquals(StatusReserva.EM_ANDAMENTO, result.getStatus());
+        assertEquals(StatusReserva.PENDENTE, reservaSalva.getStatus());
+        assertEquals(StatusReserva.PENDENTE, result.getStatus());
     }
 
     @Test
@@ -266,37 +269,6 @@ public class ReservaServiceTest {
     }
 
     @Test
-    void naoDeveAtualizarReservaEmAndamento() {
-        // Preparar uma reserva em andamento
-        Reserva reservaEmAndamento = new Reserva();
-        reservaEmAndamento.setId(500L);
-        reservaEmAndamento.setStatus(StatusReserva.EM_ANDAMENTO);
-        reservaEmAndamento.setDataReserva(LocalDate.now());
-        reservaEmAndamento.setDataVencimento(LocalDate.now().plusDays(2));
-
-        Usuario usuario = new Usuario();
-        usuario.setId(1L);
-        reservaEmAndamento.setUsuario(usuario);
-
-        Filial filial = new Filial();
-        filial.setId(2L);
-        reservaEmAndamento.setLocalRetirada(filial);
-
-        when(reservaRepository.findById(500L)).thenReturn(Optional.of(reservaEmAndamento));
-
-        ReservaDTO dto = new ReservaDTO();
-        dto.setId(500L);
-        dto.setDataReserva(LocalDate.now().plusDays(1));
-        dto.setDataVencimento(LocalDate.now().plusDays(3));
-
-        // Verificar que lança exceção ao tentar atualizar
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> reservaService.update(500L, dto));
-
-        assertEquals("Não é permitido atualizar reservas em andamento", exception.getMessage());
-    }
-
-    @Test
     void naoDeveCriarReservaComDataInvalida() {
         ReservaDTO dto = new ReservaDTO();
         dto.setUsuarioId(1L);
@@ -305,10 +277,9 @@ public class ReservaServiceTest {
         dto.setMotoristaId(5L);
         dto.setCategoria(TipoReserva.ANTECIPADA);
         dto.setStatus(StatusReserva.PENDENTE);
-        // Data de vencimento igual à data de reserva (inválido)
         LocalDate hoje = LocalDate.now();
         dto.setDataReserva(hoje);
-        dto.setDataVencimento(hoje); // Mesmo dia, não é posterior
+        dto.setDataVencimento(hoje);
 
         Usuario usuario = new Usuario();
         usuario.setId(1L);
@@ -327,10 +298,12 @@ public class ReservaServiceTest {
         // Veículo original
         Veiculo veiculoOriginal = new Veiculo();
         veiculoOriginal.setId(10L);
+        veiculoOriginal.setStatusVeiculo(StatusVeiculo.RESERVADO);
 
         // Novo veículo
         Veiculo novoVeiculo = new Veiculo();
         novoVeiculo.setId(20L);
+        novoVeiculo.setStatusVeiculo(StatusVeiculo.DISPONIVEL);
 
         // Reserva original
         Reserva reserva = new Reserva();
@@ -385,8 +358,8 @@ public class ReservaServiceTest {
         assertEquals(StatusVeiculo.DISPONIVEL, veiculosSalvos.get(0).getStatusVeiculo());
         assertEquals(10L, veiculosSalvos.get(0).getId());
 
-        // O segundo veículo salvo deve ser o novo com status EM_USO
-        assertEquals(StatusVeiculo.EM_USO, veiculosSalvos.get(1).getStatusVeiculo());
+        // O segundo veículo salvo deve ser o novo com status RESERVADO
+        assertEquals(StatusVeiculo.RESERVADO, veiculosSalvos.get(1).getStatusVeiculo());
         assertEquals(20L, veiculosSalvos.get(1).getId());
 
         // Verificar que a reserva foi atualizada com o novo veículo
@@ -467,5 +440,105 @@ public class ReservaServiceTest {
                 () -> reservaService.insert(dto, authentication));
 
         assertEquals("Veículo é obrigatório", exception.getMessage());
+    }
+
+    @Test
+    void deveAtualizarStatusVeiculoQuandoCancelarReserva() {
+        // Configuração do veículo
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(30L);
+        veiculo.setStatusVeiculo(StatusVeiculo.RESERVADO);
+
+        // Configuração da reserva original
+        Reserva reserva = new Reserva();
+        reserva.setId(700L);
+        reserva.setStatus(StatusReserva.PENDENTE);
+        reserva.setDataReserva(LocalDate.now());
+        reserva.setDataVencimento(LocalDate.now().plusDays(5));
+        reserva.setVeiculo(veiculo);
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        reserva.setUsuario(usuario);
+
+        Filial filial = new Filial();
+        filial.setId(2L);
+        reserva.setLocalRetirada(filial);
+
+        Motorista motorista = new Motorista();
+        motorista.setId(3L);
+        reserva.setMotorista(motorista);
+
+        // Configurar mocks
+        when(reservaRepository.findById(700L)).thenReturn(Optional.of(reserva));
+        when(reservaRepository.save(any(Reserva.class))).thenReturn(reserva);
+
+        // DTO para atualização - cancela a reserva
+        ReservaDTO dto = new ReservaDTO();
+        dto.setId(700L);
+        dto.setStatus(StatusReserva.CANCELADO);
+        dto.setDataReserva(LocalDate.now());
+        dto.setDataVencimento(LocalDate.now().plusDays(5));
+
+        // Executar atualização
+        reservaService.update(700L, dto);
+
+        // Verificar que o status do veículo foi alterado para DISPONIVEL
+        ArgumentCaptor<Veiculo> captor = ArgumentCaptor.forClass(Veiculo.class);
+        verify(veiculoRepository).save(captor.capture());
+
+        Veiculo veiculoAtualizado = captor.getValue();
+        assertEquals(StatusVeiculo.DISPONIVEL, veiculoAtualizado.getStatusVeiculo());
+        assertEquals(30L, veiculoAtualizado.getId());
+    }
+
+    @Test
+    void deveAtualizarStatusVeiculoQuandoColocarEmAndamento() {
+        // Configuração do veículo
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(50L);
+        veiculo.setStatusVeiculo(StatusVeiculo.RESERVADO);
+
+        // Configuração da reserva original
+        Reserva reserva = new Reserva();
+        reserva.setId(900L);
+        reserva.setStatus(StatusReserva.PENDENTE);
+        reserva.setDataReserva(LocalDate.now());
+        reserva.setDataVencimento(LocalDate.now().plusDays(5));
+        reserva.setVeiculo(veiculo);
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        reserva.setUsuario(usuario);
+
+        Filial filial = new Filial();
+        filial.setId(2L);
+        reserva.setLocalRetirada(filial);
+
+        Motorista motorista = new Motorista();
+        motorista.setId(3L);
+        reserva.setMotorista(motorista);
+
+        // Configurar mocks
+        when(reservaRepository.findById(900L)).thenReturn(Optional.of(reserva));
+        when(reservaRepository.save(any(Reserva.class))).thenReturn(reserva);
+
+        // DTO para atualização - coloca em andamento
+        ReservaDTO dto = new ReservaDTO();
+        dto.setId(900L);
+        dto.setStatus(StatusReserva.EM_ANDAMENTO);
+        dto.setDataReserva(LocalDate.now());
+        dto.setDataVencimento(LocalDate.now().plusDays(5));
+
+        // Executar atualização
+        reservaService.update(900L, dto);
+
+        // Verificar que o status do veículo foi alterado para EM_USO
+        ArgumentCaptor<Veiculo> captor = ArgumentCaptor.forClass(Veiculo.class);
+        verify(veiculoRepository).save(captor.capture());
+
+        Veiculo veiculoAtualizado = captor.getValue();
+        assertEquals(StatusVeiculo.EM_USO, veiculoAtualizado.getStatusVeiculo());
+        assertEquals(50L, veiculoAtualizado.getId());
     }
 }
