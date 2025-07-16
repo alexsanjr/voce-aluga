@@ -1,13 +1,11 @@
 package com.cefet.vocealuga.service;
 
-import com.cefet.vocealuga.dtos.MeDTO;
 import com.cefet.vocealuga.dtos.ReservaDTO;
 import com.cefet.vocealuga.entities.*;
 import com.cefet.vocealuga.entities.enums.StatusReserva;
 import com.cefet.vocealuga.entities.enums.StatusVeiculo;
 import com.cefet.vocealuga.entities.enums.TipoReserva;
 import com.cefet.vocealuga.repositories.*;
-import com.cefet.vocealuga.services.AuthService;
 import com.cefet.vocealuga.services.ReservaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
