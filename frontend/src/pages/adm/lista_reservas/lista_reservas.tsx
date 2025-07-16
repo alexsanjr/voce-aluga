@@ -180,6 +180,8 @@ const ListaReservas: React.FC = () => {
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Usuário ID</th>
+                                        <th>Veículo ID</th>
                                         <th>Categoria</th>
                                         <th>Local Retirada</th>
                                         <th>Data Reserva</th>
@@ -192,6 +194,8 @@ const ListaReservas: React.FC = () => {
                                     {reservas.map((reserva: any) => (
                                         <tr key={reserva.id}>
                                             <td>{reserva.id}</td>
+                                            <td>{reserva.usuarioId}</td>
+                                            <td>{reserva.veiculoId}</td>
                                             <td>{reserva.categoria}</td>
                                             <td>{reserva.localRetiradaId}</td>
                                             <td>{new Date(reserva.dataReserva).toLocaleDateString("pt-BR")}</td>

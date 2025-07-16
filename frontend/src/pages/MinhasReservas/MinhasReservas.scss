@@ -19,7 +19,7 @@
     font-weight: 700;
     text-align: center;
     position: relative;
-    
+
     &::after {
       content: '';
       position: absolute;
@@ -184,7 +184,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   &::before {
     content: '';
     width: 16px;

@@ -58,6 +58,7 @@ const ListaFrota: React.FC = () => {
                                 <table>
                                     <thead>
                                         <tr>
+                                            <th>ID</th>
                                             <th>Marca</th>
                                             <th>Modelo</th>
                                             <th>Grupo</th>
@@ -72,6 +73,7 @@ const ListaFrota: React.FC = () => {
                                     <tbody>
                                         {veiculosFiltrados.map((item: any) => (
                                             <tr key={item.id}>
+                                                <td>{item.id}</td>
                                                 <td>{item.marca}</td>
                                                 <td>{item.modelo}</td>
                                                 <td>{item.grupo}</td>
