@@ -2,12 +2,10 @@ package com.cefet.vocealuga.services;
 
 import com.cefet.vocealuga.dtos.MotoristaDTO;
 import com.cefet.vocealuga.dtos.MeDTO;
-import com.cefet.vocealuga.entities.Cliente;
 import com.cefet.vocealuga.entities.Motorista;
 import com.cefet.vocealuga.entities.Usuario;
 import com.cefet.vocealuga.repositories.MotoristaRepository;
 import com.cefet.vocealuga.repositories.UsuarioRepository;
-import com.cefet.vocealuga.services.exceptions.BusinessException;
 import com.cefet.vocealuga.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -34,15 +32,8 @@ public class MotoristaService {
     public MotoristaDTO criarMotoristaPeloUsuarioLogado(String cnh, Authentication authentication) {
         MeDTO userInfo = authService.findMe(authentication);
 
-        if (!"ROLE_CLIENTE".equals(userInfo.getRole())) {
-            throw new BusinessException("Apenas clientes podem adicionar-se como motoristas");
-        }
-
         Usuario usuario = usuarioRepository.findByEmail(userInfo.getEmail());
 
-        if (!(usuario instanceof Cliente)) {
-            throw new BusinessException("Usuário não é um cliente");
-        }
 
         Motorista motorista = new Motorista();
         motorista.setCnh(cnh);
