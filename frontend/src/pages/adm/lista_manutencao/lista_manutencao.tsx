@@ -1,60 +1,68 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import DashboardDefaults from "../../../components/dashboard-defaults/dashboard-defaults";
 import { useState, useEffect } from "react";
-import type { ReactNode } from "react";
-import { InputSelect } from "../../../components/inputs";
-import { locais } from "../../../utils/veiculoOptions";
-import "./lista_manutencao.min.css";
-import {
-    agendarManutencao,
-    getManutencoes,
-    finalizarManutencao,
-    getEstacaoDeServico,
-    type ManutencaoPayload
-} from "../../../services/manutencaoService";
+import { useNavigate } from "react-router-dom";
+import * as manutencaoService from "../../../services/manutencaoService";
+import type { Manutencao, EstacaoServico } from "../../../services/manutencaoService";
 import useHookAdmList from "./hook/useHookAdmList";
 import type { ApiError } from "../../../types/api-error";
 
-interface Manutencao extends ManutencaoPayload {
-    id: number;
-    status?: "AGENDADO" | "EM_ANDAMENTO" | "FINALIZADO" | "CANCELADO";
-}
-
-interface EstacaoServico {
-    id: number;
-    nome: string;
-}
-
-const statusLabels: Record<string, string> = {
-    AGENDADO: "Agendada",
-    EM_ANDAMENTO: "Em andamento",
-    FINALIZADO: "Finalizada",
-    CANCELADO: "Cancelada"
-};
+import "./lista_manutencao.min.css";
 
 const ListaManutencao: React.FC = () => {
-    const { Lista_veiculos, atualizarLista } = useHookAdmList();
+    const hookResult = useHookAdmList();
+    const navigate = useNavigate();
+    console.log('Hook result:', hookResult);
+
+    // Garante que Lista_veiculos é sempre um array
+    const Lista_veiculos = (() => {
+        if (!hookResult?.Lista_veiculos) return [];
+        const data = hookResult.Lista_veiculos;
+        if (typeof data === 'object' && 'content' in data && Array.isArray(data.content)) {
+            return data.content;
+        }
+        return Array.isArray(data) ? data : [];
+    })();
+
+    console.log('Lista_veiculos processada:', Lista_veiculos);
+
     const [manutencoes, setManutencoes] = useState<Manutencao[]>([]);
     const [estacoesServico, setEstacoesServico] = useState<EstacaoServico[]>([]);
     const [loading, setLoading] = useState(false);
-    const [modalAberto, setModalAberto] = useState(false);
-    const [motivoManutencao, setMotivoManutencao] = useState("");
-    const [veiculoSelecionado, setVeiculoSelecionado] = useState<number | null>(null);
-    const [estacaoSelecionada, setEstacaoSelecionada] = useState("");
-    const [filialSelecionada, setFilialSelecionada] = useState("");
 
     useEffect(() => {
-        carregarManutencoes();
-        carregarEstacoes();
+        const loadData = async () => {
+            await carregarEstacoes();
+            await carregarManutencoes();
+        };
+        loadData();
     }, []);
 
     const carregarManutencoes = async () => {
         setLoading(true);
         try {
-            const data = await getManutencoes();
-            setManutencoes(Array.isArray(data) ? data : []);
-        } catch (err) {
-            handleError(err);
+            const response = await manutencaoService.getManutencoes();
+            let lista: Manutencao[] = [];
+
+            if (response && typeof response === 'object') {
+                const data = response as any;
+                if (Array.isArray(data)) {
+                    lista = data;
+                } else if (Array.isArray(data.content)) {
+                    lista = data.content;
+                } else if (Array.isArray(data.results)) {
+                    lista = data.results;
+                } else if (Array.isArray(data.data)) {
+                    lista = data.data;
+                }
+            }
+
+            setManutencoes(lista);
+            console.log('Manutenções carregadas:', lista);
+        } catch (error) {
+            console.error('Erro ao carregar manutenções:', error);
+            handleError(error);
+            setManutencoes([]);
         } finally {
             setLoading(false);
         }
@@ -62,108 +70,54 @@ const ListaManutencao: React.FC = () => {
 
     const carregarEstacoes = async () => {
         try {
-            const data = await getEstacaoDeServico();
-            setEstacoesServico(Array.isArray(data) ? data : []);
-        } catch (err) {
-            handleError(err);
+            const response = await manutencaoService.getEstacaoDeServico();
+            let lista: EstacaoServico[] = [];
+
+            if (response && typeof response === 'object') {
+                const data = response as any;
+                if (Array.isArray(data)) {
+                    lista = data;
+                } else if (Array.isArray(data.content)) {
+                    lista = data.content;
+                } else if (Array.isArray(data.results)) {
+                    lista = data.results;
+                } else if (Array.isArray(data.data)) {
+                    lista = data.data;
+                }
+            }
+
+            setEstacoesServico(lista);
+            console.log('Estações carregadas:', lista);
+        } catch (error) {
+            console.error('Erro ao carregar estações:', error);
+            handleError(error);
+            setEstacoesServico([]);
         }
     };
 
-    const handleError = (error: any) => {
+    const handleError = (error: unknown) => {
         console.error("Erro:", error);
-        if (error.response?.data) {
-            const apiError = error.response.data as ApiError;
-            alert(apiError.message || "Ocorreu um erro. Tente novamente.");
+        if (error && typeof error === 'object' && 'response' in error) {
+            const apiError = error as unknown as ApiError;
+            alert(apiError.message || "Erro ao processar a requisição");
         } else {
-            alert("Ocorreu um erro inesperado. Tente novamente.");
+            alert("Erro ao processar a requisição");
         }
     };
 
     const handleNovaManutencao = () => {
-        setModalAberto(true);
+        navigate('/nova_manutencao');
     };
 
-    const handleSubmitManutencao = async () => {
-        if (!veiculoSelecionado || !estacaoSelecionada || !motivoManutencao) {
-            alert("Preencha todos os campos");
-            return;
-        }
-
-        const payload: ManutencaoPayload = {
-            veiculoId: veiculoSelecionado,
-            estacaoDeServicoId: Number(estacaoSelecionada),
-            motivoManutencao
-        };
-
-        setLoading(true);
-        try {
-            await agendarManutencao(payload);
-            setModalAberto(false);
-
-            if (atualizarLista) {
-                await atualizarLista();
-            }
-            await carregarManutencoes();
-
-            // Limpar campos
-            setMotivoManutencao("");
-            setEstacaoSelecionada("");
-            setVeiculoSelecionado(null);
-        } catch (err) {
-            handleError(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleFinalizarManutencao = async (manutencaoId: number) => {
+    const handleFinalizarManutencao = async (id: number) => {
         if (window.confirm("Deseja finalizar esta manutenção?")) {
             try {
-                await finalizarManutencao(manutencaoId);
+                await manutencaoService.finalizarManutencao(id);
                 await carregarManutencoes();
-                if (atualizarLista) {
-                    await atualizarLista();
-                }
-            } catch (err) {
-                handleError(err);
+            } catch (error) {
+                handleError(error);
             }
         }
-    };
-
-    const getAcoes = (manutencao: Manutencao) => {
-        const acoes: ReactNode[] = [];
-
-        if (manutencao.status === "AGENDADO") {
-            acoes.push(
-                <button
-                    key="iniciar"
-                    className="start-maintenance"
-                    title="Iniciar manutenção"
-                    onClick={() => handleFinalizarManutencao(manutencao.id)}
-                >
-                    <i>
-                        <Icon icon="tabler:player-play" />
-                    </i>
-                </button>
-            );
-        }
-
-        if (manutencao.status === "EM_ANDAMENTO") {
-            acoes.push(
-                <button
-                    key="finalizar"
-                    className="finish-maintenance"
-                    title="Finalizar manutenção"
-                    onClick={() => handleFinalizarManutencao(manutencao.id)}
-                >
-                    <i>
-                        <Icon icon="tabler:check" />
-                    </i>
-                </button>
-            );
-        }
-
-        return acoes;
     };
 
     return (
@@ -172,23 +126,13 @@ const ListaManutencao: React.FC = () => {
                 <div className="title">
                     <button onClick={handleNovaManutencao}>
                         <i>
-                            <Icon icon="tabler:tool" />
+                            <Icon icon="fluent-emoji-high-contrast:plus" />
                         </i>
                         <p>Nova Manutenção</p>
                     </button>
-
-                    <InputSelect
-                        options={locais}
-                        icon="icon-park-solid:city"
-                        value={filialSelecionada}
-                        onChange={(e) => setFilialSelecionada(e.target.value)}
-                    />
                 </div>
 
                 <div className="table">
-                    <div className="section-title">
-                        <h3>Manutenções</h3>
-                    </div>
                     <div className="arredondar">
                         {loading ? (
                             <div>Carregando...</div>
@@ -200,14 +144,17 @@ const ListaManutencao: React.FC = () => {
                                         <th>Placa</th>
                                         <th>Estação de Serviço</th>
                                         <th>Motivo</th>
-                                        <th>Status</th>
-                                        <th>Ações</th>
+                                        <th>Data</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {manutencoes.map((manutencao) => {
+                                        console.log('Manutenção atual:', manutencao);
                                         const veiculo = Lista_veiculos.find(v => v.id === manutencao.veiculoId);
-                                        const estacao = estacoesServico.find(e => e.id === manutencao.estacaoDeServicoId);
+                                        console.log('Veículo encontrado:', veiculo);
+                                        const estacao = estacoesServico.find(e => Number(e.id) === Number(manutencao.estacaoDeServicoId));
+                                        console.log('Estação encontrada:', estacao);
 
                                         return (
                                             <tr key={manutencao.id}>
@@ -215,13 +162,16 @@ const ListaManutencao: React.FC = () => {
                                                 <td>{veiculo?.placa || 'N/A'}</td>
                                                 <td>{estacao?.nome || 'N/A'}</td>
                                                 <td>{manutencao.motivoManutencao}</td>
-                                                <td className="status">
-                                                    <span className={`status-${manutencao.status}`}>
-                                                        {statusLabels[manutencao.status || ""] || manutencao.status}
-                                                    </span>
-                                                </td>
-                                                <td className="edit">
-                                                    <div>{getAcoes(manutencao)}</div>
+                                                <td>{new Date(manutencao.dataManutencao).toLocaleDateString('pt-BR')}</td>
+                                                <td>
+                                                    {manutencao.status === 'AGENDADO' && (
+                                                        <button
+                                                            onClick={() => handleFinalizarManutencao(manutencao.id)}
+                                                            title="Finalizar manutenção"
+                                                        >
+                                                            <Icon icon="tabler:check" />
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         );
@@ -232,69 +182,6 @@ const ListaManutencao: React.FC = () => {
                     </div>
                 </div>
             </section>
-
-            {/* Modal de Agendamento */}
-            {modalAberto && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h3>Agendar Manutenção</h3>
-                        <form onSubmit={(e) => { e.preventDefault(); handleSubmitManutencao(); }}>
-                            <div className="form-group">
-                                <label>Veículo</label>
-                                <select
-                                    value={veiculoSelecionado || ""}
-                                    onChange={(e) => setVeiculoSelecionado(Number(e.target.value))}
-                                    required
-                                >
-                                    <option value="">Selecione um veículo</option>
-                                    {Lista_veiculos
-                                        .filter(v => v.statusVeiculo === "DISPONIVEL")
-                                        .map(veiculo => (
-                                            <option key={veiculo.id} value={veiculo.id}>
-                                                {veiculo.marca} {veiculo.modelo} - {veiculo.placa}
-                                            </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="form-group">
-                                <label>Estação de Serviço</label>
-                                <select
-                                    value={estacaoSelecionada}
-                                    onChange={(e) => setEstacaoSelecionada(e.target.value)}
-                                    required
-                                >
-                                    <option value="">Selecione uma estação</option>
-                                    {estacoesServico.map(estacao => (
-                                        <option key={estacao.id} value={estacao.id}>
-                                            {estacao.nome}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="form-group">
-                                <label>Motivo da Manutenção</label>
-                                <textarea
-                                    value={motivoManutencao}
-                                    onChange={(e) => setMotivoManutencao(e.target.value)}
-                                    required
-                                    rows={3}
-                                />
-                            </div>
-
-                            <div className="modal-actions">
-                                <button type="button" onClick={() => setModalAberto(false)}>
-                                    Cancelar
-                                </button>
-                                <button type="submit" disabled={loading}>
-                                    {loading ? 'Agendando...' : 'Agendar Manutenção'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
         </DashboardDefaults>
     );
 };
