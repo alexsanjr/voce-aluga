@@ -7,6 +7,7 @@ import Register from "../pages/Register/Register";
 import Pagamento from "../pages/Pagamento/Pagamento";
 import Aluguel from "../pages/Aluguel/Aluguel";
 import MinhasReservas from "../pages/MinhasReservas/MinhasReservas";
+import CadastroMotorista from "../pages/CadastroMotorista/CadastroMotorista";
 
 import { lazy } from "react";
 import EditarVeiculo from "../pages/adm/editar_veiculo/editar_veiculo";
@@ -29,6 +30,15 @@ export default function Router() {
                 element={
                     <PrivateRoute>
                         <Reserva />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/cadastro-motorista"
+                element={
+                    <PrivateRoute>
+                        <CadastroMotorista />
                     </PrivateRoute>
                 }
             />

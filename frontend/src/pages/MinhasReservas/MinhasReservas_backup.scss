@@ -122,6 +122,14 @@
 }
 
 .minhas-reserva-datas {
+  color: $primarySecundary;
+  font-size: 1.05rem;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  font-weight: 500;
+
+.minhas-reserva-datas {
   color: #475569;
   font-size: 1.05rem;
   display: flex;
@@ -158,6 +166,7 @@
   b {
     color: $primarySecundary;
   }
+}
 }
 
 .minhas-reserva-status {
@@ -242,7 +251,7 @@
     content: '';
     width: 20px;
     height: 20px;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23dc2626" viewBox="0 0 24 24"><path d="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"/></svg>') no-repeat center;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23dc2626" viewBox="0 0 24 24"><path d="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2m3.59,5L12,10.59 8.41,7 7,8.41 10.59,12 7,15.59 8.41,17 12,13.41 15.59,17 17,15.59 13.41,12 17,8.41 15.59,7Z"/></svg>') no-repeat center;
     background-size: contain;
     display: inline-block;
     margin-right: 0.5rem;
@@ -263,6 +272,157 @@
   }
 }
 
+// Seção de Cadastro de Motorista
+.motorista-section {
+  width: 100%;
+  background: linear-gradient(135deg, #ffffff 0%, #fcfcfc 100%);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+
+  h3 {
+    font-size: 1.8rem;
+    color: $primarySecundary;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    text-align: center;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, $primarySecundary, lighten($primarySecundary, 20%));
+      border-radius: 2px;
+    }
+  }
+}
+
+.motorista-tipo-selecao {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.2rem 1.5rem;
+    background: rgba(248, 250, 252, 0.8);
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #334155;
+
+    &:hover {
+      background: rgba(241, 245, 249, 1);
+      border-color: rgba(159, 103, 221, 0.3);
+      transform: translateY(-1px);
+    }
+
+    input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: $primarySecundary;
+      cursor: pointer;
+    }
+
+    input[type="radio"]:checked + & {
+      background: rgba(159, 103, 221, 0.05);
+      border-color: $primarySecundary;
+      color: $primarySecundary;
+    }
+  }
+}
+
+.motorista-form {
+  background: rgba(248, 250, 252, 0.5);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+
+  .form-group {
+    margin-bottom: 1.8rem;
+
+    label {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.8rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 2px solid rgba(226, 232, 240, 0.8);
+      border-radius: 10px;
+      font-size: 1rem;
+      background: #ffffff;
+      transition: all 0.3s ease;
+      color: #334155;
+
+      &:focus {
+        outline: none;
+        border-color: $primarySecundary;
+        box-shadow: 0 0 0 3px rgba(159, 103, 221, 0.1);
+        background: #ffffff;
+      }
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+  }
+
+  .btn-cadastrar-motorista {
+    width: 100%;
+    padding: 1.2rem 2rem;
+    background: linear-gradient(135deg, $primarySecundary 0%, lighten($primarySecundary, 10%) 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, darken($primarySecundary, 5%) 0%, $primarySecundary 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px 0 rgba(159, 103, 221, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .sucesso-message {
+    background: rgba(34, 197, 94, 0.1);
+    color: #059669;
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-weight: 500;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    text-align: center;
+  }
+}
+
 // Responsividade
 @media (max-width: 768px) {
   .minhas-reservas-container {
@@ -272,6 +432,40 @@
     h2 {
       font-size: 2rem;
       margin-bottom: 2rem;
+    }
+  }
+
+  .motorista-section {
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+
+    h3 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .motorista-tipo-selecao {
+    gap: 1rem;
+
+    label {
+      padding: 1rem 1.2rem;
+      font-size: 1rem;
+    }
+  }
+
+  .motorista-form {
+    padding: 1.5rem;
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        font-size: 1rem;
+      }
+
+      input {
+        padding: 0.9rem 1rem;
+      }
     }
   }
 
@@ -307,6 +501,44 @@
 
     h2 {
       font-size: 1.8rem;
+    }
+  }
+
+  .motorista-section {
+    padding: 1.5rem 1rem;
+
+    h3 {
+      font-size: 1.3rem;
+    }
+  }
+
+  .motorista-tipo-selecao {
+    label {
+      padding: 0.8rem 1rem;
+      font-size: 0.95rem;
+
+      input[type="radio"] {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  .motorista-form {
+    padding: 1.2rem;
+
+    .form-group {
+      margin-bottom: 1.2rem;
+
+      input {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    .btn-cadastrar-motorista {
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
     }
   }
 

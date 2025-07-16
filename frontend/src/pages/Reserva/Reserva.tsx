@@ -72,7 +72,7 @@ const Reserva: React.FC = () => {
                 ...veiculo,
             },
         };
-        navigate("/pagamento", { state: { reservaPayload } });
+        navigate("/cadastro-motorista", { state: { reservaPayload } });
     };
 
     return (

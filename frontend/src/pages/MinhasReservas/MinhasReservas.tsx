@@ -58,6 +58,7 @@ const MinhasReservas: React.FC = () => {
             <NavBar />
             <div className="minhas-reservas-container">
                 <h2>Minhas Reservas</h2>
+                
                 {loading ? (
                     <div className="minhas-reservas-loading">Carregando reservas...</div>
                 ) : erro ? (

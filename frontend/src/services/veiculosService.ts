@@ -43,39 +43,3 @@ export const deleteVeiculo = async (id: string | number) => {
     const response = await api.delete(`${API_URL}/${id}`);
     return response.data;
 };
-
-// Upload de imagem para um veículo
-export const uploadVeiculoImagem = async (id: string | number, file: File) => {
-    const formData = new FormData();
-    formData.append('imagem', file);
-    
-    const response = await api.post(`${API_URL}/${id}/upload-imagem`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    });
-    return response.data;
-};
-
-// Upload de múltiplas imagens para um veículo
-export const uploadVeiculoImagens = async (id: string | number, files: File[]) => {
-    const formData = new FormData();
-    files.forEach((file, index) => {
-        formData.append(`imagens`, file);
-    });
-    
-    const response = await api.post(`${API_URL}/${id}/upload-imagens`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    });
-    return response.data;
-};
-
-// Deletar uma imagem específica
-export const deleteVeiculoImagem = async (id: string | number, imagemUrl: string) => {
-    const response = await api.delete(`${API_URL}/${id}/imagem`, {
-        data: { imagemUrl }
-    });
-    return response.data;
-};

@@ -9,6 +9,8 @@ interface ReservaPayload {
     dataReserva: string;
     dataVencimento: string;
     localRetiradaId: number;
+    motoristaId: number;
+    veiculoId: number;
 }
 
 // Criar uma nova reserva
