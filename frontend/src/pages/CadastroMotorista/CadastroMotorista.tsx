@@ -18,32 +18,32 @@ const CadastroMotorista: React.FC = () => {
     const reservaPayload = location.state?.reservaPayload;
 
     // Estados para o formulário de motorista
-    const [tipoMotorista, setTipoMotorista] = useState<'eu' | 'outro' | ''>('');
+    const [tipoMotorista, setTipoMotorista] = useState<"eu" | "outro" | "">("");
     const [motoristaForm, setMotoristaForm] = useState<MotoristaForm>({
-        cnh: '',
-        nome: '',
-        cpf: '',
-        dataNascimento: ''
+        cnh: "",
+        nome: "",
+        cpf: "",
+        dataNascimento: "",
     });
     const [loading, setLoading] = useState(false);
-    const [erro, setErro] = useState('');
+    const [erro, setErro] = useState("");
 
     const handleInputChange = (field: keyof MotoristaForm, value: string) => {
         let formattedValue = value;
 
         // Formatação para CPF (apenas números, máximo 11 dígitos)
-        if (field === 'cpf') {
-            formattedValue = value.replace(/\D/g, '').slice(0, 11);
+        if (field === "cpf") {
+            formattedValue = value.replace(/\D/g, "").slice(0, 11);
         }
 
         // Formatação para CNH (apenas números e letras, máximo 11 caracteres)
-        if (field === 'cnh') {
-            formattedValue = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 11);
+        if (field === "cnh") {
+            formattedValue = value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 11);
         }
 
-        setMotoristaForm(prev => ({
+        setMotoristaForm((prev) => ({
             ...prev,
-            [field]: formattedValue
+            [field]: formattedValue,
         }));
     };
 
@@ -58,15 +58,19 @@ const CadastroMotorista: React.FC = () => {
 
         try {
             let motoristaResponse;
-            
-            if (tipoMotorista === 'eu') {
+
+            if (tipoMotorista === "eu") {
                 // Cadastro para usuário logado
                 motoristaResponse = await cadastrarMotoristaLogado({
-                    cnh: motoristaForm.cnh
+                    cnh: motoristaForm.cnh,
                 });
-            } else if (tipoMotorista === 'outro') {
+            } else if (tipoMotorista === "outro") {
                 // Validações para outro motorista
-                if (!motoristaForm.nome?.trim() || !motoristaForm.cpf?.trim() || !motoristaForm.dataNascimento?.trim()) {
+                if (
+                    !motoristaForm.nome?.trim() ||
+                    !motoristaForm.cpf?.trim() ||
+                    !motoristaForm.dataNascimento?.trim()
+                ) {
                     setErro("Todos os campos são obrigatórios para cadastrar outro motorista");
                     return;
                 }
@@ -76,14 +80,14 @@ const CadastroMotorista: React.FC = () => {
                     cnh: motoristaForm.cnh,
                     nome: motoristaForm.nome!,
                     cpf: motoristaForm.cpf!,
-                    dataNascimento: motoristaForm.dataNascimento!
+                    dataNascimento: motoristaForm.dataNascimento!,
                 });
             }
 
             // Atualizar o reservaPayload com o ID do motorista
             const updatedReservaPayload = {
                 ...reservaPayload,
-                motoristaId: motoristaResponse.id
+                motoristaId: motoristaResponse.id,
             };
 
             // Navegar para o pagamento após sucesso
@@ -126,13 +130,13 @@ const CadastroMotorista: React.FC = () => {
 
                     <div className="motorista-section">
                         <div className="motorista-tipo-selecao">
-                            <label className={tipoMotorista === 'eu' ? 'selected' : ''}>
+                            <label className={tipoMotorista === "eu" ? "selected" : ""}>
                                 <input
                                     type="radio"
                                     name="tipoMotorista"
                                     value="eu"
-                                    checked={tipoMotorista === 'eu'}
-                                    onChange={(e) => setTipoMotorista(e.target.value as 'eu')}
+                                    checked={tipoMotorista === "eu"}
+                                    onChange={(e) => setTipoMotorista(e.target.value as "eu")}
                                 />
                                 <span className="radio-custom"></span>
                                 <div className="radio-content">
@@ -140,14 +144,14 @@ const CadastroMotorista: React.FC = () => {
                                     <small>Usar meus dados cadastrados</small>
                                 </div>
                             </label>
-                            
-                            <label className={tipoMotorista === 'outro' ? 'selected' : ''}>
+
+                            <label className={tipoMotorista === "outro" ? "selected" : ""}>
                                 <input
                                     type="radio"
                                     name="tipoMotorista"
                                     value="outro"
-                                    checked={tipoMotorista === 'outro'}
-                                    onChange={(e) => setTipoMotorista(e.target.value as 'outro')}
+                                    checked={tipoMotorista === "outro"}
+                                    onChange={(e) => setTipoMotorista(e.target.value as "outro")}
                                 />
                                 <span className="radio-custom"></span>
                                 <div className="radio-content">
@@ -165,13 +169,13 @@ const CadastroMotorista: React.FC = () => {
                                         type="text"
                                         id="cnh"
                                         value={motoristaForm.cnh}
-                                        onChange={(e) => handleInputChange('cnh', e.target.value)}
+                                        onChange={(e) => handleInputChange("cnh", e.target.value)}
                                         placeholder="Digite o número da CNH (11 caracteres)"
                                         maxLength={11}
                                     />
                                 </div>
 
-                                {tipoMotorista === 'outro' && (
+                                {tipoMotorista === "outro" && (
                                     <>
                                         <div className="form-group">
                                             <label htmlFor="nome">Nome Completo *</label>
@@ -179,7 +183,7 @@ const CadastroMotorista: React.FC = () => {
                                                 type="text"
                                                 id="nome"
                                                 value={motoristaForm.nome}
-                                                onChange={(e) => handleInputChange('nome', e.target.value)}
+                                                onChange={(e) => handleInputChange("nome", e.target.value)}
                                                 placeholder="Digite o nome completo do motorista"
                                             />
                                         </div>
@@ -189,10 +193,10 @@ const CadastroMotorista: React.FC = () => {
                                             <input
                                                 type="text"
                                                 id="cpf"
-                                                value={motoristaForm.cpf}
-                                                onChange={(e) => handleInputChange('cpf', e.target.value)}
+                                                value={formatCPF(motoristaForm.cpf || "")}
+                                                onChange={(e) => handleInputChange("cpf", e.target.value)}
                                                 placeholder="Digite o CPF (apenas números)"
-                                                maxLength={11}
+                                                maxLength={14} // 11 números + máscara
                                             />
                                         </div>
 
@@ -202,7 +206,7 @@ const CadastroMotorista: React.FC = () => {
                                                 type="date"
                                                 id="dataNascimento"
                                                 value={motoristaForm.dataNascimento}
-                                                onChange={(e) => handleInputChange('dataNascimento', e.target.value)}
+                                                onChange={(e) => handleInputChange("dataNascimento", e.target.value)}
                                             />
                                         </div>
                                     </>
@@ -217,20 +221,18 @@ const CadastroMotorista: React.FC = () => {
                                     >
                                         Voltar
                                     </button>
-                                    
+
                                     <button
                                         type="button"
                                         className="btn-continuar"
                                         onClick={handleCadastroMotorista}
                                         disabled={loading}
                                     >
-                                        {loading ? 'Cadastrando...' : 'Continuar para Pagamento'}
+                                        {loading ? "Cadastrando..." : "Continuar para Pagamento"}
                                     </button>
                                 </div>
 
-                                {erro && (
-                                    <div className="erro-message">{erro}</div>
-                                )}
+                                {erro && <div className="erro-message">{erro}</div>}
                             </div>
                         )}
                     </div>
@@ -240,4 +242,13 @@ const CadastroMotorista: React.FC = () => {
     );
 };
 
+function formatCPF(value: string) {
+    const v = value.replace(/\D/g, "").slice(0, 11);
+    return v
+        .replace(/^(\d{3})(\d)/, "$1.$2")
+        .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1-$2");
+}
+
 export default CadastroMotorista;
+
