@@ -1,5 +1,7 @@
 @startuml "Diagrama de Classes - Você Aluga"
 
+' === ENTIDADES PRINCIPAIS ===
+
 abstract class Usuario {
   -Long id
   -String nome
@@ -8,24 +10,51 @@ abstract class Usuario {
   -String email
   -String password
   -String telefone
+  +getId() : Long
+  +setId(Long) : void
+  +getNome() : String
+  +setNome(String) : void
+  +getEmail() : String
+  +setEmail(String) : void
+  +getPassword() : String
+  +setPassword(String) : void
 }
 
 class Cliente extends Usuario {
   -int pontosFidelidade
+  +getPontosFidelidade() : int
+  +setPontosFidelidade(int) : void
 }
 
 class Funcionario extends Usuario {
   -String cargo
   -Filial filial
+  +getCargo() : String
+  +setCargo(String) : void
+  +getFilial() : Filial
+  +setFilial(Filial) : void
 }
 
-class Gerente extends Usuario {
-  -String setor
-  -Filial filial
+class Gerente extends Funcionario {
+  +Gerente()
 }
 
-class Administrador extends Usuario {
-  -String nivel
+class Administrador extends Funcionario {
+  +Administrador()
+}
+
+class Motorista {
+  -Long id
+  -String cnh
+  -String nome
+  -String cpf
+  -LocalDate dataNascimento
+  +getId() : Long
+  +setId(Long) : void
+  +getCnh() : String
+  +setCnh(String) : void
+  +getNome() : String
+  +setNome(String) : void
 }
 
 class Veiculo {
@@ -41,16 +70,30 @@ class Veiculo {
   -String placa
   -Estoque estoque
   -Filial filial
+  +getId() : Long
+  +setId(Long) : void
+  +getMarca() : String
+  +setMarca(String) : void
+  +getModelo() : String
+  +setModelo(String) : void
 }
 
 class Reserva {
   -Long id
   -Usuario usuario
+  -Motorista motorista
   -TipoReserva categoria
   -StatusReserva status
   -LocalDate dataReserva
   -LocalDate dataVencimento
   -Filial localRetirada
+  -Veiculo veiculo
+  +getId() : Long
+  +setId(Long) : void
+  +getUsuario() : Usuario
+  +setUsuario(Usuario) : void
+  +getMotorista() : Motorista
+  +setMotorista(Motorista) : void
 }
 
 class Filial {
@@ -58,39 +101,80 @@ class Filial {
   -String nome
   -String local
   -Estoque estoque
+  +getId() : Long
+  +setId(Long) : void
+  +getNome() : String
+  +setNome(String) : void
+  +getLocal() : String
+  +setLocal(String) : void
 }
 
 class Estoque {
   -Long id
   -String nome
   -Filial filial
+  +getId() : Long
+  +setId(Long) : void
+  +getNome() : String
+  +setNome(String) : void
+  +getFilial() : Filial
+  +setFilial(Filial) : void
 }
 
 class TransferenciaVeiculos {
   -Long id
-  -Veiculo veiculo
-  -Filial filialOrigem
-  -Filial filialDestino
-  -LocalDate dataTransferencia
+  -Estoque estoqueOrigem
+  -Estoque estoqueDestino
+  -Instant data
+  -Set<Veiculo> veiculos
   -StatusTransferencia status
-  -String observacoes
+  +getId() : Long
+  +setId(Long) : void
+  +getEstoqueOrigem() : Estoque
+  +setEstoqueOrigem(Estoque) : void
+  +getEstoqueDestino() : Estoque
+  +setEstoqueDestino(Estoque) : void
 }
 
 class AgendarManutencao {
   -Long id
   -Veiculo veiculo
-  -LocalDate dataAgendamento
-  -String descricao
-  -StatusManutencao status
-  -double custo
-  -String responsavel
+  -EstacaoDeServico estacaoDeServico
+  -String motivoManutencao
+  -Instant dataManutencao
+  +getId() : Long
+  +setId(Long) : void
+  +getVeiculo() : Veiculo
+  +setVeiculo(Veiculo) : void
 }
 
 class EstacaoDeServico {
   -Long id
   -String nome
   -String local
+  +getId() : Long
+  +setId(Long) : void
+  +getNome() : String
+  +setNome(String) : void
+  +getLocal() : String
+  +setLocal(String) : void
 }
+
+class Endereco {
+  -Long id
+  -String rua
+  -String numero
+  -String bairro
+  -String cidade
+  -String estado
+  -String cep
+  +getId() : Long
+  +setId(Long) : void
+  +getRua() : String
+  +setRua(String) : void
+}
+
+' === ENUMS ===
 
 enum Grupo {
   A
@@ -101,23 +185,21 @@ enum Grupo {
 enum Cor {
   BRANCO
   PRETO
-  PRATA
   AZUL
   VERMELHO
-  OUTRO
+  PRATA
 }
 
 enum StatusVeiculo {
-  DISPONIVEL
   EM_USO
+  DISPONIVEL
   RESERVADO
   MANUTENCAO
 }
 
 enum TipoReserva {
-  DIARIA
-  SEMANAL
-  MENSAL
+  IMEDIATA
+  ANTECIPADA
 }
 
 enum StatusReserva {
@@ -128,51 +210,62 @@ enum StatusReserva {
   CANCELADO
 }
 
-enum StatusManutencao {
-  AGENDADA
-  EM_ANDAMENTO
-  CONCLUIDA
-  CANCELADA
-}
-
 enum StatusTransferencia {
-  SOLICITADA
-  APROVADA
-  EM_TRANSITO
-  CONCLUIDA
-  CANCELADA
+  PENDENTE
+  APROVADO
+  CANCELADO
+  CONCLUIDO
 }
 
-' Relacionamentos de Herança
+enum StatusPagamento {
+  APROVADO
+  PENDENTE
+  RECUSADO
+}
+
+' === DTOs ===
+
+class PagamentoDTO {
+  -String metodo
+  -String cardNumber
+  -String cardExpiry
+  -String cardCVV
+  -String cardName
+  +getMetodo() : String
+  +setMetodo(String) : void
+}
+
+' === RELACIONAMENTOS DE HERANÇA ===
 Usuario <|-- Cliente
 Usuario <|-- Funcionario
-Usuario <|-- Gerente
-Usuario <|-- Administrador
+Funcionario <|-- Gerente
+Funcionario <|-- Administrador
 
-' Relacionamentos JPA
-Filial ||--|| Estoque
-Estoque ||--o{ Veiculo
-Veiculo }o--|| Filial
+' === RELACIONAMENTOS JPA ===
+Filial ||--|| Estoque : "1:1"
+Estoque ||--o{ Veiculo : "1:N @ManyToOne"
+Veiculo }o--|| Filial : "@ManyToOne"
 
-Usuario ||--o{ Reserva
-Reserva }o--|| Filial
+Usuario ||--o{ Reserva : "1:N @ManyToOne"
+Reserva }o--|| Filial : "@ManyToOne localRetirada"
+Reserva }o--|| Veiculo : "@ManyToOne"
+Reserva }o--o{ Motorista : "@ManyToOne"
 
-Veiculo ||--o{ TransferenciaVeiculos
-Filial ||--o{ TransferenciaVeiculos : origem
-Filial ||--o{ TransferenciaVeiculos : destino
+TransferenciaVeiculos }o--|| Estoque : "@ManyToOne origem"
+TransferenciaVeiculos }o--|| Estoque : "@ManyToOne destino"
+TransferenciaVeiculos }o--o{ Veiculo : "@ManyToMany"
 
-Veiculo ||--o{ AgendarManutencao
+Veiculo ||--o{ AgendarManutencao : "1:N @ManyToOne"
+AgendarManutencao }o--|| EstacaoDeServico : "@ManyToOne"
 
-Funcionario }o--|| Filial
-Gerente }o--|| Filial
+Funcionario }o--|| Filial : "@ManyToOne"
 
-' Relacionamentos com Enums
+' === RELACIONAMENTOS COM ENUMS ===
 Veiculo }o--|| Grupo
 Veiculo }o--|| Cor
 Veiculo }o--|| StatusVeiculo
 Reserva }o--|| TipoReserva
 Reserva }o--|| StatusReserva
-AgendarManutencao }o--|| StatusManutencao
 TransferenciaVeiculos }o--|| StatusTransferencia
 
 @enduml

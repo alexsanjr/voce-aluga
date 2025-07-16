@@ -20,9 +20,11 @@ package "🌐 Frontend Layer" as frontend_layer #lightblue {
             [Login Page] as login_page
             [Register Page] as register_page
             [Aluguel Page] as aluguel_page
+            [AluguelCard Page] as aluguelcard_page
             [Reserva Page] as reserva_page
             [Pagamento Page] as pagamento_page
             [Minhas Reservas] as minhas_reservas
+            [Cadastro Motorista] as cadastro_motorista
             [Admin Panel] as admin_panel
         }
         
@@ -34,20 +36,277 @@ package "🌐 Frontend Layer" as frontend_layer #lightblue {
             [Section Cards] as section_cards
             [Dashboard Defaults] as dashboard_defaults
             [Input Components] as input_components
+            [Image Upload] as image_upload
         }
         
         package "🚀 Services" as frontend_services #white {
             [API Service] as api_service
+            [Auth Service] as auth_service_front
             [Login Service] as login_service
             [Register Service] as register_service
             [Veiculos Service] as veiculos_service
             [Reserva Service] as reserva_service
             [Pagamento Service] as pagamento_service
+            [Motorista Service] as motorista_service_front
+            [Manutencao Service] as manutencao_service_front
+            [Transferencia Service] as transferencia_service_front
+            [Me Service] as me_service
         }
         
         package "🛣️ Routing" as routing #white {
             [Router] as router
             [Private Route] as private_route
+        }
+        
+        package "🎨 Styles & Assets" as styles_assets #white {
+            [SCSS Files] as scss_files
+            [CSS Files] as css_files
+            [Images] as images
+            [Icons] as icons
+        }
+        
+        package "🔧 Utils & Types" as utils_types #white {
+            [JWT Utils] as jwt_utils
+            [Date Utils] as date_utils
+            [Veiculo Types] as veiculo_types
+            [API Error Types] as api_error_types
+            [Veiculo Options] as veiculo_options
+        }
+    }
+    
+    package "📦 Frontend Dependencies" as frontend_deps #lavender {
+        [React 19.1.0] as react
+        [TypeScript] as typescript
+        [Vite] as vite
+        [React Router] as react_router
+        [Axios] as axios
+        [ESLint] as eslint
+    }
+}
+
+package "⚙️ Backend Layer" as backend_layer #lightgreen {
+    
+    package "☕ Spring Boot Application" as spring_app #honeydew {
+        
+        package "🎮 Controller Layer" as controllers #white {
+            [Auth Controller] as auth_controller
+            [Register Controller] as register_controller
+            [Veiculo Controller] as veiculo_controller
+            [Reserva Controller] as reserva_controller
+            [Pagamento Controller] as pagamento_controller
+            [Filial Controller] as filial_controller
+            [Estoque Controller] as estoque_controller
+            [Motorista Controller] as motorista_controller
+            [Transferencia Veiculos Controller] as transferencia_controller
+            [Agendar Manutencao Controller] as manutencao_controller
+            [Estacao De Servico Controller] as estacao_controller
+        }
+        
+        package "💼 Service Layer" as services #white {
+            [Usuario Service] as usuario_service
+            [JWT Token Service] as jwt_service
+            [Veiculo Service] as veiculo_service_back
+            [Reserva Service] as reserva_service_back
+            [Pagamento Service] as pagamento_service_back
+            [Filial Service] as filial_service
+            [Estoque Service] as estoque_service
+            [Motorista Service] as motorista_service_back
+            [Transferencia Veiculos Service] as transferencia_service_back
+            [Agendar Manutencao Service] as manutencao_service_back
+        }
+        
+        package "🗂️ Repository Layer" as repositories #white {
+            [Usuario Repository] as usuario_repo
+            [Veiculo Repository] as veiculo_repo
+            [Reserva Repository] as reserva_repo
+            [Filial Repository] as filial_repo
+            [Estoque Repository] as estoque_repo
+            [Motorista Repository] as motorista_repo
+            [Transferencia Veiculos Repository] as transferencia_repo
+            [Agendar Manutencao Repository] as manutencao_repo
+            [Estacao De Servico Repository] as estacao_repo
+        }
+        
+        package "🏛️ Entity Layer" as entities #white {
+            [Usuario] as usuario_entity
+            [Cliente] as cliente_entity
+            [Funcionario] as funcionario_entity
+            [Gerente] as gerente_entity
+            [Administrador] as admin_entity
+            [Motorista] as motorista_entity
+            [Veiculo] as veiculo_entity
+            [Reserva] as reserva_entity
+            [Filial] as filial_entity
+            [Estoque] as estoque_entity
+            [Endereco] as endereco_entity
+            [Transferencia Veiculos] as transferencia_entity
+            [Agendar Manutencao] as manutencao_entity
+            [Estacao De Servico] as estacao_entity
+        }
+        
+        package "🏷️ Enums Package" as enums #white {
+            [Grupo] as grupo_enum
+            [Cor] as cor_enum
+            [Status Veiculo] as status_veiculo_enum
+            [Tipo Reserva] as tipo_reserva_enum
+            [Status Reserva] as status_reserva_enum
+            [Status Transferencia] as status_transferencia_enum
+            [Status Pagamento] as status_pagamento_enum
+        }
+        
+        package "🛡️ Security Layer" as security #white {
+            [Security Config] as security_config
+            [JWT Authentication Filter] as jwt_filter
+            [Authentication Provider] as auth_provider
+            [CORS Configuration] as cors_config
+        }
+        
+        package "📋 DTO Layer" as dtos #white {
+            [Auth DTOs] as auth_dtos
+            [Register Request] as register_request
+            [Veiculo DTO] as veiculo_dto
+            [Reserva DTO] as reserva_dto
+            [Pagamento DTO] as pagamento_dto
+            [Transferencia Veiculos DTO] as transferencia_dto
+            [Motorista DTO] as motorista_dto
+        }
+        
+        package "⚠️ Exception Handling" as exceptions #white {
+            [Custom Exceptions] as custom_exceptions
+            [Global Exception Handler] as exception_handler
+            [Error Response] as error_response
+        }
+        
+        package "📊 Configuration" as config #white {
+            [Application Properties] as app_properties
+            [Import SQL] as import_sql
+            [Database Config] as db_config
+            [Web Config] as web_config
+        }
+    }
+    
+    package "📚 Backend Dependencies" as backend_deps #lightcyan {
+        [Spring Boot 3.x] as spring_boot
+        [Spring Security] as spring_security
+        [Spring Data JPA] as spring_jpa
+        [Spring Web] as spring_web
+        [Spring Validation] as spring_validation
+        [JWT] as jwt_lib
+        [PostgreSQL Driver] as postgres_driver
+        [Hibernate] as hibernate
+        [Jackson] as jackson
+        [Maven] as maven
+    }
+}
+
+package "🗄️ Database Layer" as database_layer #lightyellow {
+    
+    package "🐘 PostgreSQL Database" as postgres_db #lemonchiffon {
+        [usuario] as usuarios_table
+        [cliente] as clientes_table
+        [funcionario] as funcionarios_table
+        [gerente] as gerentes_table
+        [administrador] as admin_table
+        [motorista] as motorista_table
+        [veiculo] as veiculos_table
+        [reserva] as reservas_table
+        [filial] as filiais_table
+        [estoque] as estoques_table
+        [endereco] as endereco_table
+        [transferenciaveiculos] as transferencia_table
+        [agendarmanutencao] as manutencao_table
+        [estacaodeservico] as estacao_table
+        [transferenciaVeiculos_Veiculo] as transferencia_veiculo_table
+    }
+    
+    package "🔗 Database Features" as db_features #white {
+        [Inheritance Strategy JOINED] as inheritance_strategy
+        [Foreign Keys] as foreign_keys
+        [Unique Constraints] as unique_constraints
+        [Cascade Operations] as cascade_ops
+        [Many-to-Many Tables] as many_to_many
+    }
+}
+
+package "🌍 External Services" as external_services #lightpink {
+    [Payment Gateway] as payment_gateway
+    [Email Service] as email_service
+    [File Storage] as file_storage
+}
+
+' === RELACIONAMENTOS ===
+
+' Frontend interno
+pages --> components : usa
+pages --> frontend_services : consome
+frontend_services --> api_service : utiliza
+routing --> pages : navega
+components --> styles_assets : aplica
+utils_types --> frontend_services : suporte
+
+' Frontend para Backend
+api_service --> controllers : HTTP/REST API
+
+' Backend interno - fluxo de dados
+controllers --> services : delega
+services --> repositories : acessa
+repositories --> entities : mapeia JPA
+entities --> enums : utiliza
+security --> controllers : protege
+dtos --> controllers : transfere dados
+exceptions --> controllers : trata erros
+config --> spring_app : configura
+
+' Backend para Database
+repositories --> postgres_db : JPA/Hibernate
+entities --> postgres_db : persiste
+
+' Backend para External
+services --> external_services : integra
+
+' Dependencies
+react_app --> frontend_deps : usa
+spring_app --> backend_deps : usa
+postgres_db --> db_features : implementa
+
+note top of frontend_layer
+  <b>Frontend Technologies:</b>
+  • React com TypeScript
+  • Vite para build e desenvolvimento
+  • React Router para navegação
+  • Axios para requisições HTTP
+  • SCSS para estilização
+  • ESLint para qualidade de código
+end note
+
+note top of backend_layer
+  <b>Backend Technologies:</b>
+  • Spring Boot com Java
+  • Spring Security com JWT
+  • Spring Data JPA com Hibernate
+  • Arquitetura em camadas
+  • RESTful API design
+  • Estratégia de herança JOINED
+end note
+
+note top of database_layer
+  <b>Database Features:</b>
+  • PostgreSQL como SGBD
+  • Relacionamentos JPA bem definidos
+  • Tabelas de junção para Many-to-Many
+  • Herança com estratégia JOINED
+  • Foreign Keys e Constraints
+end note
+
+note right of external_services
+  <b>Integrações Externas:</b>
+  • Gateway de pagamento
+  • Serviço de email
+  • Armazenamento de arquivos
+  • APIs de terceiros
+end note
+
+@enduml
         }
         
         package "🎨 Styles & Assets" as styles_assets #white {

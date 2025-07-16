@@ -1,0 +1,167 @@
+@startuml "Arquitetura do Sistema - Você Aluga"
+
+!theme plain
+title <size:18><color:#1976D2>Sistema Você Aluga - Arquitetura Geral</color></size>
+
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+package "🌐 Camada de Apresentação" as presentation #lightblue {
+    component [React Frontend] as frontend #aliceblue
+    component [Vite Dev Server] as vite #aliceblue
+    component [TypeScript] as typescript #aliceblue
+}
+
+package "🔗 Camada de Comunicação" as communication #lightgray {
+    component [REST API] as rest_api #white
+    component [HTTP/HTTPS] as http #white
+    component [JSON] as json #white
+    component [CORS] as cors #white
+}
+
+package "🛡️ Camada de Segurança" as security #lightyellow {
+    component [Spring Security] as spring_security #white
+    component [JWT Authentication] as jwt_auth #white
+    component [Password Encoder] as password_encoder #white
+    component [Authorization] as authorization #white
+}
+
+package "⚙️ Camada de Aplicação" as application #lightgreen {
+    component [Spring Boot] as spring_boot #white
+    component [Controllers] as controllers #white
+    component [Services] as services #white
+    component [DTOs] as dtos #white
+}
+
+package "💼 Camada de Negócio" as business #lightcoral {
+    component [Entities] as entities #white
+    component [Enums] as enums #white
+    component [Business Logic] as business_logic #white
+    component [Validation] as validation #white
+}
+
+package "🗄️ Camada de Persistência" as persistence #lightcyan {
+    component [Spring Data JPA] as spring_jpa #white
+    component [Hibernate] as hibernate #white
+    component [Repositories] as repositories #white
+    component [JPA Entities] as jpa_entities #white
+}
+
+package "🗃️ Camada de Dados" as data #lightsalmon {
+    database "PostgreSQL\nDatabase" as postgres {
+        folder "Tabelas" {
+            [usuario] as usuario_table
+            [cliente] as cliente_table
+            [funcionario] as funcionario_table
+            [veiculo] as veiculo_table
+            [reserva] as reserva_table
+            [filial] as filial_table
+            [estoque] as estoque_table
+        }
+    }
+}
+
+package "🌍 Serviços Externos" as external #lightpink {
+    component [Payment Gateway] as payment_gw #white
+    component [Email Service] as email_service #white
+    component [File Storage] as file_storage #white
+}
+
+' === Relacionamentos ===
+
+' Frontend
+frontend ..> rest_api : HTTP Requests
+vite ..> frontend : Builds & Serves
+typescript ..> frontend : Type Safety
+
+' Communication
+rest_api ..> spring_security : Protected by
+http ..> json : Transfers
+cors ..> frontend : Allows
+
+' Security
+spring_security ..> jwt_auth : Uses
+jwt_auth ..> authorization : Enforces
+password_encoder ..> spring_security : Secures
+
+' Application
+controllers ..> spring_security : Protected by
+controllers ..> services : Delegates to
+services ..> dtos : Uses
+dtos ..> json : Serialized to
+
+' Business
+services ..> business_logic : Implements
+business_logic ..> entities : Operates on
+entities ..> enums : Contains
+validation ..> entities : Validates
+
+' Persistence
+services ..> repositories : Uses
+repositories ..> spring_jpa : Implements
+spring_jpa ..> hibernate : Uses
+hibernate ..> jpa_entities : Maps
+
+' Data
+jpa_entities ..> postgres : Persists to
+postgres ..> usuario_table : Contains
+postgres ..> cliente_table : Contains
+postgres ..> funcionario_table : Contains
+postgres ..> veiculo_table : Contains
+postgres ..> reserva_table : Contains
+postgres ..> filial_table : Contains
+postgres ..> estoque_table : Contains
+
+' External
+services ..> payment_gw : Integrates with
+services ..> email_service : Uses
+services ..> file_storage : Stores files in
+
+' === Anotações ===
+
+note top of presentation
+  <b>Frontend Technologies:</b>
+  • React 19.1.0 com TypeScript
+  • Vite para desenvolvimento
+  • React Router para navegação
+  • Axios para requisições HTTP
+  • SCSS para estilização
+end note
+
+note top of application
+  <b>Backend Technologies:</b>
+  • Spring Boot 3.x
+  • Spring Web MVC
+  • RESTful API design
+  • Arquitetura em camadas
+  • Injeção de dependência
+end note
+
+note top of security
+  <b>Segurança:</b>
+  • JWT para autenticação
+  • Spring Security
+  • Role-based authorization
+  • CORS configurado
+  • Senhas criptografadas
+end note
+
+note top of persistence
+  <b>Persistência:</b>
+  • Spring Data JPA
+  • Hibernate ORM
+  • Repository Pattern
+  • Query Methods
+  • Transações declarativas
+end note
+
+note top of data
+  <b>Banco de Dados:</b>
+  • PostgreSQL
+  • Estratégia JOINED para herança
+  • Foreign Keys
+  • Constraints de integridade
+  • Índices para performance
+end note
+
+@enduml

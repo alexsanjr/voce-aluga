@@ -6,75 +6,96 @@ title <size:16><color:#1976D2>Sistema Você Aluga - Processo de Reserva de Veíc
 actor Cliente
 participant "Frontend\n(React)" as Frontend
 participant "Auth Controller" as AuthCtrl
-participant "Vehicle Controller" as VehicleCtrl
-participant "Reservation Controller" as ReservCtrl
-participant "Payment Controller" as PaymentCtrl
-participant "Vehicle Service" as VehicleSvc
-participant "Reservation Service" as ReservSvc
-participant "Payment Service" as PaymentSvc
+participant "Veiculo Controller" as VehicleCtrl
+participant "Reserva Controller" as ReservCtrl
+participant "Pagamento Controller" as PaymentCtrl
+participant "Motorista Controller" as MotoristaCtrl
+participant "Usuario Service" as UsuarioSvc
+participant "JWT Token Service" as JwtSvc
+participant "Veiculo Service" as VehicleSvc
+participant "Reserva Service" as ReservSvc
+participant "Pagamento Service" as PaymentSvc
+participant "Motorista Service" as MotoristaSvc
 participant "Database" as DB
 participant "Payment Gateway" as PaymentGW
 
 == Autenticação ==
 Cliente -> Frontend: Acessa sistema
 Frontend -> AuthCtrl: POST /auth/login
-AuthCtrl -> DB: Valida credenciais
-DB --> AuthCtrl: Usuario válido
-AuthCtrl --> Frontend: JWT Token
+note right of AuthCtrl: LoginRequest: email, password
+AuthCtrl -> UsuarioSvc: Valida credenciais
+UsuarioSvc -> DB: Busca usuário por email
+DB --> UsuarioSvc: Usuario encontrado
+UsuarioSvc --> AuthCtrl: Usuario válido
+AuthCtrl -> JwtSvc: Gera JWT token
+JwtSvc --> AuthCtrl: JWT Token
+AuthCtrl --> Frontend: AuthResponse com token
 Frontend --> Cliente: Autenticado
 
 == Busca de Veículos ==
 Cliente -> Frontend: Busca veículos disponíveis
-Frontend -> VehicleCtrl: GET /veiculos?disponivel=true
-VehicleCtrl -> VehicleSvc: buscarVeiculosDisponiveis()
-VehicleSvc -> DB: SELECT * FROM veiculos WHERE status = 'DISPONIVEL'
-DB --> VehicleSvc: Lista de veículos
-VehicleSvc --> VehicleCtrl: List<Veiculo>
-VehicleCtrl --> Frontend: JSON com veículos
+Frontend -> VehicleCtrl: GET /veiculos
+note right of VehicleCtrl: Headers: Authorization: Bearer {token}\n@PreAuthorize roles verificadas
+VehicleCtrl -> VehicleSvc: findAllPaged(Pageable)
+VehicleSvc -> DB: SELECT * FROM veiculo WHERE statusVeiculo = 'DISPONIVEL'
+DB --> VehicleSvc: Page<Veiculo>
+VehicleSvc --> VehicleCtrl: Page<VeiculoDTO>
+VehicleCtrl --> Frontend: JSON com veículos paginados
 Frontend --> Cliente: Exibe veículos disponíveis
 
+== Cadastro de Motorista ==
+Cliente -> Frontend: Informa dados do motorista
+Frontend -> MotoristaCtrl: POST /motoristas
+MotoristaCtrl -> MotoristaSvc: insert(MotoristaDTO)
+MotoristaSvc -> DB: INSERT INTO motorista
+DB --> MotoristaSvc: Motorista salvo
+MotoristaSvc --> MotoristaCtrl: MotoristaDTO
+MotoristaCtrl --> Frontend: 201 Created + motorista
+Frontend --> Cliente: Motorista cadastrado
+
 == Seleção e Reserva ==
-Cliente -> Frontend: Seleciona veículo e datas
+Cliente -> Frontend: Seleciona veículo, datas e motorista
 Frontend -> Frontend: Valida dados do formulário
 Frontend -> ReservCtrl: POST /reservas
-note right of ReservCtrl: Headers: Authorization: Bearer {token}
+note right of ReservCtrl: Headers: Authorization: Bearer {token}\nReservaDTO: usuario, veiculo, motorista, categoria, datas, filial
 
-ReservCtrl -> ReservSvc: criarReserva(dadosReserva)
+ReservCtrl -> ReservSvc: insert(ReservaDTO)
 ReservSvc -> DB: BEGIN TRANSACTION
 
 alt Veículo disponível
-    ReservSvc -> DB: INSERT INTO reservas
+    ReservSvc -> DB: INSERT INTO reserva
     DB --> ReservSvc: Reserva criada
     
-    ReservSvc -> VehicleSvc: atualizarStatusVeiculo(id, RESERVADO)
-    VehicleSvc -> DB: UPDATE veiculos SET status = 'RESERVADO'
+    ReservSvc -> VehicleSvc: Atualiza status do veículo
+    VehicleSvc -> DB: UPDATE veiculo SET statusVeiculo = 'RESERVADO'
     DB --> VehicleSvc: Status atualizado
     VehicleSvc --> ReservSvc: Confirmação
     
     ReservSvc -> DB: COMMIT TRANSACTION
     DB --> ReservSvc: Transação confirmada
-    ReservSvc --> ReservCtrl: Reserva criada com sucesso
+    ReservSvc --> ReservCtrl: ReservaDTO criada
     ReservCtrl --> Frontend: 201 Created + dados da reserva
     
 else Veículo indisponível
     ReservSvc -> DB: ROLLBACK TRANSACTION
-    ReservSvc --> ReservCtrl: Exception: VeiculoIndisponivelException
-    ReservCtrl --> Frontend: 409 Conflict
+    ReservSvc --> ReservCtrl: Exception: ResourceNotFoundException
+    ReservCtrl --> Frontend: 404 Not Found
     Frontend --> Cliente: "Veículo não disponível"
 end
 
 == Processo de Pagamento ==
 Cliente -> Frontend: Procede para pagamento
 Frontend -> PaymentCtrl: POST /pagamentos
-PaymentCtrl -> PaymentSvc: processarPagamento(dadosPagamento)
+note right of PaymentCtrl: PagamentoDTO: metodo, cardNumber, cardExpiry, cardCVV, cardName
+PaymentCtrl -> PaymentSvc: processarPagamento(PagamentoDTO)
 
-PaymentSvc -> PaymentGW: Processa pagamento
+PaymentSvc -> PaymentGW: Processa pagamento externo
 PaymentGW --> PaymentSvc: Resposta do pagamento
 
 alt Pagamento aprovado
-    PaymentSvc -> DB: INSERT INTO pagamentos
+    PaymentSvc -> DB: INSERT INTO pagamento (status: APROVADO)
     PaymentSvc -> ReservSvc: confirmarReserva(reservaId)
-    ReservSvc -> DB: UPDATE reservas SET status = 'CONFIRMADA'
+    ReservSvc -> DB: UPDATE reserva SET status = 'AGENDADO'
     DB --> ReservSvc: Status atualizado
     ReservSvc --> PaymentSvc: Reserva confirmada
     PaymentSvc --> PaymentCtrl: Pagamento processado
@@ -83,10 +104,10 @@ alt Pagamento aprovado
     
 else Pagamento recusado
     PaymentSvc -> ReservSvc: cancelarReserva(reservaId)
-    ReservSvc -> DB: UPDATE reservas SET status = 'CANCELADA'
+    ReservSvc -> DB: UPDATE reserva SET status = 'CANCELADO'
     ReservSvc -> VehicleSvc: liberarVeiculo(veiculoId)
-    VehicleSvc -> DB: UPDATE veiculos SET status = 'DISPONIVEL'
-    PaymentSvc --> PaymentCtrl: Pagamento recusado
+    VehicleSvc -> DB: UPDATE veiculo SET statusVeiculo = 'DISPONIVEL'
+    PaymentSvc --> PaymentCtrl: StatusPagamento: RECUSADO
     PaymentCtrl --> Frontend: 402 Payment Required
     Frontend --> Cliente: "Pagamento recusado"
 end
@@ -94,9 +115,18 @@ end
 == Confirmação Final ==
 Frontend -> Cliente: Exibe confirmação da reserva
 note over Cliente, PaymentGW
-  O cliente recebe email de confirmação
-  e pode acompanhar o status da reserva
-  na página "Minhas Reservas"
+  O cliente pode visualizar suas reservas
+  na página "Minhas Reservas" através do
+  endpoint GET /reservas/usuario/{id}
+  
+  Estados da reserva:
+  - PENDENTE: Criada mas não paga
+  - AGENDADO: Paga e confirmada
+  - EM_ANDAMENTO: Em execução
+  - ENCERRADO: Finalizada
+  - CANCELADO: Cancelada
 end note
+
+@enduml
 
 @enduml
