@@ -193,8 +193,8 @@ const ListaReservas: React.FC = () => {
                                             <td>{new Date(reserva.dataReserva).toLocaleDateString("pt-BR")}</td>
                                             <td>{new Date(reserva.dataVencimento).toLocaleDateString("pt-BR")}</td>
                                             <td className="status">
-                                                <span className={`status-${reserva.status}`}>
-                                                    {statusLabels[reserva.status] || reserva.status}
+                                                <span className={`status-${reserva.status}`} style={{ textTransform: 'uppercase' }}>
+                                                    {(statusLabels[reserva.status] || reserva.status).toUpperCase()}
                                                 </span>
                                             </td>
                                             <td className="edit">

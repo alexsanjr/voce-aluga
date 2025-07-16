@@ -7,33 +7,38 @@ export interface EstacaoServico {
     nome: string;
 }
 
-export interface ManutencaoPayload {
+export interface Manutencao {
+    id: number;
     veiculoId: number;
     estacaoDeServicoId: number;
     motivoManutencao: string;
+    dataManutencao: string;
+    status?: "AGENDADO" | "EM_ANDAMENTO" | "FINALIZADO" | "CANCELADO";
 }
 
-export const getManutencoes = async () => {
+export type ManutencaoPayload = Omit<Manutencao, 'id' | 'status'>
+
+export const getManutencoes = async (): Promise<Manutencao[]> => {
     const response = await api.get(API_URL);
     return response.data;
 };
 
-export const getManutencaoById = async (id: number) => {
+export const getManutencaoById = async (id: number): Promise<Manutencao> => {
     const response = await api.get(`${API_URL}/${id}`);
     return response.data;
 };
 
-export const agendarManutencao = async (payload: ManutencaoPayload) => {
+export const agendarManutencao = async (payload: ManutencaoPayload): Promise<Manutencao> => {
     const response = await api.post(`${API_URL}`, payload);
     return response.data;
 };
 
-export const finalizarManutencao = async (id: number) => {
+export const finalizarManutencao = async (id: number): Promise<Manutencao> => {
     const response = await api.patch(`${API_URL}/${id}/finalizar`);
     return response.data;
 };
 
-export const getEstacaoDeServico = async () => {
-    const response = await api.get("/estacoes-servico");
+export const getEstacaoDeServico = async (): Promise<EstacaoServico[]> => {
+    const response = await api.get("/estacao-de-servico");
     return response.data;
 };

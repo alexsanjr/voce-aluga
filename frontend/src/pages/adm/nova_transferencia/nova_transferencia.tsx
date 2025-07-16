@@ -86,16 +86,7 @@ const NovaTransferencia: React.FC = () => {
                 <section className="form-criar-veiculo">
                     <form onSubmit={enviar_form}>
                         <div className="veiculos-lista-transferencia">
-                            <label
-                                style={{
-                                    fontWeight: 400,
-                                    fontSize: "1.08rem",
-                                    marginBottom: "0.7rem",
-                                    display: "block",
-                                }}
-                            >
-                                Selecione o veículo
-                            </label>
+                            <label>Selecione o veículo</label>
                             {loading ? (
                                 <div>Carregando veículos...</div>
                             ) : veiculos.length === 0 ? (
