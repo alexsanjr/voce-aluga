@@ -19,6 +19,7 @@ interface Reserva {
     localRetiradaId: number;
     status: string;
     usuarioId: number;
+    motoristaId: number;
 }
 
 const statusLabels: Record<string, string> = {
@@ -57,6 +58,7 @@ const ListaReservas: React.FC = () => {
             dataReserva: reserva.dataReserva,
             dataVencimento: reserva.dataVencimento,
             localRetiradaId: reserva.localRetiradaId,
+            motoristaId: reserva.motoristaId
         };
     };
 
