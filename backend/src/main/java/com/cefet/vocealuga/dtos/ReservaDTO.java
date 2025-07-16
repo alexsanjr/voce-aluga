@@ -16,6 +16,7 @@ public class ReservaDTO {
     private LocalDate dataReserva;
     private LocalDate dataVencimento;
     private Long localRetiradaId;
+    private Long VeiculoId;
 
     public Long getId() {
         return id;
@@ -71,5 +72,13 @@ public class ReservaDTO {
 
     public void setUsuarioId(Long usuarioId) {
         this.usuarioId = usuarioId;
+    }
+
+    public Long getVeiculoId() {
+        return VeiculoId;
+    }
+
+    public void setVeiculoId(Long veiculoId) {
+        VeiculoId = veiculoId;
     }
 }

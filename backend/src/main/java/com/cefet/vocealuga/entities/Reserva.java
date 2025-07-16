@@ -26,8 +26,11 @@ public class Reserva {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filial_id")
     private Filial localRetirada;
+    @ManyToOne
+    @JoinColumn(name = "veiculo_id")
+    private Veiculo veiculo;
 
-    public Reserva(Long id, TipoReserva categoria, StatusReserva status, LocalDate dataReserva, LocalDate dataVencimento, Filial localRetirada, Usuario usuario) {
+    public Reserva(Long id, TipoReserva categoria, StatusReserva status, LocalDate dataReserva, LocalDate dataVencimento, Filial localRetirada, Usuario usuario, Veiculo  veiculo ) {
         this.id = id;
         this.categoria = categoria;
         this.status = status;
@@ -35,6 +38,7 @@ public class Reserva {
         this.dataVencimento = dataVencimento;
         this.localRetirada = localRetirada;
         this.usuario = usuario;
+        this.veiculo = veiculo;
     }
 
     public Reserva() {
@@ -94,6 +98,14 @@ public class Reserva {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
     }
 
     @Override

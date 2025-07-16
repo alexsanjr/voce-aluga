@@ -34,6 +34,9 @@ public class AuthService {
             dto.setDocumento(func.getDocumento());
             dto.setDataDeNascimento(func.getDataDeNascimento());
 
+            List<Long> reservas = reservaRepository.findIdsByUsuarioId(func.getId());
+            dto.setReservas(reservas);
+
 
         } else if (principal instanceof Cliente cliente) {
             dto.setNome(cliente.getNome());

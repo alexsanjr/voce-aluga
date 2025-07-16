@@ -4,10 +4,13 @@ import com.cefet.vocealuga.dtos.ReservaDTO;
 import com.cefet.vocealuga.entities.Filial;
 import com.cefet.vocealuga.entities.Reserva;
 import com.cefet.vocealuga.entities.Usuario;
+import com.cefet.vocealuga.entities.Veiculo;
 import com.cefet.vocealuga.entities.enums.StatusReserva;
+import com.cefet.vocealuga.entities.enums.StatusVeiculo;
 import com.cefet.vocealuga.repositories.FilialRepository;
 import com.cefet.vocealuga.repositories.ReservaRepository;
 import com.cefet.vocealuga.repositories.UsuarioRepository;
+import com.cefet.vocealuga.repositories.VeiculoRepository;
 import com.cefet.vocealuga.services.exceptions.DatabaseException;
 import com.cefet.vocealuga.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ public class ReservaService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    VeiculoRepository veiculoRepository;
 
 
     @Transactional(readOnly = true)
@@ -64,9 +70,14 @@ public class ReservaService {
             throw new IllegalArgumentException("Data de vencimento deve ser posterior à data de reserva");
         }
 
-        // Obtém o usuário logado do contexto de autenticação
+
         Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
         dto.setUsuarioId(usuarioLogado.getId());
+
+        Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId()).orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+
+        veiculo.setStatusVeiculo(StatusVeiculo.EM_USO);
+        veiculoRepository.save(veiculo);
 
         Reserva entity = convertToEntity(dto);
         entity = repository.save(entity);
@@ -123,6 +134,7 @@ public class ReservaService {
         dto.setStatus(entity.getStatus());
         dto.setLocalRetiradaId(entity.getLocalRetirada() != null ? entity.getLocalRetirada().getId() : null);
         dto.setUsuarioId(entity.getUsuario() != null ? entity.getUsuario().getId() : null);
+        dto.setVeiculoId(entity.getVeiculo() != null ? entity.getVeiculo().getId() : null);
         return dto;
     }
 
@@ -143,6 +155,13 @@ public class ReservaService {
                 .orElseThrow(() -> new RuntimeException("Local de retirada não encontrada"));
         filial.setId(dto.getLocalRetiradaId());
         entity.setLocalRetirada(filial);
+
+        if (dto.getVeiculoId() != null) {
+            entity.setVeiculo(
+                    veiculoRepository.findById(dto.getVeiculoId())
+                            .orElseThrow(() -> new RuntimeException("Veículo não encontrado"))
+            );
+        }
 
         return entity;
     }

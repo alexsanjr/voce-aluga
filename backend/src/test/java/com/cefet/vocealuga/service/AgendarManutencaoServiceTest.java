@@ -4,6 +4,7 @@ import com.cefet.vocealuga.dtos.AgendarManutencaoDTO;
 import com.cefet.vocealuga.entities.AgendarManutencao;
 import com.cefet.vocealuga.entities.EstacaoDeServico;
 import com.cefet.vocealuga.entities.Veiculo;
+import com.cefet.vocealuga.entities.enums.StatusVeiculo;
 import com.cefet.vocealuga.repositories.AgendarManutencaoRepository;
 import com.cefet.vocealuga.repositories.EstacaoDeServicoRepository;
 import com.cefet.vocealuga.repositories.VeiculoRepository;
@@ -11,6 +12,7 @@ import com.cefet.vocealuga.services.AgendarManutencaoService;
 import com.cefet.vocealuga.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -58,6 +60,7 @@ public class AgendarManutencaoServiceTest {
 
         veiculo = new Veiculo();
         veiculo.setId(1L);
+        veiculo.setStatusVeiculo(StatusVeiculo.DISPONIVEL);
 
         estacaoDeServico = new EstacaoDeServico();
         estacaoDeServico.setId(1L);
@@ -83,13 +86,14 @@ public class AgendarManutencaoServiceTest {
         when(estacaoDeServicoRepository.findById(estacaoDeServico.getId())).thenReturn(Optional.of(estacaoDeServico));
 
         when(repository.save(any(AgendarManutencao.class))).thenReturn(agendarManutencao);
+        when(veiculoRepository.save(any(Veiculo.class))).thenReturn(veiculo);
 
         Page<AgendarManutencao> page = new PageImpl<>(List.of(agendarManutencao));
         when(repository.findAll(any(Pageable.class))).thenReturn(page);
     }
 
     @Test
-    void deveAgendarManutencaoComDadosValidos() {
+    void deveAgendarManutencaoComVeiculoDisponivel() {
         // Arrange
         AgendarManutencaoDTO novoAgendamento = new AgendarManutencaoDTO();
         novoAgendamento.setVeiculoId(veiculo.getId());
@@ -97,12 +101,11 @@ public class AgendarManutencaoServiceTest {
         novoAgendamento.setMotivoManutencao("Troca de óleo e filtros");
         novoAgendamento.setDataManutencao(dataManutencao);
 
-        // Modificando o mock do repository.save para retornar um objeto com os dados corretos
-        when(repository.save(any(AgendarManutencao.class))).thenAnswer(invocation -> {
-            AgendarManutencao savedEntity = invocation.getArgument(0);
-            savedEntity.setId(existingId); // Mantém o ID conforme esperado no teste
-            return savedEntity;
-        });
+        // Configuração específica para este teste
+        veiculo.setStatusVeiculo(StatusVeiculo.DISPONIVEL);
+
+        // Capturador para verificar se o status do veículo é alterado
+        ArgumentCaptor<Veiculo> veiculoCaptor = ArgumentCaptor.forClass(Veiculo.class);
 
         // Act
         AgendarManutencaoDTO resultado = service.insert(novoAgendamento);
@@ -110,14 +113,79 @@ public class AgendarManutencaoServiceTest {
         // Assert
         assertNotNull(resultado);
         assertEquals(existingId, resultado.getId());
-        assertEquals("Troca de óleo e filtros", resultado.getMotivoManutencao());
-        assertEquals(dataManutencao, resultado.getDataManutencao());
-        assertEquals(veiculo.getId(), resultado.getVeiculoId());
-        assertEquals(estacaoDeServico.getId(), resultado.getEstacaoDeServicoId());
 
-        verify(veiculoRepository, times(1)).findById(veiculo.getId());
+        // Verificar se o veiculoRepository.save foi chamado com o veículo com status alterado para MANUTENCAO
+        verify(veiculoRepository).save(veiculoCaptor.capture());
+        assertEquals(StatusVeiculo.MANUTENCAO, veiculoCaptor.getValue().getStatusVeiculo());
+
+        // Verificações adicionais
+        verify(veiculoRepository, times(2)).findById(veiculo.getId());
         verify(estacaoDeServicoRepository, times(1)).findById(estacaoDeServico.getId());
+
         verify(repository, times(1)).save(any(AgendarManutencao.class));
+    }
+
+    @Test
+    void deveLancarExcecaoAoAgendarManutencaoComVeiculoIndisponivel() {
+        // Arrange
+        AgendarManutencaoDTO novoAgendamento = new AgendarManutencaoDTO();
+        novoAgendamento.setVeiculoId(veiculo.getId());
+        novoAgendamento.setEstacaoDeServicoId(estacaoDeServico.getId());
+        novoAgendamento.setMotivoManutencao("Troca de óleo e filtros");
+        novoAgendamento.setDataManutencao(dataManutencao);
+
+        // Configurando veículo para estar em uso (não disponível)
+        veiculo.setStatusVeiculo(StatusVeiculo.EM_USO);
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> service.insert(novoAgendamento));
+
+        // Verificações
+        verify(veiculoRepository, times(1)).findById(veiculo.getId());
+        verify(veiculoRepository, never()).save(any(Veiculo.class));
+        verify(repository, never()).save(any(AgendarManutencao.class));
+    }
+
+    @Test
+    void deveLancarExcecaoAoAgendarManutencaoComVeiculoJaEmManutencao() {
+        // Arrange
+        AgendarManutencaoDTO novoAgendamento = new AgendarManutencaoDTO();
+        novoAgendamento.setVeiculoId(veiculo.getId());
+        novoAgendamento.setEstacaoDeServicoId(estacaoDeServico.getId());
+        novoAgendamento.setMotivoManutencao("Troca de óleo e filtros");
+        novoAgendamento.setDataManutencao(dataManutencao);
+
+        // Configurando veículo para já estar em manutenção
+        veiculo.setStatusVeiculo(StatusVeiculo.MANUTENCAO);
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> service.insert(novoAgendamento));
+
+        // Verificações
+        verify(veiculoRepository, times(1)).findById(veiculo.getId());
+        verify(veiculoRepository, never()).save(any(Veiculo.class));
+        verify(repository, never()).save(any(AgendarManutencao.class));
+    }
+
+    @Test
+    void deveLancarExcecaoAoAgendarManutencaoComVeiculoReservado() {
+        // Arrange
+        AgendarManutencaoDTO novoAgendamento = new AgendarManutencaoDTO();
+        novoAgendamento.setVeiculoId(veiculo.getId());
+        novoAgendamento.setEstacaoDeServicoId(estacaoDeServico.getId());
+        novoAgendamento.setMotivoManutencao("Troca de óleo e filtros");
+        novoAgendamento.setDataManutencao(dataManutencao);
+
+        // Configurando veículo para estar reservado
+        veiculo.setStatusVeiculo(StatusVeiculo.RESERVADO);
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> service.insert(novoAgendamento));
+
+        // Verificações
+        verify(veiculoRepository, times(1)).findById(veiculo.getId());
+        verify(veiculoRepository, never()).save(any(Veiculo.class));
+        verify(repository, never()).save(any(AgendarManutencao.class));
     }
 
     @Test
@@ -146,12 +214,10 @@ public class AgendarManutencaoServiceTest {
 
         Page<AgendarManutencaoDTO> resultado = service.findAll(pageable);
 
-        // Assert
         assertNotNull(resultado);
         assertEquals(1, resultado.getTotalElements());
         assertEquals(existingId, resultado.getContent().get(0).getId());
 
-        // Verifica se o método correto foi chamado
         verify(repository).findAll(pageable);
     }
 
