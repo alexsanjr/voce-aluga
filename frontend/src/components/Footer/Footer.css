@@ -42,7 +42,7 @@
 }
 
 .footer-logo {
-  height: 3rem;
+  height: 4.5rem;
   width: auto;
   max-width: 100%;
   object-fit: contain;
@@ -73,7 +73,7 @@
 }
 
 .links-section ul span {
-  color: #3c7cad;
+  color: #9F67DD;
   font-weight: bold;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .contact-section .phone img {
-  background-color: #3c7cad;
+  background-color: #9F67DD;
   border-radius: 100%;
   padding: 0.3rem;
   width: 1rem;

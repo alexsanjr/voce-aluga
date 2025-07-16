@@ -30,27 +30,25 @@ const HomeEscolha: React.FC = () => {
                     <li>
                         <div className="icon">
                             <i className="protecao">
-                                <Icon icon="fa-solid:shield-alt" />
+                                <Icon icon="material-symbols:calendar-month" />
                             </i>
                         </div>
 
-                        <strong>Cobertura Completa</strong>
+                        <strong>Reserve do seu jeito!</strong>
                         <p>
-                            Seguro abrangente incluso em todas as locações. Dirija com confiança, sabendo que está
-                            totalmente protegido.
+                            Você pode alugar um automóvel de forma antecipada ou imediata!
                         </p>
                     </li>
                     <li>
                         <div className="icon">
                             <i className="atendimento">
-                                <Icon icon="fa6-solid:headset" />
+                                <Icon icon="material-symbols:location-on" />
                             </i>
                         </div>
 
-                        <strong>Suporte 25/7</strong>
+                        <strong>Devolução flexível</strong>
                         <p>
-                            Nossa equipe de atendimento ao cliente está disponível 24 horas por dia para ajudar você com
-                            qualquer dúvida ou problema.
+                            Devolva o automóvel em qualquer uma de nossas filiais.
                         </p>
                     </li>
                 </ul>
