@@ -20,6 +20,7 @@ interface Reserva {
     status: string;
     usuarioId: number;
     motoristaId: number;
+    veiculoId: number;
 }
 
 const statusLabels: Record<string, string> = {
@@ -58,7 +59,8 @@ const ListaReservas: React.FC = () => {
             dataReserva: reserva.dataReserva,
             dataVencimento: reserva.dataVencimento,
             localRetiradaId: reserva.localRetiradaId,
-            motoristaId: reserva.motoristaId
+            motoristaId: reserva.motoristaId,
+            veiculoId: reserva.veiculoId
         };
     };
 
