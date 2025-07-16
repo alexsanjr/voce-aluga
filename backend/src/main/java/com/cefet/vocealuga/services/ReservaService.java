@@ -76,7 +76,7 @@ public class ReservaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
 
         // Atualizar status do veículo
-        veiculo.setStatusVeiculo(StatusVeiculo.EM_USO);
+        veiculo.setStatusVeiculo(StatusVeiculo.RESERVADO);
         veiculoRepository.save(veiculo);
 
         // Verificar se o motorista existe
@@ -104,6 +104,31 @@ public class ReservaService {
             Reserva entity = repository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada com ID: " + id));
 
+            // Se a reserva está passando para CANCELADA, atualize o status do veículo para DISPONÍVEL
+            if (dto.getStatus() == StatusReserva.CANCELADO && entity.getStatus() != StatusReserva.CANCELADO) {
+                if (entity.getVeiculo() != null) {
+                    Veiculo veiculo = entity.getVeiculo();
+                    veiculo.setStatusVeiculo(StatusVeiculo.DISPONIVEL);
+                    veiculoRepository.save(veiculo);
+                }
+            }
+
+            if (dto.getStatus() == StatusReserva.ENCERRADO && entity.getStatus() != StatusReserva.ENCERRADO) {
+                if (entity.getVeiculo() != null) {
+                    Veiculo veiculo = entity.getVeiculo();
+                    veiculo.setStatusVeiculo(StatusVeiculo.DISPONIVEL);
+                    veiculoRepository.save(veiculo);
+                }
+            }
+
+            if (dto.getStatus() == StatusReserva.EM_ANDAMENTO && entity.getStatus() != StatusReserva.EM_ANDAMENTO) {
+                if (entity.getVeiculo() != null) {
+                    Veiculo veiculo = entity.getVeiculo();
+                    veiculo.setStatusVeiculo(StatusVeiculo.EM_USO);
+                    veiculoRepository.save(veiculo);
+                }
+            }
+
             if (entity.getStatus() == StatusReserva.EM_ANDAMENTO) {
                 throw new IllegalArgumentException("Não é permitido atualizar reservas em andamento");
             }
@@ -126,7 +151,6 @@ public class ReservaService {
             if (dto.getVeiculoId() != null &&
                     (entity.getVeiculo() == null || !dto.getVeiculoId().equals(entity.getVeiculo().getId()))) {
 
-
                 if (entity.getVeiculo() != null) {
                     Veiculo veiculoAntigo = entity.getVeiculo();
                     veiculoAntigo.setStatusVeiculo(StatusVeiculo.DISPONIVEL);
@@ -135,7 +159,7 @@ public class ReservaService {
 
                 Veiculo novoVeiculo = veiculoRepository.findById(dto.getVeiculoId())
                         .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
-                novoVeiculo.setStatusVeiculo(StatusVeiculo.EM_USO);
+                novoVeiculo.setStatusVeiculo(StatusVeiculo.RESERVADO);
                 veiculoRepository.save(novoVeiculo);
                 entity.setVeiculo(novoVeiculo);
             }
