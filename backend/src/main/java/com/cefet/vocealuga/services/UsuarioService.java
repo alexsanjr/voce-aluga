@@ -23,13 +23,14 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
 
-    private FilialRepository filialRepository;
+    private final EmailService emailService;
 
     public UsuarioService(UsuarioRepository repository,
-                          PasswordEncoder passwordEncoder, JwtTokenService tokenService) {
+                          PasswordEncoder passwordEncoder, JwtTokenService tokenService, EmailService emailService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenService = tokenService;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<?> registerUser(RegisterRequest request) {
@@ -71,6 +72,13 @@ public class UsuarioService {
 
 
         saveUser(novoUsuario);
+
+        try {
+            emailService.sendWelcomeEmail(novoUsuario.getEmail(), novoUsuario.getNome());
+        } catch (java.io.IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("erro", "Falha ao enviar e-mail de boas-vindas"));
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "mensagem", "Usuário " + request.getTipo() + " criado com sucesso!",
