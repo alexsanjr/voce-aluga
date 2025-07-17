@@ -1,20 +1,14 @@
 package com.cefet.vocealuga.controllers;
 
-import com.cefet.vocealuga.dtos.FilialDTO;
 import com.cefet.vocealuga.dtos.PagamentoDTO;
-import com.cefet.vocealuga.services.FilialService;
 import com.cefet.vocealuga.services.PagamentoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pagamento")
@@ -25,8 +19,34 @@ public class PagamentoController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_FUNCIONARIO', 'ROLE_GERENTE', 'ROLE_ADMIN', 'ROLE_CLIENTE')")
-    public ResponseEntity<PagamentoDTO> insert(@Valid @RequestBody PagamentoDTO dto) {
-        PagamentoDTO resposta = pagamentoService.processarPagamento(dto);
-        return ResponseEntity.ok(resposta); // HTTP 200 OK com DTO no corpo
+    public ResponseEntity<Map<String, String>> insert(@Valid @RequestBody PagamentoDTO dto) {
+        pagamentoService.processarPagamento(dto);
+        return ResponseEntity.ok(Map.of(
+                "mensagem", "Email de confirmação enviado. Verifique sua caixa de entrada.",
+                "status", "pendente"
+        ));
+    }
+
+    @GetMapping("/confirmar/{token}")
+    public ResponseEntity<Map<String, String>> confirmarPagamento(@PathVariable String token) {
+        try {
+            boolean confirmado = pagamentoService.confirmarPagamento(token);
+            if (confirmado) {
+                return ResponseEntity.ok(Map.of(
+                        "mensagem", "Pagamento confirmado com sucesso!",
+                        "status", "confirmado"
+                ));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "erro", "Erro ao confirmar pagamento",
+                        "status", "erro"
+                ));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "erro", e.getMessage(),
+                    "status", "erro"
+            ));
+        }
     }
 }

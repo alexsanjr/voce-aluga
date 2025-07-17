@@ -38,6 +38,9 @@ public class ReservaService {
     @Autowired
     private MotoristaRepository motoristaRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional(readOnly = true)
     public ReservaDTO findById(Long id) {
 
