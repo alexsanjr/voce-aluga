@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,8 +31,13 @@ public class PagamentoService {
     @Autowired
     private ReservaService reservaService;
 
+    @Autowired
+    private PdfService pdfService;
+
     @Value("${app.base.url:http://localhost:8080}")
     private String baseUrl;
+
+    private static final Logger logger = LoggerFactory.getLogger(PagamentoService.class);
 
     @Transactional
     public PagamentoDTO processarPagamento(PagamentoDTO dto) {
@@ -90,7 +97,6 @@ public class PagamentoService {
             throw new RuntimeException("Pagamento já confirmado anteriormente");
         }
 
-
         pagamento.setConfirmado(true);
         pagamentoRepository.save(pagamento);
 
@@ -101,12 +107,28 @@ public class PagamentoService {
         // Processar pagamento definitivamente
         processarPagamentoDefinitivo(pagamento);
 
-        // Enviar email de confirmação de pagamento
-        smtpEmailService.sendPaymentConfirmation(
-                pagamento.getEmailUsuario(),
-                pagamento.getToken(),
-                "R$ " + pagamento.getValor()
-        );
+        // Gerar comprovante PDF e enviar por email
+        try {
+            ReservaDTO reserva = null;
+            if (pagamento.getReservaId() != null) {
+                reserva = reservaService.findById(pagamento.getReservaId());
+            }
+
+            byte[] pdfBytes = pdfService.gerarComprovantePagamento(pagamento, reserva);
+
+            // Enviar email com comprovante em anexo
+            smtpEmailService.sendPaymentConfirmation(
+                    pagamento.getEmailUsuario(),
+                    pagamento.getToken(),
+                    "R$ " + pagamento.getValor(),
+                    pdfBytes
+            );
+
+            logger.info("Comprovante PDF enviado por email para pagamento: {}", pagamento.getToken());
+
+        } catch (Exception e) {
+            logger.error("Erro ao gerar/enviar comprovante PDF: ", e);
+        }
 
         return true;
     }
@@ -145,6 +167,11 @@ public class PagamentoService {
         String body = createHtmlPaymentConfirmation(nomeUsuario, metodo, linkConfirmacao);
 
         smtpEmailService.sendEmailAsync(email, subject, body);
+    }
+
+    public Pagamento buscarPorToken(String token) {
+        return pagamentoRepository.findByToken(token)
+                .orElseThrow(() -> new ResourceNotFoundException("Pagamento não encontrado"));
     }
 
     private String createHtmlPaymentConfirmation(String nomeUsuario, String metodo, String linkConfirmacao) {

@@ -2,6 +2,7 @@ package com.cefet.vocealuga.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -47,16 +48,47 @@ public class SmtpEmailService {
         }
     }
 
+    @Async
+    public CompletableFuture<Void> sendEmailWithAttachmentAsync(String to, String subject, String body, byte[] attachmentData, String attachmentName) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, fromName);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+            helper.setReplyTo(fromEmail);
+
+            if (attachmentData != null && attachmentData.length > 0) {
+                helper.addAttachment(attachmentName, new ByteArrayResource(attachmentData), "application/pdf");
+            }
+
+            message.setHeader("X-Mailer", "VocêAluga System");
+            message.setHeader("X-Priority", "3");
+            message.setHeader("List-Unsubscribe", "<mailto:" + fromEmail + ">");
+
+            mailSender.send(message);
+            System.out.println("Email SMTP com anexo enviado com sucesso para: " + to);
+            return CompletableFuture.completedFuture(null);
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar email SMTP com anexo: " + e.getMessage());
+            throw new RuntimeException("Falha ao enviar email SMTP com anexo", e);
+        }
+    }
+
     public void sendTestEmail(String to) {
         String subject = "✅ Teste SMTP - VocêAluga";
         String body = createHtmlTestEmail();
         sendEmailAsync(to, subject, body);
     }
 
-    public void sendPaymentConfirmation(String to, String pagamentoId, String valor) {
+    public void sendPaymentConfirmation(String to, String pagamentoId, String valor, byte[] comprovantePdf) {
         String subject = "Confirmação de Pagamento - VocêAluga";
         String body = createHtmlPaymentConfirmation(pagamentoId, valor);
-        sendEmailAsync(to, subject, body);
+        //sendEmailAsync(to, subject, body);
+        String attachmentName = "comprovante_pagamento_" + pagamentoId + ".pdf";
+        sendEmailWithAttachmentAsync(to, subject, body, comprovantePdf, attachmentName);
     }
 
     public void sendWelcomeEmail(String to, String username) {
@@ -140,6 +172,7 @@ public class SmtpEmailService {
                 .payment-info { background: white; padding: 15px; border-radius: 5px; margin: 15px 0; }
                 .footer { padding: 10px; text-align: center; color: #666; font-size: 12px; }
                 .success { color: #4CAF50; font-weight: bold; }
+                .attachment-info { background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0; }
             </style>
         </head>
         <body>
@@ -151,14 +184,20 @@ public class SmtpEmailService {
                 <div class="content">
                     <h2 class="success">✅ Pagamento Confirmado!</h2>
                     <p>Seu pagamento foi processado com sucesso.</p>
-                    
+
                     <div class="payment-info">
                         <p><strong>ID do Pagamento:</strong> %s</p>
                         <p><strong>Valor:</strong> %s</p>
                         <p><strong>Data/Hora:</strong> %s</p>
                         <p><strong>Status:</strong> <span class="success">Aprovado</span></p>
                     </div>
-                    
+
+                    <div class="attachment-info">
+                        <p><strong>📄 Comprovante em Anexo</strong></p>
+                        <p>Seu comprovante de pagamento está anexado a este email em formato PDF.</p>
+                        <p>Guarde este documento para seus registros.</p>
+                    </div>
+
                     <p>Obrigado por utilizar o VocêAluga!</p>
                     <p>Em caso de dúvidas, entre em contato conosco.</p>
                 </div>
