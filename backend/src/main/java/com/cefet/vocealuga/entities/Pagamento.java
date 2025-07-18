@@ -1,6 +1,8 @@
 package com.cefet.vocealuga.entities;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,6 +27,8 @@ public class Pagamento {
     @Column
     private String cardCVV;
 
+    private BigDecimal valor;
+
     @Column
     private String cardName;
 
@@ -40,7 +44,14 @@ public class Pagamento {
     // Construtores, getters e setters
     public Pagamento() {}
 
-    // Getters e setters...
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,7 +22,7 @@ public class PagamentoService {
     private PagamentoRepository pagamentoRepository;
 
     @Autowired
-    private EmailService emailService;
+    private SmtpEmailService smtpEmailService;
 
     @Value("${app.base.url:http://localhost:8080}")
     private String baseUrl;
@@ -44,24 +43,19 @@ public class PagamentoService {
         Pagamento pagamento = new Pagamento();
         pagamento.setToken(token);
         pagamento.setMetodo(dto.getMetodo());
+        pagamento.setValor(dto.getValor());
         pagamento.setCardNumber(mascaraCartao(dto.getCardNumber()));
         pagamento.setCardExpiry(dto.getCardExpiry());
-        pagamento.setCardCVV("***"); // Nunca salvar CVV real
+        pagamento.setCardCVV("***");
         pagamento.setCardName(dto.getCardName());
         pagamento.setEmailUsuario(usuario.getEmail());
-        pagamento.setDataExpiracao(LocalDateTime.now().plusHours(24)); // Expira em 24h
+        pagamento.setDataExpiracao(LocalDateTime.now().plusHours(24));
         pagamento.setConfirmado(false);
 
         pagamentoRepository.save(pagamento);
 
-        // Enviar email de confirmação
-        try {
-            enviarEmailConfirmacao(usuario.getEmail(), usuario.getNome(), token, dto.getMetodo());
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao enviar email de confirmação: " + e.getMessage());
-        }
+        enviarEmailConfirmacao(usuario.getEmail(), usuario.getNome(), token, dto.getMetodo());
 
-        // Retornar resposta indicando que email foi enviado
         PagamentoDTO resposta = new PagamentoDTO();
         resposta.setMetodo(dto.getMetodo());
 
@@ -88,12 +82,18 @@ public class PagamentoService {
         // Processar pagamento definitivamente
         processarPagamentoDefinitivo(pagamento);
 
+        // Enviar email de confirmação de pagamento
+        smtpEmailService.sendPaymentConfirmation(
+                pagamento.getEmailUsuario(),
+                pagamento.getToken(),
+                "R$ " + pagamento.getValor()
+        );
+
         return true;
     }
 
     private void validarDadosPagamento(PagamentoDTO dto) {
         if ("pix".equalsIgnoreCase(dto.getMetodo())) {
-            // PIX não precisa de validações extras
             return;
         }
 
@@ -115,25 +115,67 @@ public class PagamentoService {
         }
     }
 
-    private void enviarEmailConfirmacao(String email, String nomeUsuario, String token, String metodo) throws IOException {
+    private void enviarEmailConfirmacao(String email, String nomeUsuario, String token, String metodo) {
         String linkConfirmacao = baseUrl + "/pagamento/confirmar/" + token;
 
         String subject = "Confirmação de Pagamento - VocêAluga";
-        String body = String.format(
-                "Olá %s!\n\n" +
-                        "Recebemos sua solicitação de pagamento via %s.\n\n" +
-                        "Para confirmar e processar seu pagamento, clique no link abaixo:\n" +
-                        "%s\n\n" +
-                        "Este link expira em 24 horas.\n\n" +
-                        "Se você não fez esta solicitação, ignore este email.\n\n" +
-                        "Atenciosamente,\n" +
-                        "Equipe VocêAluga",
-                nomeUsuario,
-                metodo.toUpperCase(),
-                linkConfirmacao
-        );
+        String body = createHtmlPaymentConfirmation(nomeUsuario, metodo, linkConfirmacao);
 
-        emailService.sendEmail(email, subject, body);
+        smtpEmailService.sendEmailAsync(email, subject, body);
+    }
+
+    private String createHtmlPaymentConfirmation(String nomeUsuario, String metodo, String linkConfirmacao) {
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: Arial, sans-serif; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: #4CAF50; color: white; padding: 20px; text-align: center; }
+                    .content { padding: 20px; background: #f9f9f9; }
+                    .payment-info { background: white; padding: 15px; border-radius: 5px; margin: 15px 0; }
+                    .footer { padding: 10px; text-align: center; color: #666; font-size: 12px; }
+                    .highlight { color: #4CAF50; font-weight: bold; }
+                    .btn { background: #4CAF50; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 15px 0; }
+                    .warning { color: #ff9800; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🚗 VocêAluga</h1>
+                        <p>Confirmação de Pagamento</p>
+                    </div>
+                    <div class="content">
+                        <h2>Olá, <span class="highlight">%s</span>! 👋</h2>
+                        <p>Recebemos sua solicitação de pagamento via <strong>%s</strong>.</p>
+
+                        <div class="payment-info">
+                            <h3>🔒 Para confirmar seu pagamento:</h3>
+                            <p>Clique no botão abaixo para processar seu pagamento com segurança.</p>
+                            
+                            <div style="text-align: center;">
+                                <a href="%s" class="btn">✅ Confirmar Pagamento</a>
+                            </div>
+                            
+                            <p class="warning">⚠️ Este link expira em 24 horas.</p>
+                            <p><strong>Data/Hora:</strong> %s</p>
+                        </div>
+
+                        <p>Se você não fez esta solicitação, ignore este email.</p>
+                        <p>Seu pagamento só será processado após a confirmação.</p>
+                    </div>
+                    <div class="footer">
+                        <p>Este é um email automático do sistema VocêAluga</p>
+                        <p>Não responda este email</p>
+                        <p>Em caso de dúvidas, entre em contato conosco</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """.formatted(nomeUsuario, metodo.toUpperCase(), linkConfirmacao, LocalDateTime.now().toString());
     }
 
     private void processarPagamentoDefinitivo(Pagamento pagamento) {

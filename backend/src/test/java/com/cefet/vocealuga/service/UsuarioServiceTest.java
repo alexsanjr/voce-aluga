@@ -6,7 +6,7 @@ import com.cefet.vocealuga.dtos.RegisterRequest;
 import com.cefet.vocealuga.dtos.enums.TipoRegister;
 import com.cefet.vocealuga.entities.Cliente;
 import com.cefet.vocealuga.repositories.UsuarioRepository;
-import com.cefet.vocealuga.services.EmailService;
+import com.cefet.vocealuga.services.SmtpEmailService;
 import com.cefet.vocealuga.services.JwtTokenService;
 import com.cefet.vocealuga.services.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ class UsuarioServiceTest {
     @Mock
     private JwtTokenService jwtTokenService;
     @Mock
-    private EmailService emailService;
+    private SmtpEmailService smtpEmailService;
     @Mock
     private UsuarioService usuarioService;
 
@@ -40,14 +39,13 @@ class UsuarioServiceTest {
         usuarioRepository = mock(UsuarioRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
         jwtTokenService = mock(JwtTokenService.class);
-        emailService = mock(EmailService.class);
+        smtpEmailService = mock(SmtpEmailService.class);
 
-        // Adicionar o EmailService como 4º parâmetro
-        usuarioService = new UsuarioService(usuarioRepository, passwordEncoder, jwtTokenService, emailService);
+        usuarioService = new UsuarioService(usuarioRepository, passwordEncoder, jwtTokenService, smtpEmailService);
     }
 
     @Test
-    void deveRegistrarUsuarioComDadosValidos() throws IOException {
+    void deveRegistrarUsuarioComDadosValidos() {
         RegisterRequest request = new RegisterRequest(
                 "Robson", "12345678954", LocalDate.of(1998, 12, 12),
                 "robson@gmail.com", "21999999999", "Senha123!", TipoRegister.CLIENTE
@@ -58,8 +56,7 @@ class UsuarioServiceTest {
         when(passwordEncoder.encode(any())).thenReturn("senhaCodificada");
         when(usuarioRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Mock do emailService para não gerar erro
-        doNothing().when(emailService).sendWelcomeEmail(anyString(), anyString());
+        doNothing().when(smtpEmailService).sendWelcomeEmail(anyString(), anyString());
 
         ResponseEntity<?> response = usuarioService.registerUser(request);
 
@@ -82,8 +79,7 @@ class UsuarioServiceTest {
         when(passwordEncoder.matches("Senha123!", "senhaCodificada")).thenReturn(true);
         when(jwtTokenService.generateToken(anyString(), anyString(), anyLong())).thenReturn("tokenFake");
 
-        // Criar nova instância com EmailService
-        UsuarioService usuarioServiceReal = new UsuarioService(usuarioRepository, passwordEncoder, jwtTokenService, emailService);
+        UsuarioService usuarioServiceReal = new UsuarioService(usuarioRepository, passwordEncoder, jwtTokenService, smtpEmailService);
 
         AuthResponse response = usuarioServiceReal.authenticateUser(loginRequest);
 
@@ -92,7 +88,6 @@ class UsuarioServiceTest {
         assertEquals("Login realizado com sucesso", response.getMensagem());
     }
 
-    // Resto dos testes permanecem iguais...
     @Test
     void naoDeveRegistrarUsuarioComEmailJaCadastrado() {
         RegisterRequest request = new RegisterRequest(
