@@ -9,6 +9,15 @@ public class PagamentoDTO {
     private String cardCVV;
     private String cardName;
     private BigDecimal valor;
+    private Long reservaId;
+
+    public Long getReservaId() {
+        return reservaId;
+    }
+
+    public void setReservaId(Long reservaId) {
+        this.reservaId = reservaId;
+    }
 
     public BigDecimal getValor() {
         return valor;

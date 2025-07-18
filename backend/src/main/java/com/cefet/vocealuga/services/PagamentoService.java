@@ -1,6 +1,7 @@
 package com.cefet.vocealuga.services;
 
 import com.cefet.vocealuga.dtos.PagamentoDTO;
+import com.cefet.vocealuga.dtos.ReservaDTO;
 import com.cefet.vocealuga.entities.Pagamento;
 import com.cefet.vocealuga.entities.Usuario;
 import com.cefet.vocealuga.repositories.PagamentoRepository;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,13 +26,23 @@ public class PagamentoService {
     @Autowired
     private SmtpEmailService smtpEmailService;
 
+    @Autowired
+    private ReservaService reservaService;
+
     @Value("${app.base.url:http://localhost:8080}")
     private String baseUrl;
 
     @Transactional
     public PagamentoDTO processarPagamento(PagamentoDTO dto) {
-        // Validações básicas
         validarDadosPagamento(dto);
+
+        ReservaDTO reserva = null;
+        BigDecimal valorPagamento = dto.getValor();
+
+        if (dto.getReservaId() != null) {
+            reserva = reservaService.findById(dto.getReservaId());
+            valorPagamento = reserva.getValorTotal();
+        }
 
         // Obter usuário logado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -43,7 +55,8 @@ public class PagamentoService {
         Pagamento pagamento = new Pagamento();
         pagamento.setToken(token);
         pagamento.setMetodo(dto.getMetodo());
-        pagamento.setValor(dto.getValor());
+        pagamento.setValor(valorPagamento);
+        pagamento.setReservaId(dto.getReservaId());
         pagamento.setCardNumber(mascaraCartao(dto.getCardNumber()));
         pagamento.setCardExpiry(dto.getCardExpiry());
         pagamento.setCardCVV("***");
@@ -58,6 +71,8 @@ public class PagamentoService {
 
         PagamentoDTO resposta = new PagamentoDTO();
         resposta.setMetodo(dto.getMetodo());
+        resposta.setValor(dto.getValor());
+        resposta.setReservaId(dto.getReservaId());
 
         return resposta;
     }
@@ -75,9 +90,13 @@ public class PagamentoService {
             throw new RuntimeException("Pagamento já confirmado anteriormente");
         }
 
-        // Confirmar pagamento
+
         pagamento.setConfirmado(true);
         pagamentoRepository.save(pagamento);
+
+        if (pagamento.getReservaId() != null) {
+            reservaService.confirmarPagamentoReserva(pagamento.getReservaId());
+        }
 
         // Processar pagamento definitivamente
         processarPagamentoDefinitivo(pagamento);
@@ -93,6 +112,10 @@ public class PagamentoService {
     }
 
     private void validarDadosPagamento(PagamentoDTO dto) {
+        if (dto.getReservaId() == null && (dto.getValor() == null || dto.getValor().compareTo(BigDecimal.ZERO) <= 0)) {
+            throw new RuntimeException("Valor do pagamento deve ser maior que zero");
+        }
+
         if ("pix".equalsIgnoreCase(dto.getMetodo())) {
             return;
         }

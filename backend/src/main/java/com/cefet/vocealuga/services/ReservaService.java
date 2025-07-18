@@ -91,13 +91,34 @@ public class ReservaService {
         Reserva entity = convertToEntity(dto);
 
         // Definir status inicial da reserva
-        entity.setStatus(StatusReserva.PENDENTE);
+        entity.setStatus(StatusReserva.AGUARDANDO_PAGAMENTO);
 
 
         // Salvar a reserva
         entity = repository.save(entity);
 
         return convertToDTO(entity);
+    }
+
+    @Transactional
+    public void confirmarPagamentoReserva(Long reservaId) {
+        Reserva reserva = repository.findById(reservaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva não encontrada"));
+
+        if (reserva.getStatus() != StatusReserva.AGUARDANDO_PAGAMENTO) {
+            throw new RuntimeException("Reserva não está aguardando pagamento");
+        }
+
+
+        reserva.setStatus(StatusReserva.PENDENTE);
+
+        if (reserva.getVeiculo() != null) {
+            Veiculo veiculo = reserva.getVeiculo();
+            veiculo.setStatusVeiculo(StatusVeiculo.RESERVADO);
+            veiculoRepository.save(veiculo);
+        }
+
+        repository.save(reserva);
     }
 
     @Transactional

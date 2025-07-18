@@ -40,9 +40,18 @@ public class Pagamento {
 
     @Column(nullable = false)
     private Boolean confirmado = false;
+    private Long reservaId;
 
-    // Construtores, getters e setters
+
     public Pagamento() {}
+
+    public Long getReservaId() {
+        return reservaId;
+    }
+
+    public void setReservaId(Long reservaId) {
+        this.reservaId = reservaId;
+    }
 
     public BigDecimal getValor() {
         return valor;
